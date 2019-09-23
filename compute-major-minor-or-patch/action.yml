@@ -3,4 +3,4 @@ description: 'Outputs appropriate label for NPM version'
 author: 'Frontside Inc.'
 runs:
   using: 'node12'
-  main: 'main.js'
+  main: 'dist/index.js'
