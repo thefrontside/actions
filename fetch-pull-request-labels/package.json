@@ -1,5 +1,5 @@
 {
-  "dependencies": {
+  "devDependencies": {
     "@actions/core": "^1.1.0",
     "@actions/github": "^1.1.0"
   }
