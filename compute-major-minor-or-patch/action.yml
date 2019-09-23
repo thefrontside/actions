@@ -1,0 +1,6 @@
+name: 'Computer Major, Minor, or Patch'
+description: 'Outputs appropriate label for NPM version'
+author: 'Frontside Inc.'
+runs:
+  using: 'node12'
+  main: 'dist/index.js'
