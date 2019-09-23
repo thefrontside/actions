@@ -3,6 +3,7 @@ The Frontside Actions is a collection of Github Actions we use in Transparent NP
 
 ## Actions
 The following are our current actions. Go to its directories for a more detailed instructions on how to use them.
+
 | Actions | Description |
 | ------- | ----------- |
 | [write-npm-snapshot-version](/write-npm-snapshot-version) | Updates package version in `package.json` with the SHA of the current commit. |
