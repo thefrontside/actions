@@ -19,3 +19,12 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - run: echo ${{ steps.fetch-pull-request-labels.outputs.PR_LABELS }}
 ```
+
+# Development
+Since this action was built with Javascript, per the [documentation](https://help.github.com/en/articles/creating-a-javascript-action#commit-and-push-your-action-to-github), any changes made to this action must be re-compiled with `@zeit/ncc`.
+
+In your terminal:
+```bash
+$ npm i -g @zeit/ncc
+$ ncc build main.js
+```
