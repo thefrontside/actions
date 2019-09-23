@@ -3,4 +3,4 @@ description: 'Fetch and output pull request labels'
 author: 'Frontside Inc.'
 runs:
   using: 'node12'
-  main: 'main.js'
+  main: 'dist/index.js'
