@@ -10,3 +10,4 @@ The following are our current actions. Go to its directories for a more detailed
 | [fetch-pull-request-labels](/fetch-pull-request-labels) | Retrieves and outputs labels of a pull request. |
 | [compute-major-minor-or-patch](/compute-major-minor-or-patch) | Takes in an array of labels and returns either `major`, `minor`, or `patch` as an environment variable. |
 | [commit-push-and-tag-release](/commit-push-and-tag-release) | Commit and push the file that is specified as an argument. |
+| [post-instruction-comment](/post-instruction-comment) | Generate comment on pull request with instructions on how to use the newly published package. |
