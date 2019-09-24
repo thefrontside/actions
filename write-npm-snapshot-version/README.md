@@ -1,7 +1,7 @@
 # Write NPM Snapshot Version
 This action updates the version of your package according to the SHA of the current commit.
 
-# Usage
+## Usage
 ```yaml
 jobs:
   job_name:

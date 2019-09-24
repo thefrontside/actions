@@ -6,7 +6,7 @@ This action is specifically tailored to run *on* a PR after it is closed and mer
 ## Requirements
 You must specify the file you want pushed to your repository as an `add` argument and also expose your `GITHUB_TOKEN`.
 
-# Usage
+## Usage
 ```yaml
 jobs:
   job_name:
