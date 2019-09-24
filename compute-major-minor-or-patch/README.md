@@ -1,7 +1,7 @@
 # Compute Major Minor or Patch
 This action takes in an argument of `PR_LABELS` and outputs one label that is appropriate for `npm version` as an environment variable `$MAJOR_OR_MINOR_OR_PATCH`.
 
-## Requirements
+# Requirements
 You must pass in a `PR_LABELS` argument.
 
 # Usage
