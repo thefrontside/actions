@@ -3,10 +3,10 @@ This action commits the file according to the `add` argument and pushes it to yo
 
 This action is specifically tailored to run *on* a PR after it is closed and merged so it may not work as intended if it runs straight from a regular commit/push.
 
-# Requirements
+## Requirements
 You must specify the file you want pushed to your repository as an `add` argument and also expose your `GITHUB_TOKEN`.
 
-# Usage
+## Usage
 ```yaml
 jobs:
   job_name:
