@@ -7965,15 +7965,18 @@ const octokit = new github.GitHub(GITHUB_TOKEN);
 
 async function run() {
   try {
-    const pull_number = github.context.payload.number;
-
-    const pullrequest = await octokit.pulls.get({
+    const pullrequests = await octokit.pulls.list({
       owner: github.context.repo.owner,
       repo: github.context.repo.repo,
-      pull_number
+      state: 'closed', //because we only care about merged
+      base: github.context.ref
     });
 
-    const labels = pullrequest.data.labels.map(labels => { return labels.name });
+    const lastmerged = pullrequests.data.filter((pr) => { return pr.merged_at != null })[0];
+
+    console.log("Retrieving labels from merge #" + lastmerged.number + ".");
+
+    const labels = lastmerged.labels.map(labels => { return labels.name });
 
     core.setOutput('PR_LABELS', labels);
   } catch (error) {

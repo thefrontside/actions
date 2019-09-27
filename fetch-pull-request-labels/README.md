@@ -1,5 +1,5 @@
 # Fetch Pull Request Labels
-This action retrieves the labels of a pull request and outputs them as `PR_LABELS` available between steps within a job.
+This action retrieves the labels of the latest merged pull request and outputs them as `PR_LABELS` available between steps within a job.
 
 ## Requirements
 You must pass in your `GITHUB_TOKEN` as shown below.
