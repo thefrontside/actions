@@ -7975,16 +7975,17 @@ const octokit = new github.GitHub(GITHUB_TOKEN);
 
 async function run() {
   try {
-    let commit_regexed = /#(\d+)/.exec(github.context.payload.head_commit.message);
+    // let commit_regexed = /#(\d+)/.exec(github.context.payload.head_commit.message)[1];
 
-    const pullrequests = await octokit.pulls.list({
+    const pull_request = await octokit.pulls.list({
       owner: github.context.repo.owner,
       repo: github.context.repo.repo,
-      state: 'closed', //because we only care about merged
-      head: github.context.ref //only pull request merged to the branch we're on
+      // state: 'closed', //because we only care about merged
+      // head: github.context.ref //only pull request merged to the branch we're on
+      pull_number: /#(\d+)/.exec(github.context.payload.head_commit.message)[1]
     });
 
-    console.log(commit_regexed);
+    console.log(pull_request);
 
     // const match_commit = pullrequests.data.filter((pr) => { return pr.merged_at != null })[0];
 
