@@ -1,4 +1,7 @@
-# Fetch Pull Request Labels
+fix for when pull request can't be found
+but more importantly why isn't it finding any PRs
+
+<!-- # Fetch Pull Request Labels
 This action retrieves the labels of the latest merged pull request and outputs them as `PR_LABELS` available between steps within a job.
 
 ## Requirements
@@ -27,4 +30,4 @@ In your terminal:
 ```bash
 $ npm i -g @zeit/ncc
 $ ncc build main.js
-```
+``` -->
