@@ -20,6 +20,8 @@ async function run() {
 
     console.log("4:", shouldbefour);
 
+    console.log('commit message:', github.context.payload.head_commit.message);
+
     // const lastmerged = pullrequests.data.filter((pr) => { return pr.merged_at != null })[0];
 
     // console.log("Retrieving labels from merge #" + lastmerged.number + ".");
