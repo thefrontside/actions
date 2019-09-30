@@ -11,7 +11,7 @@ async function run() {
   try {
     // let commit_regexed = /#(\d+)/.exec(github.context.payload.head_commit.message)[1];
 
-    const pull_request = await octokit.pulls.list({
+    const pull_request = await octokit.pulls.get({
       owner: github.context.repo.owner,
       repo: github.context.repo.repo,
       // state: 'closed', //because we only care about merged
