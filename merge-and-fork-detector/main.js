@@ -7,9 +7,6 @@ const NPM_AUTH_TOKEN = core.getInput('NPM_AUTH_TOKEN');
 
 async function run() {
   try {
-    const regex = /#(\d+)/;
-    const commit_message = github.context.payload.head_commit.message;
-
     // for PR
     if (github.context.payload.number) {
       // case 1
@@ -41,6 +38,8 @@ async function run() {
       }
       else {
         // case 4
+        const regex = /#(\d+)/;
+        const commit_message = github.context.payload.head_commit.message;
         if (regex.test(commit_message)) {
           // const pull_request = await octokit.pulls.get({
           //   owner: github.context.repo.owner,
@@ -69,8 +68,7 @@ case 2 = it is a PR but no npm_auth_token
   case 2.1 = it's a fork
   case 2.2 = it's not a fork
 
-case 3 = it's a fork with no token so fail
-
+confirmed: case 3 = it's a fork with no token so fail
 case 4 = commit has pr number so success
-case 5 = commit has no pr number so fail
+confirmed case 5 = commit has no pr number so fail
 */
