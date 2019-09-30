@@ -7979,11 +7979,15 @@ async function run() {
       base: github.context.ref
     });
 
-    console.log("list:", pullrequests);
+    console.log(github.context)
 
-    const lastclosed = pullrequests.data.filter((pr) => { return pr.number == 4 });
+    // console.log("list:", pullrequests);
 
-    console.log("4:", lastclosed);
+    // const lastclosed = pullrequests.data.filter((pr) => { return pr.number == 4 });
+
+    // console.log("4:", lastclosed);
+
+
 
     // const lastmerged = pullrequests.data.filter((pr) => { return pr.merged_at != null })[0];
 
