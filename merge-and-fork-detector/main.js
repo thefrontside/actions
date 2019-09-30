@@ -12,7 +12,13 @@ async function run() {
       state: 'closed', //because we only care about merged
       base: github.context.ref
     });
-    console.log(pullrequests)
+
+    console.log("list:", pullrequests);
+
+    const lastclosed = pullrequests.data.filter((pr) => { return pr.number == 4 });
+
+    console.log("4:", lastclosed);
+
     // const lastmerged = pullrequests.data.filter((pr) => { return pr.merged_at != null })[0];
 
     // console.log("Retrieving labels from merge #" + lastmerged.number + ".");
