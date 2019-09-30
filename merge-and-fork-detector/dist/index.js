@@ -7979,9 +7979,9 @@ async function run() {
     const regex = /#(\d+)/;
     const commit_message = github.context.payload.head_commit.message;
 
-    if (github.context.payload.repository.fork) {
-      console.log("This is a forked repository")
-      console.log(NPM_AUTH_TOKEN);
+    if (github.context.payload.repository.fork && !NPM_AUTH_TOKEN) {
+      // only checking for npm_auth_token if it's a fork
+      console.log("this means it's a fork AND you provided no token")
     } else {
       if (regex.test(commit_message)) {
         const pull_request = await octokit.pulls.get({
