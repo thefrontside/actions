@@ -7970,24 +7970,21 @@ const github = __webpack_require__(955);
 const GITHUB_TOKEN = core.getInput('GITHUB_TOKEN');
 const octokit = new github.GitHub(GITHUB_TOKEN);
 
+// check conmmit to see merged by looking for #1-9
+// check if fork
+
 async function run() {
   try {
     const pullrequests = await octokit.pulls.list({
       owner: github.context.repo.owner,
       repo: github.context.repo.repo,
       state: 'closed', //because we only care about merged
-      base: github.context.ref
+      head: github.context.ref //only pull request merged to the branch we're on
     });
 
-    console.log(github.context)
+    const shouldbefour = pullrequests.data.filter((pr) => { return pr.number == 4 });
 
-    // console.log("list:", pullrequests);
-
-    // const lastclosed = pullrequests.data.filter((pr) => { return pr.number == 4 });
-
-    // console.log("4:", lastclosed);
-
-
+    console.log("4:", shouldbefour);
 
     // const lastmerged = pullrequests.data.filter((pr) => { return pr.merged_at != null })[0];
 
