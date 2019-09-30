@@ -9,6 +9,8 @@ const octokit = new github.GitHub(GITHUB_TOKEN);
 
 async function run() {
   try {
+    let commit_regexed = /#(\d+)/.exec(github.context.payload.head_commit.message);
+
     const pullrequests = await octokit.pulls.list({
       owner: github.context.repo.owner,
       repo: github.context.repo.repo,
@@ -16,13 +18,9 @@ async function run() {
       head: github.context.ref //only pull request merged to the branch we're on
     });
 
-    const shouldbefour = pullrequests.data.filter((pr) => { return pr.number == 4 });
+    console.log(commit_regexed);
 
-    console.log("4:", shouldbefour);
-
-    console.log('commit message:', github.context.payload.head_commit.message);
-
-    // const lastmerged = pullrequests.data.filter((pr) => { return pr.merged_at != null })[0];
+    // const match_commit = pullrequests.data.filter((pr) => { return pr.merged_at != null })[0];
 
     // console.log("Retrieving labels from merge #" + lastmerged.number + ".");
 
