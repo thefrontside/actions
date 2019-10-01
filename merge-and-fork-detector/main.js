@@ -57,7 +57,7 @@ async function run() {
         }
         // case 5
         else {
-          core.setOutput('PR', "pr111");
+          core.setOutput('PR', false);
           core.exportVariable('PR2', "pr222");
         }
       }
