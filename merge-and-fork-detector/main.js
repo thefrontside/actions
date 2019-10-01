@@ -67,8 +67,7 @@ case 1 = it's on a PR but no npm_auth_token
 case 2 = it is a PR but no npm_auth_token
   case 2.1 = it's a fork
   case 2.2 = it's not a fork
-
-confirmed: case 3 = it's a fork with no token so fail
+case 3 = it's a fork with no token so fail
 case 4 = commit has pr number so success
-confirmed case 5 = commit has no pr number so fail
+case 5 = commit has no pr number so fail
 */
