@@ -5,6 +5,9 @@ git remote set-url origin https://${GITHUB_TOKEN}:x-oauth-basic@github.com/${GIT
 git fetch origin +refs/heads/*:refs/heads/*
 
 echo referee: $GITHUB_REF
+git checkout release-0
+echo echoing branch below
+git branch
 
 # branch=$(printf "%s\n" "${GITHUB_BASE_REF#*refs\/heads\/}")
 # echo echoing what branch just did: $(printf "%s\n" "${GITHUB_BASE_REF#*refs\/heads\/}")
