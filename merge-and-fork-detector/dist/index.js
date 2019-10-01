@@ -8024,8 +8024,7 @@ async function run() {
         // case 5
         else {
           console.log("We suspect this workflow wasn't triggered by a commit made from a merge because we could not locate a PR number in the commit message.")
-          console.log("Resuming workflow because life is too short.")
-          core.setFailed('oaiwejfoaiewjf')
+          core.setFailed('Halting workflow')
         }
       }
     }
