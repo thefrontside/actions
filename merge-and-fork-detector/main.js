@@ -3,9 +3,6 @@ const github = require('@actions/github');
 
 const NPM_AUTH_TOKEN = core.getInput('NPM_AUTH_TOKEN');
 
-// preemptive warning with instructions for forks
-// checks if it's a merge from a pr
-
 /*
 case 1 = it's on a PR but no npm_auth_token
 case 2 = it is a PR but no npm_auth_token
@@ -15,6 +12,10 @@ case 3 = it's a fork with no token so fail
 case 4 = commit has pr number so success
 case 5 = commit has no pr number so fail
 */
+
+// only runs if
+// 1. Workflow is triggered by a pull request and NPM_AUTH_TOKEN is accessible.
+// 2. Workflow is triggered by the commit of a pull request merge.
 
 async function run() {
   try {
@@ -59,6 +60,8 @@ async function run() {
           core.setFailed("We suspect this workflow wasn't triggered by a commit made from a merge because we could not locate a PR number in the commit message.")
         }
       }
+      core.setOutput('PR', "pr111");
+      core.exportVariable('PR2', "pr222");
     }
   } catch (error) {
     core.setFailed(error.message);
