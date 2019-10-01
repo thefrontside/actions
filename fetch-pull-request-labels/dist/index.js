@@ -7983,9 +7983,9 @@ async function run() {
       pull_number
     });
 
-    console.log("result:", pull_request.data);
+    const labels = pull_request.labels.map(labels => { return labels.name });
 
-    const labels = lastmerged.labels.map(labels => { return labels.name });
+    console.log(labels)
 
     core.setOutput('PR_LABELS', labels);
   } catch (error) {
