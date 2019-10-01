@@ -15,7 +15,7 @@ case 5 = commit has no pr number so fail
 
 // only runs if
 // 1. Workflow is triggered by a pull request and NPM_AUTH_TOKEN is accessible.
-// 2. Workflow is triggered by the commit of a pull request merge.
+// 2. In non-PR, as long as it's not a fork and missing token. see case 3
 
 async function run() {
   try {
@@ -57,8 +57,8 @@ async function run() {
         }
         // case 5
         else {
-          core.setOutput('PR', false);
-          core.exportVariable('PR2', "pr222");
+          console.log("We suspect this workflow wasn't triggered by a commit made from a merge because we could not locate a PR number in the commit message.")
+          console.log("Resuming workflow because life is too short.")
         }
       }
     }
