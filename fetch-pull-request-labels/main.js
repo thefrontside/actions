@@ -24,7 +24,7 @@ async function run() {
       pull_number
     });
 
-    const labels = pull_request.labels.map(labels => { return labels.name });
+    const labels = pull_request.data.labels.map(labels => { return labels.name });
 
     console.log(labels)
 
