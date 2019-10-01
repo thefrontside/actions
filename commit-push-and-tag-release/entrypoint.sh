@@ -4,9 +4,14 @@ set -euo pipefail
 git remote set-url origin https://${GITHUB_TOKEN}:x-oauth-basic@github.com/${GITHUB_REPOSITORY}.git
 
 git fetch origin +refs/heads/*:refs/heads/*
+echo report after fetch
+
 branch=$(printf "%s\n" "${GITHUB_BASE_REF#*refs\/heads\/}")
+echo echoing what branch just did: $(printf "%s\n" "${GITHUB_BASE_REF#*refs\/heads\/}")
+
+echo before checkout: $(git branch | grep \* | cut -d ' ' -f2)
 git checkout $branch
-echo branch: $branch
+echo current branch: $(git branch | grep \* | cut -d ' ' -f2)
 
 # ___ uncomment below
 
