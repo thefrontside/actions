@@ -1,9 +1,17 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
 
-// const GITHUB_TOKEN = core.getInput('GITHUB_TOKEN');
 const NPM_AUTH_TOKEN = core.getInput('NPM_AUTH_TOKEN');
-// const octokit = new github.GitHub(GITHUB_TOKEN);
+
+/*
+case 1 = it's on a PR but no npm_auth_token
+case 2 = it is a PR but no npm_auth_token
+  case 2.1 = it's a fork
+  case 2.2 = it's not a fork
+case 3 = it's a fork with no token so fail
+case 4 = commit has pr number so success
+case 5 = commit has no pr number so fail
+*/
 
 async function run() {
   try {
@@ -41,11 +49,6 @@ async function run() {
         const regex = /#(\d+)/;
         const commit_message = github.context.payload.head_commit.message;
         if (regex.test(commit_message)) {
-          // const pull_request = await octokit.pulls.get({
-          //   owner: github.context.repo.owner,
-          //   repo: github.context.repo.repo,
-          //   pull_number: regex.exec(commit_message)[1]
-          // });
           console.log(`Merge #${regex.exec(commit_message)[1]} detected. Resuming workflow.`)
         }
         // case 5
@@ -60,14 +63,3 @@ async function run() {
 };
 
 run();
-
-
-/*
-case 1 = it's on a PR but no npm_auth_token
-case 2 = it is a PR but no npm_auth_token
-  case 2.1 = it's a fork
-  case 2.2 = it's not a fork
-case 3 = it's a fork with no token so fail
-case 4 = commit has pr number so success
-case 5 = commit has no pr number so fail
-*/

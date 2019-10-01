@@ -30,5 +30,6 @@ Since this action was built with Javascript, per the [documentation](https://hel
 In your terminal:
 ```bash
 $ npm i -g @zeit/ncc
+$ npm install
 $ ncc build main.js
 ```

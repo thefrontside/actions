@@ -1,9 +1,7 @@
-fetching/checkout needs to be updated for triggers that happen on original repo and not pull request
-
-<!-- # Commit Push and Tag Release
+# Commit Push and Tag Release
 This action commits the file according to the `add` argument and pushes it to your repository.
 
-This action is specifically tailored to run *on* a PR after it is closed and merged so it may not work as intended if it runs straight from a regular commit/push.
+This action is specifically tailored to run *on* the repository after its automated commit triggered by a merge of a pull request.
 
 ## Requirements
 You must specify the file you want pushed to your repository as an `add` argument and also expose your `GITHUB_TOKEN`.
@@ -22,4 +20,4 @@ jobs:
         add: package.json
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-``` -->
+```

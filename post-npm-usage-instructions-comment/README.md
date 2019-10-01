@@ -1,5 +1,5 @@
 # Post Instruction Comment
-This action will generate a comment on a PR using [DangerJS](https://github.com/danger/danger-js). The message is preset with instructions on how to access the package that was published from the latest commit of the PR. The message was tailored to be relevant to the `TNP PR Create` workflow.
+This action will generate a comment on a PR using [DangerJS](https://github.com/danger/danger-js). The message is preset with instructions on how to access the package that was published from the latest commit of the PR. The message was tailored to be relevant to the `TNP Publish Preview` workflow.
 
 ## Requirements
 You must pass in your `GITHUB_TOKEN` as shown below.
