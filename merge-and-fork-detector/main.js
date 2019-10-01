@@ -3,6 +3,9 @@ const github = require('@actions/github');
 
 const NPM_AUTH_TOKEN = core.getInput('NPM_AUTH_TOKEN');
 
+// preemptive warning with instructions for forks
+// checks if it's a merge from a pr
+
 /*
 case 1 = it's on a PR but no npm_auth_token
 case 2 = it is a PR but no npm_auth_token
