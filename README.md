@@ -3,7 +3,7 @@ WIP. README commented out in repo.
 agenda:
 ~~1. merge-and-fork-detector~~
 ~~2. fetch-pull-request-labels~~
-3. commit-push-and-tag-release
+~~3. commit-push-and-tag-release~~
 
 <!-- # Frontside Actions
 The Frontside Actions is a collection of Github Actions we use in Transparent NPM Publishing.
