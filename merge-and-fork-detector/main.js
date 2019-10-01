@@ -57,11 +57,10 @@ async function run() {
         }
         // case 5
         else {
-          core.setFailed("We suspect this workflow wasn't triggered by a commit made from a merge because we could not locate a PR number in the commit message.")
+          core.setOutput('PR', "pr111");
+          core.exportVariable('PR2', "pr222");
         }
       }
-      core.setOutput('PR', "pr111");
-      core.exportVariable('PR2', "pr222");
     }
   } catch (error) {
     core.setFailed(error.message);
