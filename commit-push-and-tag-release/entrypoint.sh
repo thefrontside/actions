@@ -4,10 +4,7 @@ set -euo pipefail
 git remote set-url origin https://${GITHUB_TOKEN}:x-oauth-basic@github.com/${GITHUB_REPOSITORY}.git
 git fetch origin +refs/heads/*:refs/heads/*
 
-echo referee: $GITHUB_REF
-git checkout release-0
-echo echoing branch below
-git branch
+echo referee: "${GITHUB_REF#*refs\/heads\/}"
 
 # branch=$(printf "%s\n" "${GITHUB_BASE_REF#*refs\/heads\/}")
 # echo echoing what branch just did: $(printf "%s\n" "${GITHUB_BASE_REF#*refs\/heads\/}")
