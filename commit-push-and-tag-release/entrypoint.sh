@@ -15,4 +15,4 @@ git add $INPUT_ADD
 
 current="`node -e \"console.log(require('./package.json').version)\"`"
 git commit -m "Release version $current"
-git push "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY.git" $branch
+git push "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY.git" #$branch

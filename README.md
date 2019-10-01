@@ -1,8 +1,8 @@
 WIP. README commented out in repo.
 
 agenda:
-1. merge-and-fork-detector
-2. fetch-pull-request-labels
+~~1. merge-and-fork-detector~~
+~~2. fetch-pull-request-labels~~
 3. commit-push-and-tag-release
 
 <!-- # Frontside Actions
