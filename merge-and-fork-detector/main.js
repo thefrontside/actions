@@ -4,18 +4,27 @@ const github = require('@actions/github');
 const NPM_AUTH_TOKEN = core.getInput('NPM_AUTH_TOKEN');
 
 /*
-case 1 = it's on a PR but no npm_auth_token
-case 2 = it is a PR but no npm_auth_token
-  case 2.1 = it's a fork
-  case 2.2 = it's not a fork
-case 3 = it's a fork with no token so fail
-case 4 = commit has pr number so success
-case 5 = commit has no pr number so fail
-*/
 
-// only runs if
-// 1. Workflow is triggered by a pull request and NPM_AUTH_TOKEN is accessible.
-// 2. In non-PR, as long as it's not a fork and missing token. see case 3
+only runs if:
+
+  1. Workflow is triggered by a pull request and NPM_AUTH_TOKEN is accessible.
+  2. In non-PR, as long as it's not a fork and missing token. see case 3
+
+
+scenarios:
+
+  on pull requests:
+    case 1 = success: confirm npm_auth_token
+    case 2 = fail: no npm_auth_token
+      case 2.1 = it's a fork
+      case 2.2 = it's not a fork
+
+  on commits:
+    case 3 = fail: it's a fork with no token
+    case 4 = success: commit has pr number
+    case 5 = fail: commit is not from a pr merge
+
+*/
 
 async function run() {
   try {
