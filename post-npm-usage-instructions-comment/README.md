@@ -1,4 +1,4 @@
-# Post Instruction Comment
+# Post NPM Usage Instructions Comment
 This action will generate a comment on a PR using [DangerJS](https://github.com/danger/danger-js). The message is preset with instructions on how to access the package that was published from the latest commit of the PR. The message was tailored to be relevant to the `TNP Publish Preview` workflow.
 
 ## Requirements
@@ -12,8 +12,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
-    - name: Post Instruction Comment
-      uses: thefrontside/actions/post-instruction-comment@master
+    - name: Post Instructions Comment
+      uses: thefrontside/actions/post-npm-usage-instructions-comment@master
       env: 
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
