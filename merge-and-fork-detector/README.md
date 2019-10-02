@@ -9,11 +9,11 @@ You must pass in your NPM_AUTH_TOKEN for this action to work properly.
 ## Usage
 ```yaml
 jobs:
-  filter:
-    name: Filter by Commit Message
+  job_name:
+    name: Job Name
     runs-on: ubuntu-latest
     steps:    
-    - name: Filter by Commit Message
+    - name: Filter for Forks and Merges
       uses: thefrontside/actions/merge-and-fork-detector@master
       with:
         NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
