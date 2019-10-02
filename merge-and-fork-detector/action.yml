@@ -1,0 +1,6 @@
+name: 'Merge and Fork Detector'
+description: 'Checks if this workflow was triggered by a merge and or a fork.'
+author: 'Frontside Inc.'
+runs:
+  using: 'node12'
+  main: 'dist/index.js'

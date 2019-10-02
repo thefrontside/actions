@@ -46,7 +46,7 @@ module.exports =
 /***/ 21:
 /***/ (function(module) {
 
-module.exports = {"_from":"@octokit/rest@^16.15.0","_id":"@octokit/rest@16.30.0","_inBundle":false,"_integrity":"sha512-TN5MbqVuqxT/s87D6tGe3zsMvyHUQSkGFMBHuwBToPQGV3eG2a67rJW2rag2vJr7JusWyERDhQ4g/4HvFo9B1g==","_location":"/@octokit/rest","_phantomChildren":{"os-name":"3.1.0"},"_requested":{"type":"range","registry":true,"raw":"@octokit/rest@^16.15.0","name":"@octokit/rest","escapedName":"@octokit%2frest","scope":"@octokit","rawSpec":"^16.15.0","saveSpec":null,"fetchSpec":"^16.15.0"},"_requiredBy":["/@actions/github"],"_resolved":"https://registry.npmjs.org/@octokit/rest/-/rest-16.30.0.tgz","_shasum":"c14f177b7378f330ec6ec6ae49b68af359d09053","_spec":"@octokit/rest@^16.15.0","_where":"/Users/minkimcello/Projects/thefrontside/actions/fetch-pull-request-labels/node_modules/@actions/github","author":{"name":"Gregor Martynus","url":"https://github.com/gr2m"},"bugs":{"url":"https://github.com/octokit/rest.js/issues"},"bundleDependencies":false,"bundlesize":[{"path":"./dist/octokit-rest.min.js.gz","maxSize":"33 kB"}],"contributors":[{"name":"Mike de Boer","email":"info@mikedeboer.nl"},{"name":"Fabian Jakobs","email":"fabian@c9.io"},{"name":"Joe Gallo","email":"joe@brassafrax.com"},{"name":"Gregor Martynus","url":"https://github.com/gr2m"}],"dependencies":{"@octokit/request":"^5.0.0","@octokit/request-error":"^1.0.2","atob-lite":"^2.0.0","before-after-hook":"^2.0.0","btoa-lite":"^1.0.0","deprecation":"^2.0.0","lodash.get":"^4.4.2","lodash.set":"^4.3.2","lodash.uniq":"^4.5.0","octokit-pagination-methods":"^1.1.0","once":"^1.4.0","universal-user-agent":"^4.0.0"},"deprecated":false,"description":"GitHub REST API client for Node.js","devDependencies":{"@gimenete/type-writer":"^0.1.3","@octokit/fixtures-server":"^5.0.6","@octokit/graphql":"^4.2.0","@types/node":"^12.0.0","bundlesize":"^0.18.0","chai":"^4.1.2","compression-webpack-plugin":"^3.0.0","cypress":"^3.0.0","glob":"^7.1.2","http-proxy-agent":"^2.1.0","lodash.camelcase":"^4.3.0","lodash.merge":"^4.6.1","lodash.upperfirst":"^4.3.1","mkdirp":"^0.5.1","mocha":"^6.0.0","mustache":"^3.0.0","nock":"^11.3.3","npm-run-all":"^4.1.2","nyc":"^14.0.0","prettier":"^1.14.2","proxy":"^0.2.4","semantic-release":"^15.0.0","sinon":"^7.2.4","sinon-chai":"^3.0.0","sort-keys":"^4.0.0","string-to-arraybuffer":"^1.0.0","string-to-jsdoc-comment":"^1.0.0","typescript":"^3.3.1","webpack":"^4.0.0","webpack-bundle-analyzer":"^3.0.0","webpack-cli":"^3.0.0"},"files":["index.js","index.d.ts","lib","plugins"],"homepage":"https://github.com/octokit/rest.js#readme","keywords":["octokit","github","rest","api-client"],"license":"MIT","name":"@octokit/rest","nyc":{"ignore":["test"]},"publishConfig":{"access":"public"},"release":{"publish":["@semantic-release/npm",{"path":"@semantic-release/github","assets":["dist/*","!dist/*.map.gz"]}]},"repository":{"type":"git","url":"git+https://github.com/octokit/rest.js.git"},"scripts":{"build":"npm-run-all build:*","build:browser":"npm-run-all build:browser:*","build:browser:development":"webpack --mode development --entry . --output-library=Octokit --output=./dist/octokit-rest.js --profile --json > dist/bundle-stats.json","build:browser:production":"webpack --mode production --entry . --plugin=compression-webpack-plugin --output-library=Octokit --output-path=./dist --output-filename=octokit-rest.min.js --devtool source-map","build:ts":"node scripts/generate-types","coverage":"nyc report --reporter=html && open coverage/index.html","generate-bundle-report":"webpack-bundle-analyzer dist/bundle-stats.json --mode=static --no-open --report dist/bundle-report.html","generate-routes":"node scripts/generate-routes","lint":"prettier --check '{lib,plugins,scripts,test}/**/*.{js,json,ts}' 'docs/*.{js,json}' 'docs/src/**/*' index.js README.md package.json","lint:fix":"prettier --write '{lib,plugins,scripts,test}/**/*.{js,json,ts}' 'docs/*.{js,json}' 'docs/src/**/*' index.js README.md package.json","postvalidate:ts":"tsc --noEmit --target es6 test/typescript-validate.ts","prebuild:browser":"mkdirp dist/","pretest":"npm run -s lint","prevalidate:ts":"npm run -s build:ts","start-fixtures-server":"octokit-fixtures-server","test":"nyc mocha test/mocha-node-setup.js \"test/*/**/*-test.js\"","test:browser":"cypress run --browser chrome","validate:ts":"tsc --target es6 --noImplicitAny index.d.ts"},"types":"index.d.ts","version":"16.30.0"};
+module.exports = {"_from":"@octokit/rest@^16.15.0","_id":"@octokit/rest@16.30.1","_inBundle":false,"_integrity":"sha512-1n2QzTbbaBXNLpx7WHlcsSMdJvxSdKmerXQm+bMYlKDbQM19uq446ZpGs7Ynq5SsdLj1usIfgJ9gJf4LtcWkDw==","_location":"/@octokit/rest","_phantomChildren":{"os-name":"3.1.0"},"_requested":{"type":"range","registry":true,"raw":"@octokit/rest@^16.15.0","name":"@octokit/rest","escapedName":"@octokit%2frest","scope":"@octokit","rawSpec":"^16.15.0","saveSpec":null,"fetchSpec":"^16.15.0"},"_requiredBy":["/@actions/github"],"_resolved":"https://registry.npmjs.org/@octokit/rest/-/rest-16.30.1.tgz","_shasum":"03e6dfb93e9a9cd2b3bacb95c49a8c7923f42ad0","_spec":"@octokit/rest@^16.15.0","_where":"/Users/minkimcello/Projects/thefrontside/actions/merge-and-fork-detector/node_modules/@actions/github","author":{"name":"Gregor Martynus","url":"https://github.com/gr2m"},"bugs":{"url":"https://github.com/octokit/rest.js/issues"},"bundleDependencies":false,"bundlesize":[{"path":"./dist/octokit-rest.min.js.gz","maxSize":"33 kB"}],"contributors":[{"name":"Mike de Boer","email":"info@mikedeboer.nl"},{"name":"Fabian Jakobs","email":"fabian@c9.io"},{"name":"Joe Gallo","email":"joe@brassafrax.com"},{"name":"Gregor Martynus","url":"https://github.com/gr2m"}],"dependencies":{"@octokit/request":"^5.0.0","@octokit/request-error":"^1.0.2","atob-lite":"^2.0.0","before-after-hook":"^2.0.0","btoa-lite":"^1.0.0","deprecation":"^2.0.0","lodash.get":"^4.4.2","lodash.set":"^4.3.2","lodash.uniq":"^4.5.0","octokit-pagination-methods":"^1.1.0","once":"^1.4.0","universal-user-agent":"^4.0.0"},"deprecated":false,"description":"GitHub REST API client for Node.js","devDependencies":{"@gimenete/type-writer":"^0.1.3","@octokit/fixtures-server":"^5.0.6","@octokit/graphql":"^4.2.0","@types/node":"^12.0.0","bundlesize":"^0.18.0","chai":"^4.1.2","compression-webpack-plugin":"^3.0.0","cypress":"^3.0.0","glob":"^7.1.2","http-proxy-agent":"^2.1.0","lodash.camelcase":"^4.3.0","lodash.merge":"^4.6.1","lodash.upperfirst":"^4.3.1","mkdirp":"^0.5.1","mocha":"^6.0.0","mustache":"^3.0.0","nock":"^11.3.3","npm-run-all":"^4.1.2","nyc":"^14.0.0","prettier":"^1.14.2","proxy":"^0.2.4","semantic-release":"^15.0.0","sinon":"^7.2.4","sinon-chai":"^3.0.0","sort-keys":"^4.0.0","string-to-arraybuffer":"^1.0.0","string-to-jsdoc-comment":"^1.0.0","typescript":"^3.3.1","webpack":"^4.0.0","webpack-bundle-analyzer":"^3.0.0","webpack-cli":"^3.0.0"},"files":["index.js","index.d.ts","lib","plugins"],"homepage":"https://github.com/octokit/rest.js#readme","keywords":["octokit","github","rest","api-client"],"license":"MIT","name":"@octokit/rest","nyc":{"ignore":["test"]},"publishConfig":{"access":"public"},"release":{"publish":["@semantic-release/npm",{"path":"@semantic-release/github","assets":["dist/*","!dist/*.map.gz"]}]},"repository":{"type":"git","url":"git+https://github.com/octokit/rest.js.git"},"scripts":{"build":"npm-run-all build:*","build:browser":"npm-run-all build:browser:*","build:browser:development":"webpack --mode development --entry . --output-library=Octokit --output=./dist/octokit-rest.js --profile --json > dist/bundle-stats.json","build:browser:production":"webpack --mode production --entry . --plugin=compression-webpack-plugin --output-library=Octokit --output-path=./dist --output-filename=octokit-rest.min.js --devtool source-map","build:ts":"node scripts/generate-types","coverage":"nyc report --reporter=html && open coverage/index.html","generate-bundle-report":"webpack-bundle-analyzer dist/bundle-stats.json --mode=static --no-open --report dist/bundle-report.html","generate-routes":"node scripts/generate-routes","lint":"prettier --check '{lib,plugins,scripts,test}/**/*.{js,json,ts}' 'docs/*.{js,json}' 'docs/src/**/*' index.js README.md package.json","lint:fix":"prettier --write '{lib,plugins,scripts,test}/**/*.{js,json,ts}' 'docs/*.{js,json}' 'docs/src/**/*' index.js README.md package.json","postvalidate:ts":"tsc --noEmit --target es6 test/typescript-validate.ts","prebuild:browser":"mkdirp dist/","pretest":"npm run -s lint","prevalidate:ts":"npm run -s build:ts","start-fixtures-server":"octokit-fixtures-server","test":"nyc mocha test/mocha-node-setup.js \"test/*/**/*-test.js\"","test:browser":"cypress run --browser chrome","validate:ts":"tsc --target es6 --noImplicitAny index.d.ts"},"types":"index.d.ts","version":"16.30.1"};
 
 /***/ }),
 
@@ -3416,6 +3416,7 @@ var eos = function(stream, opts, callback) {
 	var rs = stream._readableState;
 	var readable = opts.readable || (opts.readable !== false && stream.readable);
 	var writable = opts.writable || (opts.writable !== false && stream.writable);
+	var cancelled = false;
 
 	var onlegacyfinish = function() {
 		if (!stream.writable) onfinish();
@@ -3440,8 +3441,13 @@ var eos = function(stream, opts, callback) {
 	};
 
 	var onclose = function() {
-		if (stream.destroyed || (readable && !(rs && rs.ended))) return callback.call(stream, new Error('premature close'));
-		if (stream.destroyed || (writable && !(ws && ws.ended))) return callback.call(stream, new Error('premature close'));
+		process.nextTick(onclosenexttick);
+	};
+
+	var onclosenexttick = function() {
+		if (cancelled) return;
+		if (readable && !(rs && (rs.ended && !rs.destroyed))) return callback.call(stream, new Error('premature close'));
+		if (writable && !(ws && (ws.ended && !ws.destroyed))) return callback.call(stream, new Error('premature close'));
 	};
 
 	var onrequest = function() {
@@ -3466,6 +3472,7 @@ var eos = function(stream, opts, callback) {
 	stream.on('close', onclose);
 
 	return function() {
+		cancelled = true;
 		stream.removeListener('complete', onfinish);
 		stream.removeListener('abort', onclose);
 		stream.removeListener('request', onrequest);
@@ -4541,7 +4548,7 @@ function withDefaults (request, newDefaults) {
 /***/ 402:
 /***/ (function(module) {
 
-module.exports = {"_from":"@octokit/graphql@^2.0.1","_id":"@octokit/graphql@2.1.3","_inBundle":false,"_integrity":"sha512-XoXJqL2ondwdnMIW3wtqJWEwcBfKk37jO/rYkoxNPEVeLBDGsGO1TCWggrAlq3keGt/O+C/7VepXnukUxwt5vA==","_location":"/@octokit/graphql","_phantomChildren":{},"_requested":{"type":"range","registry":true,"raw":"@octokit/graphql@^2.0.1","name":"@octokit/graphql","escapedName":"@octokit%2fgraphql","scope":"@octokit","rawSpec":"^2.0.1","saveSpec":null,"fetchSpec":"^2.0.1"},"_requiredBy":["/@actions/github"],"_resolved":"https://registry.npmjs.org/@octokit/graphql/-/graphql-2.1.3.tgz","_shasum":"60c058a0ed5fa242eca6f938908d95fd1a2f4b92","_spec":"@octokit/graphql@^2.0.1","_where":"/Users/minkimcello/Projects/thefrontside/actions/fetch-pull-request-labels/node_modules/@actions/github","author":{"name":"Gregor Martynus","url":"https://github.com/gr2m"},"bugs":{"url":"https://github.com/octokit/graphql.js/issues"},"bundleDependencies":false,"bundlesize":[{"path":"./dist/octokit-graphql.min.js.gz","maxSize":"5KB"}],"dependencies":{"@octokit/request":"^5.0.0","universal-user-agent":"^2.0.3"},"deprecated":false,"description":"GitHub GraphQL API client for browsers and Node","devDependencies":{"chai":"^4.2.0","compression-webpack-plugin":"^2.0.0","coveralls":"^3.0.3","cypress":"^3.1.5","fetch-mock":"^7.3.1","mkdirp":"^0.5.1","mocha":"^6.0.0","npm-run-all":"^4.1.3","nyc":"^14.0.0","semantic-release":"^15.13.3","simple-mock":"^0.8.0","standard":"^12.0.1","webpack":"^4.29.6","webpack-bundle-analyzer":"^3.1.0","webpack-cli":"^3.2.3"},"files":["lib"],"homepage":"https://github.com/octokit/graphql.js#readme","keywords":["octokit","github","api","graphql"],"license":"MIT","main":"index.js","name":"@octokit/graphql","publishConfig":{"access":"public"},"release":{"publish":["@semantic-release/npm",{"path":"@semantic-release/github","assets":["dist/*","!dist/*.map.gz"]}]},"repository":{"type":"git","url":"git+https://github.com/octokit/graphql.js.git"},"scripts":{"build":"npm-run-all build:*","build:development":"webpack --mode development --entry . --output-library=octokitGraphql --output=./dist/octokit-graphql.js --profile --json > dist/bundle-stats.json","build:production":"webpack --mode production --entry . --plugin=compression-webpack-plugin --output-library=octokitGraphql --output-path=./dist --output-filename=octokit-graphql.min.js --devtool source-map","bundle-report":"webpack-bundle-analyzer dist/bundle-stats.json --mode=static --no-open --report dist/bundle-report.html","coverage":"nyc report --reporter=html && open coverage/index.html","coverage:upload":"nyc report --reporter=text-lcov | coveralls","prebuild":"mkdirp dist/","pretest":"standard","test":"nyc mocha test/*-test.js","test:browser":"cypress run --browser chrome"},"standard":{"globals":["describe","before","beforeEach","afterEach","after","it","expect"]},"version":"2.1.3"};
+module.exports = {"_from":"@octokit/graphql@^2.0.1","_id":"@octokit/graphql@2.1.3","_inBundle":false,"_integrity":"sha512-XoXJqL2ondwdnMIW3wtqJWEwcBfKk37jO/rYkoxNPEVeLBDGsGO1TCWggrAlq3keGt/O+C/7VepXnukUxwt5vA==","_location":"/@octokit/graphql","_phantomChildren":{},"_requested":{"type":"range","registry":true,"raw":"@octokit/graphql@^2.0.1","name":"@octokit/graphql","escapedName":"@octokit%2fgraphql","scope":"@octokit","rawSpec":"^2.0.1","saveSpec":null,"fetchSpec":"^2.0.1"},"_requiredBy":["/@actions/github"],"_resolved":"https://registry.npmjs.org/@octokit/graphql/-/graphql-2.1.3.tgz","_shasum":"60c058a0ed5fa242eca6f938908d95fd1a2f4b92","_spec":"@octokit/graphql@^2.0.1","_where":"/Users/minkimcello/Projects/thefrontside/actions/merge-and-fork-detector/node_modules/@actions/github","author":{"name":"Gregor Martynus","url":"https://github.com/gr2m"},"bugs":{"url":"https://github.com/octokit/graphql.js/issues"},"bundleDependencies":false,"bundlesize":[{"path":"./dist/octokit-graphql.min.js.gz","maxSize":"5KB"}],"dependencies":{"@octokit/request":"^5.0.0","universal-user-agent":"^2.0.3"},"deprecated":false,"description":"GitHub GraphQL API client for browsers and Node","devDependencies":{"chai":"^4.2.0","compression-webpack-plugin":"^2.0.0","coveralls":"^3.0.3","cypress":"^3.1.5","fetch-mock":"^7.3.1","mkdirp":"^0.5.1","mocha":"^6.0.0","npm-run-all":"^4.1.3","nyc":"^14.0.0","semantic-release":"^15.13.3","simple-mock":"^0.8.0","standard":"^12.0.1","webpack":"^4.29.6","webpack-bundle-analyzer":"^3.1.0","webpack-cli":"^3.2.3"},"files":["lib"],"homepage":"https://github.com/octokit/graphql.js#readme","keywords":["octokit","github","api","graphql"],"license":"MIT","main":"index.js","name":"@octokit/graphql","publishConfig":{"access":"public"},"release":{"publish":["@semantic-release/npm",{"path":"@semantic-release/github","assets":["dist/*","!dist/*.map.gz"]}]},"repository":{"type":"git","url":"git+https://github.com/octokit/graphql.js.git"},"scripts":{"build":"npm-run-all build:*","build:development":"webpack --mode development --entry . --output-library=octokitGraphql --output=./dist/octokit-graphql.js --profile --json > dist/bundle-stats.json","build:production":"webpack --mode production --entry . --plugin=compression-webpack-plugin --output-library=octokitGraphql --output-path=./dist --output-filename=octokit-graphql.min.js --devtool source-map","bundle-report":"webpack-bundle-analyzer dist/bundle-stats.json --mode=static --no-open --report dist/bundle-report.html","coverage":"nyc report --reporter=html && open coverage/index.html","coverage:upload":"nyc report --reporter=text-lcov | coveralls","prebuild":"mkdirp dist/","pretest":"standard","test":"nyc mocha test/*-test.js","test:browser":"cypress run --browser chrome"},"standard":{"globals":["describe","before","beforeEach","afterEach","after","it","expect"]},"version":"2.1.3"};
 
 /***/ }),
 
@@ -7960,24 +7967,67 @@ function applyAcceptHeader (res, headers) {
 const core = __webpack_require__(357);
 const github = __webpack_require__(955);
 
-const GITHUB_TOKEN = core.getInput('GITHUB_TOKEN');
-const octokit = new github.GitHub(GITHUB_TOKEN);
+const NPM_AUTH_TOKEN = core.getInput('NPM_AUTH_TOKEN');
+
+/*
+case 1 = it's on a PR but no npm_auth_token
+case 2 = it is a PR but no npm_auth_token
+  case 2.1 = it's a fork
+  case 2.2 = it's not a fork
+case 3 = it's a fork with no token so fail
+case 4 = commit has pr number so success
+case 5 = commit has no pr number so fail
+*/
+
+// only runs if
+// 1. Workflow is triggered by a pull request and NPM_AUTH_TOKEN is accessible.
+// 2. In non-PR, as long as it's not a fork and missing token. see case 3
 
 async function run() {
   try {
-    const regex = /#(\d+)/;
-    const commit_message = github.context.payload.head_commit.message;
-    const pull_number = regex.exec(commit_message)[1];
-
-    const pull_request = await octokit.pulls.get({
-      owner: github.context.repo.owner,
-      repo: github.context.repo.repo,
-      pull_number
-    });
-
-    const labels = pull_request.data.labels.map(labels => { return labels.name });
-
-    core.setOutput('PR_LABELS', labels);
+    // for PR
+    if (github.context.payload.number) {
+      // case 1
+      if (NPM_AUTH_TOKEN) {
+        console.log("Secrets detected. Resuming workflow.")
+      }
+      // case 2
+      else {
+        // case 2.1
+        if (github.context.payload.repository.fork) {
+          console.log("NPM_AUTH_TOKEN not detected.")
+          console.log("We detect this PR was created from a forked repository. If you'd like to publish a preview, you must do so from a pull request in your own repository.")
+          console.log("Remember to change the package name in your JSON file to avoid a publishing error and provide NPM_AUTH_TOKEN in your repository's secrets.")
+        }
+        // case 2.2
+        else {
+          console.log("NPM_AUTH_TOKEN not detected. This either means you forgot to add it to your secrets of your repository.")
+        }
+        core.setFailed("Halting workflow.")
+      }
+    }
+    // for commits
+    else {
+      // case 3
+      if (github.context.payload.repository.fork && !NPM_AUTH_TOKEN) {
+        console.log("You're seeing this message because it seems you're on a forked repository and have not supplied an NPM_AUTH_TOKEN in your repository secrets.")
+        console.log("If you wish to publish your own package, you will need to update package name in your json file as well.")
+        core.setFailed("Halting workflow.")
+      }
+      else {
+        // case 4
+        const regex = /#(\d+)/;
+        const commit_message = github.context.payload.head_commit.message;
+        if (regex.test(commit_message)) {
+          console.log(`Merge #${regex.exec(commit_message)[1]} detected. Resuming workflow.`)
+        }
+        // case 5
+        else {
+          console.log("We suspect this workflow wasn't triggered by a commit made from a merge because we could not locate a PR number in the commit message.")
+          core.setFailed('Halting workflow')
+        }
+      }
+    }
   } catch (error) {
     core.setFailed(error.message);
   };
@@ -8437,7 +8487,7 @@ function merge(defaults, route, options) {
       url: method
     }, options);
   } else {
-    options = route || {};
+    options = Object.assign({}, route);
   } // lowercase header names before merging with defaults to avoid duplicates
 
 
