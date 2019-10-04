@@ -1,6 +1,0 @@
-name: 'Fetch Pull Request Labels'
-description: 'Fetch and output pull request labels'
-author: 'Frontside Inc.'
-runs:
-  using: 'node12'
-  main: 'dist/index.js'
