@@ -16,18 +16,6 @@ if [ "${#NPM_AUTH_TOKEN}" -eq "0" ]
       then
         echo -e "${YELLOW}Version $version of this package already exists. To publish the changes of this commit, you must update package version in the JSON file of your project.${NC}"
       else
-        ## wrap this in an IF for when tags already exist?
-        #
-        # example:
-        # if [[ $(echo "$(git tag --list)" | grep -F "`node -e \"console.log(require('./package.json').version)\"`" ) ]] 
-        #
-        # or else if tag already exists we'll get an error code
-        # safe to assume this will never happen?
-        #
-        # we could add this conditional to where we check `npm view`
-        #
-        ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
         git remote set-url origin https://${GITHUB_TOKEN}:x-oauth-basic@github.com/${GITHUB_REPOSITORY}.git
         git fetch origin +refs/heads/*:refs/heads/*
 
@@ -37,7 +25,7 @@ if [ "${#NPM_AUTH_TOKEN}" -eq "0" ]
         git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
         git config user.name "$GITHUB_ACTOR"
         
-        git tag "v$version"
+        git tag -a -f "v$version"
         git push "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY.git" $branch --tag
 
         ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
