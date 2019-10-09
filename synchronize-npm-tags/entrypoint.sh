@@ -15,10 +15,10 @@ npmtags=$(npm dist-tag ls | sed 's/\:.*//')
 for tag in $npmtags; do
   if [[ "$tag" = "latest" ]] || [[ $(echo "$INPUT_KEEP" | grep -e "$tag") ]]
     then
-      echo -e "${BLUE}$tag${GREEN}: Keeping protected tag.${NC}"
+      echo -e "${RED}$tag${GREEN}: Keeping protected tag.${NC}"
   elif [[ $(echo $branches | grep -e "$tag") ]]
     then
-      echo -e "${BLUE}$tag${GREEN}: Keeping tag because we found a matching branch.${NC}"
+      echo -e "${RED}$tag${GREEN}: Keeping tag because we found a matching branch.${NC}"
   else
     echo "//registry.npmjs.org/:_authToken=$NPM_AUTH_TOKEN" > ~/.npmrc
     npm dist-tag rm $package $tag
