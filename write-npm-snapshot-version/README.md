@@ -8,7 +8,7 @@ jobs:
     name: Job Name
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@v1
     - name: Write NPM Snapshot Version
       uses: thefrontside/actions/write-npm-snapshot-version@master
 ```

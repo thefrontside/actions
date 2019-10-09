@@ -5,15 +5,12 @@ cat << "EOT" > dangerfile.js
 const { markdown } = require('danger');
 const pjson = require('./package.json');
 
-const shorted = process.env.GITHUB_SHA.slice(0, 7);
+const current = `https://www.npmjs.com/package/${pjson.name}/v/${pjson.version}`
+const message = `You can view the NPM package [here](${current}).`
+const install = `npm install ${pjson.name}@${pjson.version}`;
+// const tag = `npm install ${pjson.name}@${process.env.GITHUB_HEAD_REF}`;
 
-const currentNPM = `https://www.npmjs.com/package/${pjson.name}/v/${pjson.version}-${shorted}`
-
-markdown(`This PR is available to use:`);
-markdown('```bash');
-markdown(`npm install ${pjson.name}@${pjson.version}-${shorted}`);
-markdown('```');
-markdown(`You can view the NPM package [here](${currentNPM}).`);
+markdown(`This PR is available to use:\n\`\`\`bash\n${install}\n\`\`\`\n${message}`)
 EOT
 
 yarn global add danger --dev
