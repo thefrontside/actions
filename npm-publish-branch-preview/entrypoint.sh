@@ -21,5 +21,7 @@ elif [[ "$GITHUB_HEAD_REF" = "latest" ]]
     exit 1
 else
   echo "//registry.npmjs.org/:_authToken=$NPM_AUTH_TOKEN" > ~/.npmrc
+  npm config set unsafe-perm true
+  npm install
   npm publish --access=public --tag $GITHUB_HEAD_REF
 fi
