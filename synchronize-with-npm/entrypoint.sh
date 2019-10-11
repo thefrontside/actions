@@ -27,7 +27,7 @@ if [ "${#NPM_AUTH_TOKEN}" -eq "0" ]
         git config user.name "$GITHUB_ACTOR"
         
         git tag --force "v$version"
-        git push --force  --tag "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY.git"
+        git push --force  --tags "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY.git"
 
         echo "//registry.npmjs.org/:_authToken=$NPM_AUTH_TOKEN" > ~/.npmrc
         npm config set unsafe-perm true
