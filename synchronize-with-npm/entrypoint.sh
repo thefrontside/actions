@@ -30,6 +30,8 @@ if [ "${#NPM_AUTH_TOKEN}" -eq "0" ]
         git push "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY.git" --tag
 
         echo "//registry.npmjs.org/:_authToken=$NPM_AUTH_TOKEN" > ~/.npmrc
+        npm config set unsafe-perm true
+        npm install
         npm publish --access=public
         
         echo -e "${GREEN}Tagged and published version v${version} successfully!${NC}"
