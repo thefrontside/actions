@@ -23,6 +23,6 @@ else
   echo "//registry.npmjs.org/:_authToken=$NPM_AUTH_TOKEN" > ~/.npmrc
   npm config set unsafe-perm true
   npm install
-  tag="$(echo $GITHUB_HEAD_REF | sed -E 's/\_+/&\_/g;s/\//\_/g')"
+  tag="$(echo $GITHUB_HEAD_REF | sed -E 's/\_/\_\_/g;s/\//\_/g')"
   npm publish --access=public --tag $tag
-fi
+fi`
