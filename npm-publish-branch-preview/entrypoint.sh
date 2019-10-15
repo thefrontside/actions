@@ -25,4 +25,4 @@ else
   npm install
   tag="$(echo $GITHUB_HEAD_REF | sed -E 's:_:__:g;s:\/:_:g')"
   npm publish --access=public --tag $tag
-fi`
+fi
