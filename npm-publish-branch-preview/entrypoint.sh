@@ -24,5 +24,10 @@ else
   npm config set unsafe-perm true
   npm install
   tag="$(echo $GITHUB_HEAD_REF | sed -E 's:_:__:g;s:\/:_:g')"
-  npm publish --access=public --tag $tag
-fi`
+  if [ "${#INPUT_NPM_PUBLISH}" -eq "0" ]
+    then
+      npm publish --access=public --tag $tag
+    else
+      npm run $INPUT_NPM_PUBLISH --access=public --tag $tag
+  fi
+fi
