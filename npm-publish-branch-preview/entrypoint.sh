@@ -28,6 +28,6 @@ else
     then
       npm publish --access=public --tag $tag
     else
-      npm run $INPUT_NPM_PUBLISH --access=public --tag $tag
+      $INPUT_NPM_PUBLISH --access=public --tag $tag
   fi
 fi

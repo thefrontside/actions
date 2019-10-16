@@ -36,7 +36,7 @@ if [ "${#NPM_AUTH_TOKEN}" -eq "0" ]
           then
             npm publish --access=public
           else
-            npm run $INPUT_NPM_PUBLISH --access=public
+            $INPUT_NPM_PUBLISH --access=public
         fi
         echo -e "${GREEN}Tagged and published version v${version} successfully!${NC}"
     fi
