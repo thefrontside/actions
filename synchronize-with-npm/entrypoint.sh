@@ -1,6 +1,5 @@
 #!/bin/sh
 set -e
-IFS=$'\n\t'
 
 RED='\033[1;31m'
 GREEN='\033[1;32m'
