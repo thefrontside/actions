@@ -2,7 +2,7 @@
 This action will generate a comment on a PR using [DangerJS](https://github.com/danger/danger-js). The message is preset with instructions on how to access the package that was published from the latest commit of the PR.
 
 ## Requirements
-You must pass in your `GITHUB_TOKEN` as shown below.
+- Pass in `GITHUB_TOKEN`.
 
 ## Usage
 ```yaml
@@ -19,4 +19,4 @@ jobs:
 ```
 
 ## Development
-In the future this action could make the comment content dynamic with user input with otherwise default message for TNP, In the meantime if you would like to customize the comment, you can clone the action and modify the message directly in `entrypoint.sh`.
+In the future this action could make the comment content dynamic with user input, In the meantime if you would like to customize the comment, you can clone the action and modify the message directly in `entrypoint.sh`.

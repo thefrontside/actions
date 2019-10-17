@@ -2,7 +2,9 @@
 This action will push a tag to Github and then publish to NPM after it confirms the package version has not been published already.
 
 ## Requirements
-You must pass in your `GITHUB_TOKEN` and `NPM_AUTH_TOKEN`. Remember to add `NPM_AUTH_TOKEN` in your repository secrets.
+- Pass in `GITHUB_TOKEN`. 
+- Pass in `NPM_AUTH_TOKEN`.
+- Optional: `NPM_PUBLISH` argument is available if you want to run a different command. `npm publish` will run as default.
 
 ## Usage
 ```yaml
@@ -14,6 +16,8 @@ jobs:
     - uses: actions/checkout@v1
     - name: Syncrhonize with NPM
       uses: thefrontside/actions/synchronize-with-npm@master
+      with:
+        NPM_PUBLISH: npm run my-script
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
