@@ -32,8 +32,12 @@ if [ "${#NPM_AUTH_TOKEN}" -eq "0" ]
         echo "//registry.npmjs.org/:_authToken=$NPM_AUTH_TOKEN" > ~/.npmrc
         npm config set unsafe-perm true
         npm install
-        npm publish --access=public
-        
+        if [ "${#INPUT_NPM_PUBLISH}" -eq "0" ]
+          then
+            npm publish --access=public
+          else
+            $INPUT_NPM_PUBLISH --access=public
+        fi
         echo -e "${GREEN}Tagged and published version v${version} successfully!${NC}"
     fi
 fi
