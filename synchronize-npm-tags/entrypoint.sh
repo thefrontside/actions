@@ -1,6 +1,5 @@
 #!/bin/bash
 set -e
-IFS=$'\n\t'
 
 RED='\033[1;31m'
 GREEN='\033[1;32m'
@@ -9,20 +8,18 @@ NC='\033[0m'
 
 package="`node -e \"console.log(require('./package.json').name)\"`";
 input_encoded="$(echo $INPUT_PRESERVE | sed -E 's:_:__:g;s:\/:_:g')"
-declare -a input_arrayed=($(echo $input_encoded | tr " " "\n"))
 branches="$(git ls-remote --heads origin  | sed 's?.*refs/heads/??')";
 branches_encoded="$(echo $branches | sed -E 's:_:__:g;s:\/:_:g')";
-declare -a branches_arrayed=($(echo $branches_encoded | tr " " "\n"));
 npmtags=$(npm dist-tag ls | sed 's/:.*//');
 
-for tag in $npmtags; do
+for tag in ${npmtags[@]}; do
   if [[ "$tag" = "latest" ]]
     then
       echo -e "${GREEN}Keeping tag, ${YELLOW}$tag${GREEN}, because it is protected.${NC}"
-  elif [[ $(echo $(for branch in ${branches_arrayed[@]}; do if [[ "$branch" = "$tag" ]]; then echo "$tag"; fi; done;)) ]]
+  elif [[ $(echo $(for branch in ${branches_encoded[@]}; do if [[ "$branch" = "$tag" ]]; then echo "$tag"; fi; done;)) ]]
     then
       echo -e "${GREEN}Keeping tag, ${YELLOW}$tag${GREEN}, because we found a matching branch.${NC}"
-  elif [[ $(echo $(for arg in ${input_arrayed[@]}; do if [[ "$arg" = "$tag" ]]; then echo "$tag"; fi; done;)) ]]
+  elif [[ $(echo $(for arg in ${input_encoded[@]}; do if [[ "$arg" = "$tag" ]]; then echo "$tag"; fi; done;)) ]]
     then
       echo -e "${GREEN}Keeping tag, ${YELLOW}$tag${GREEN}, because it is protected.${NC}"
   else
