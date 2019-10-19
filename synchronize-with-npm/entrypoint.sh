@@ -1,6 +1,5 @@
 #!/bin/sh
 set -e
-IFS=$'\n\t'
 
 RED='\033[1;31m'
 GREEN='\033[1;32m'
@@ -13,10 +12,8 @@ if [ "${#NPM_AUTH_TOKEN}" -eq "0" ]
   else 
     version="`node -e \"console.log(require('./package.json').version)\"`"
     package="`node -e \"console.log(require('./package.json').name)\"`"
-    if [[ $(echo $(npm view $package@$version)) ]] 
+    if [ -z "$(npm view $package@$version)" ]
       then
-        echo -e "${YELLOW}Version $version of this package already exists. To publish the changes of this commit, you must update package version in the JSON file of your project.${NC}"
-      else
         git remote set-url origin https://${GITHUB_TOKEN}:x-oauth-basic@github.com/${GITHUB_REPOSITORY}.git
         git fetch origin +refs/heads/*:refs/heads/*
 
@@ -39,5 +36,7 @@ if [ "${#NPM_AUTH_TOKEN}" -eq "0" ]
             $INPUT_NPM_PUBLISH --access=public
         fi
         echo -e "${GREEN}Tagged and published version v${version} successfully!${NC}"
+      else
+        echo -e "${YELLOW}Version $version of this package already exists. To publish the changes of this commit, you must update package version in the JSON file of your project.${NC}"
     fi
 fi
