@@ -35,7 +35,7 @@ cat << "EOT" > dangerfile.js
 const { markdown } = require('danger');
 
 const first_line = `:mega: Heads up!`;
-const second_line = `I didn't detect an NPM_AUTH_TOKEN which is necessary to publish a preview version of this package, and so I wasn't able to. However, this is perfectly normal for pull requests that are submitted from a forked repository.`;
+const second_line = `I didn't detect an NPM_AUTH_TOKEN which is necessary to publish a preview version of this package, and so I wasn't able to. However, this is perfectly normal for pull requests that are submitted from a forked repository, so no need to worry if that's what's going on here.`;
 
 markdown(`${first_line}\n\n${second_line}`)
 EOT
