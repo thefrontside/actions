@@ -20,8 +20,8 @@ else
 cat << "EOT" > dangerfile.js
 const { markdown } = require('danger');
 
-const first_line = `ERROR: Unable to publish preview because your branch conflicts with NPM's protected 'latest' tag.`;
-const second_line = `Please change the name of your branch and resubmit the pull request.`;
+const first_line = `:warning: WARNING :warning:`;
+const second_line = `We didn't publish this tag to NPM because it would conflict with the reserved \`latest\` tag.`;
 
 markdown(`${first_line}\n\n${second_line}`)
 EOT
@@ -34,8 +34,8 @@ EOT
 cat << "EOT" > dangerfile.js
 const { markdown } = require('danger');
 
-const first_line = `ERROR: NPM_AUTH_TOKEN not detected. Please add your NPM Token to your repository's secrets.`;
-const second_line = `Publishing preview will not work if the pull request was created from a forked repository unless you create the pull request against your own repository.`;
+const first_line = `:mega: Heads up!`;
+const second_line = `I didn't detect an NPM_AUTH_TOKEN which is necessary to publish a preview version of this package, and so I wasn't able to. However, this is perfectly normal for pull requests that are submitted from a forked repository.`;
 
 markdown(`${first_line}\n\n${second_line}`)
 EOT
