@@ -21,7 +21,7 @@ cat << "EOT" > dangerfile.js
 const { markdown } = require('danger');
 
 const first_line = `:warning: WARNING :warning:`;
-const second_line = `We didn't publish this tag to NPM because it would conflict with the reserved \`latest\` tag.`;
+const second_line = `I can't publish a preview of this branch this because it would conflict with \`latest\` tag which is [reserved by NPM](https://docs.npmjs.com/cli/dist-tag#purpose).`;
 
 markdown(`${first_line}\n\n${second_line}`)
 EOT
