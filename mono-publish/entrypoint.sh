@@ -35,8 +35,8 @@ markdown(`${first_line}\n\n${second_line}`)
 EOT
 
   else
-    # yarn install-with-bin-links
-    yarn install
+    yarn install-with-bin-links
+    # yarn install
     tag="$(echo $GITHUB_HEAD_REF | sed -E 's:_:__:g;s:\/:_:g')"
     echo '{"tag":"","packages":[]}' > published.json
     echo $(jq --arg TEST "$tag" '.tag = $TEST' published.json) > published.json
