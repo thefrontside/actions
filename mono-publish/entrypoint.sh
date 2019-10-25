@@ -14,7 +14,7 @@ cat << "EOT" > dangerfile.js
 const { markdown } = require('danger');
 
 const first_line = `:warning: WARNING :warning:`;
-const second_line = `No \`packages\` argument was passed in therefore this action does not know which packages to publish. Please refer to this action's [README](https://github.com/thefrontside/actions/publish-mono/README.md) on how to use it to its full potential.`;
+const second_line = `No \`packages\` argument was passed in therefore this action does not know which packages to publish. Please refer to this action's [README](https://github.com/thefrontside/actions/blob/master/mono-publish/README.md) on how to use it to its full potential.`;
 
 markdown(`${first_line}\n\n${second_line}`)
 EOT
@@ -35,8 +35,8 @@ markdown(`${first_line}\n\n${second_line}`)
 EOT
 
   else
-    yarn install-with-bin-links
-    # yarn install
+    # yarn install-with-bin-links
+    yarn install
     tag="$(echo $GITHUB_HEAD_REF | sed -E 's:_:__:g;s:\/:_:g')"
     echo '{"tag":"","packages":[]}' > published.json
     echo $(jq --arg TEST "$tag" '.tag = $TEST' published.json) > published.json
