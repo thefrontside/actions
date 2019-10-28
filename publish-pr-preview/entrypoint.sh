@@ -74,8 +74,12 @@ EOT
 
   fi
 
-  fork="$(jq '."repository"|."fork"' ../workflow/event.json)"
-  if [[ "$fork" = "false" ]]; then
+  head="$(jq '."head"|."repo"|."fork"' ../workflow/event.json)"
+  headowner="$(jq '."head"|."repo"|."owner"|."login"' ../workflow/event.json)"
+  base="$(jq '."base"|."repo"|."fork"' ../workflow/event.json)"
+  baseowner="$(jq '."base"|."repo"|."owner"|."login"' ../workflow/event.json)"
+
+  if [[ "$head" = "false" && "$base" = "false" ]] || [[ "$head" = "true" && "$base" = "true" && "$headowner" -eq "$baseowner" ]]; then
     yarn global add danger --dev
     export PATH="$(yarn global bin):$PATH"
     danger ci
