@@ -29,7 +29,6 @@ EOT
   elif [ "${#NPM_AUTH_TOKEN}" -eq "0" ]
     then
       echo -e "${RED}ERROR: NPM_AUTH_TOKEN not detected. Please add your NPM Token to your repository's secrets.${NC}"
-      echo -e "${YELLOW}Publishing preview will not work if the pull request was created from a forked repository unless you create the pull request against your own repository.${NC}"
     
 cat << "EOT" > dangerfile.js
 const { markdown } = require('danger');
@@ -75,8 +74,14 @@ EOT
 
   fi
 
-  yarn global add danger --dev
-  export PATH="$(yarn global bin):$PATH"
-  danger ci
+  fork="$(jq '."repository"|."fork"' ../workflow/event.json)"
+  if [[ "$fork" = "false" ]]; then
+    yarn global add danger --dev
+    export PATH="$(yarn global bin):$PATH"
+    danger ci
+  else
+    echo -e "${RED}Not generating a comment because this is a forked repository.${NC}"
+    echo -e "${YELLOW}Publishing preview will not work if the pull request was created from a forked repository unless you create the pull request against your own repository.${NC}"
+  fi
 
 fi
