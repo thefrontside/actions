@@ -6,7 +6,9 @@ GREEN='\033[1;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m'
 
-if [[ "$GITHUB_HEAD_REF" = "" ]]
+
+PR="$(jq '."pull_request"' ../workflow/event.json)"
+if [[ "$PR" = "null" ]]
   then
     echo -e "${RED}ERROR: We suspect this workflow was not triggered from a pull request.${NC}"
     exit 1
@@ -29,7 +31,6 @@ EOT
   elif [ "${#NPM_AUTH_TOKEN}" -eq "0" ]
     then
       echo -e "${RED}ERROR: NPM_AUTH_TOKEN not detected. Please add your NPM Token to your repository's secrets.${NC}"
-      echo -e "${YELLOW}Publishing preview will not work if the pull request was created from a forked repository unless you create the pull request against your own repository.${NC}"
     
 cat << "EOT" > dangerfile.js
 const { markdown } = require('danger');
@@ -75,8 +76,18 @@ EOT
 
   fi
 
-  yarn global add danger --dev
-  export PATH="$(yarn global bin):$PATH"
-  danger ci
+jsonpath="../workflow/event.json"
+headurl="$(jq '."pull_request"|."head"|."repo"|."url"' $jsonpath)"
+baseurl="$(jq '."pull_request"|."base"|."repo"|."url"' $jsonpath)"
+
+  if [[ "$headurl" = "$baseurl" ]]; 
+  then
+    yarn global add danger --dev
+    export PATH="$(yarn global bin):$PATH"
+    danger ci
+  else
+    echo -e "${RED}Not generating a comment because this pull request was created from a forked repository.${NC}"
+    echo -e "${YELLOW}Publishing preview will not work if the pull request was created from a forked repository unless you create the pull request against your own repository.${NC}"
+  fi
 
 fi
