@@ -6,7 +6,9 @@ GREEN='\033[1;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m'
 
-if [[ "$GITHUB_HEAD_REF" = "" ]]
+
+PR="$(jq '."pull_request"' ../workflow/event.json)"
+if [[ "$PR" = "null" ]]
   then
     echo -e "${RED}ERROR: We suspect this workflow was not triggered from a pull request.${NC}"
     exit 1
@@ -74,12 +76,16 @@ EOT
 
   fi
 
-  head="$(jq '."head"|."repo"|."fork"' ../workflow/event.json)"
-  headowner="$(jq '."head"|."repo"|."owner"|."login"' ../workflow/event.json)"
-  base="$(jq '."base"|."repo"|."fork"' ../workflow/event.json)"
-  baseowner="$(jq '."base"|."repo"|."owner"|."login"' ../workflow/event.json)"
+jsonpath="../workflow/event.json"
+headfork="$(jq '."pull_request"|."head"|."repo"|."fork"' $jsonpath)"
+basefork="$(jq '."pull_request"|."base"|."repo"|."fork"' $jsonpath)"
+headurl="$(jq '."pull_request"|."head"|."repo"|."url"' $jsonpath)"
+baseurl="$(jq '."pull_request"|."base"|."repo"|."url"' $jsonpath)"
 
-  if [[ "$head" = "false" && "$base" = "false" ]] || [[ "$head" = "true" && "$base" = "true" && "$headowner" -eq "$baseowner" ]]; then
+  if 
+    [[ "$headfork" = "false" && "$basefork" = "false" ]] || 
+    [[ "$headfork" = "true" && "$basefork" = "true" && "$headurl" = "$baseurl" ]]; 
+  then
     yarn global add danger --dev
     export PATH="$(yarn global bin):$PATH"
     danger ci
