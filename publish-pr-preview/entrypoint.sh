@@ -77,20 +77,16 @@ EOT
   fi
 
 jsonpath="../workflow/event.json"
-headfork="$(jq '."pull_request"|."head"|."repo"|."fork"' $jsonpath)"
-basefork="$(jq '."pull_request"|."base"|."repo"|."fork"' $jsonpath)"
 headurl="$(jq '."pull_request"|."head"|."repo"|."url"' $jsonpath)"
 baseurl="$(jq '."pull_request"|."base"|."repo"|."url"' $jsonpath)"
 
-  if 
-    [[ "$headfork" = "false" && "$basefork" = "false" ]] || 
-    [[ "$headfork" = "true" && "$basefork" = "true" && "$headurl" = "$baseurl" ]]; 
+  if [[ "$headurl" = "$baseurl" ]]; 
   then
     yarn global add danger --dev
     export PATH="$(yarn global bin):$PATH"
     danger ci
   else
-    echo -e "${RED}Not generating a comment because this is a forked repository.${NC}"
+    echo -e "${RED}Not generating a comment because this pull request was created from a forked repository.${NC}"
     echo -e "${YELLOW}Publishing preview will not work if the pull request was created from a forked repository unless you create the pull request against your own repository.${NC}"
   fi
 
