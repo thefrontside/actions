@@ -11,7 +11,7 @@ This action will:
 - Optional: `NPM_PUBLISH` argument is available if you want to run a different command. `npm publish` will run as default.
 
 ## Usage
-```yaml`
+```yaml
 jobs:
   job_name:
     name: Job Name
