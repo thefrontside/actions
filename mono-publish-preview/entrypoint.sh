@@ -1,5 +1,7 @@
-#!/usr/bin/env sh
+#!/usr/bin/env zsh
 set -e
+
+echo $SHELL
 
 RED='\033[1;31m'
 GREEN='\033[1;32m'
