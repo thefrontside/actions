@@ -158,6 +158,10 @@ function runit(){
   defaults=("node_modules" ".github")
   ignores=($(unslash $INPUT_IGNORE) ${defaults[@]})
 
+  echo array checking ignores arg
+  arraychecker $ignores
+  echo end of checking array
+
   # placeholder variables for testing offline
   # diffs=$(git diff --name-only base..head)
   # diffs=$(git diff --name-only 6208be7..b496d63)
@@ -206,6 +210,12 @@ EOT
       fi
     fi
   fi
+}
+
+function arraychecker(){
+  for arg in $*; do
+    echo array: $arg
+  done;
 }
 
 runit
