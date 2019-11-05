@@ -198,7 +198,11 @@ function runit(){
         git config user.name "$GITHUB_ACTOR"
 
   diffs=$(git diff --name-only $GITHUB_BASE_REF..$GITHUB_HEAD_REF)
+  echo diffs arraychecker
+  arraychecker $diffs
   dird=$(diffytodir $diffs)
+  echo dird arraychecker
+  arraychecker $dird
 
 #  git diff --name-only $GITHUB_BASE_REF..$GITHUB_HEAD_REF
 
