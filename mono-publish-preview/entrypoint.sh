@@ -6,7 +6,7 @@ GREEN='\033[1;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m'
 
-function danger(){
+function rundanger(){
   echo running: danger
   yarn global add danger --dev
   export PATH="$(yarn global bin):$PATH"
@@ -83,7 +83,7 @@ markdown(`${first_line}\n${second_line}\n${packages()}`)
 EOT
   fi;
 
-  danger
+  rundanger
 }
 
 function filter(){
@@ -200,7 +200,7 @@ const second_line = `I can't publish a preview of this branch this because it wo
 
 markdown(`${first_line}\n\n${second_line}`)
 EOT
-        danger
+        rundanger
       else
         setup
       fi
