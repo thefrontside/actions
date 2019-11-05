@@ -7,12 +7,14 @@ YELLOW='\033[1;33m'
 NC='\033[0m'
 
 function danger(){
+  echo running: danger
   yarn global add danger --dev
   export PATH="$(yarn global bin):$PATH"
   danger ci
 }
 
 function publish(){
+  echo running: publish
   if [ "${#confirmedpkgs[@]}" -eq "0" ]; # change
     then 
 cat << "EOT" > dangerfile.js
@@ -85,6 +87,7 @@ EOT
 }
 
 function filter(){
+  echo running: filter
   diffy=(${piffy[@]})
   for ignoree in ${ignores[@]}; do
     for i in ${!diffy[@]}; do
@@ -98,6 +101,7 @@ function filter(){
 }
 
 function findy(){
+  echo running: findy
   jiffy=(${dird[@]})
   piffy=()
 
@@ -125,6 +129,7 @@ function findy(){
 }
 
 function setup(){
+  echo running: setup
   yarn install
   tag="$(echo $GITHUB_HEAD_REF | sed -E 's:_:__:g;s:\/:_:g')"
   echo '{"tag":"","packages":[]}' > published.json
@@ -133,6 +138,7 @@ function setup(){
 }
 
 function runit(){
+  echo running: runit
   function unslash(){
     for unslash in $*; do
       echo $unslash | sed 's:\/$::g';
