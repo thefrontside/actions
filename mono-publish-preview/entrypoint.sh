@@ -195,12 +195,12 @@ function runit(){
 
   diffs=$(git diff --name-only $GITHUB_BASE_REF..$GITHUB_HEAD_REF)
   dird=$(diffytodir $diffs)
+
+  # testing purposes
   echo dird arraychecker
-  for arg in ${diffs[@]}; do
+  for arg in ${dird[@]}; do
     echo array: $arg
   done;
-
-#  git diff --name-only $GITHUB_BASE_REF..$GITHUB_HEAD_REF
 
   PR="$(jq '."pull_request"' ../workflow/event.json)"
   jsonpath="../workflow/event.json"
