@@ -155,16 +155,14 @@ function runit(){
   }
 
   function diffytodir(){
-    echo running diffytodir
     for diff in $*; do 
       if [ "$(echo $diff | grep -c "/")" = "0" ]; then 
         echo ".";
       else 
-        dir_of_files_changed=$(echo $diff | sed 's:\(.*\)\/.*:\1:g');
+        echo $(echo $diff | sed 's:\(.*\)\/.*:\1:g');
       fi;
       echo diffydiff: $diff
     done;
-    echo finished diffytodir
   }
 
   defaults=("node_modules" ".github")
