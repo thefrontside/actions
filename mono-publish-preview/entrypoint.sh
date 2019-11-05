@@ -128,7 +128,7 @@ function findy(){
   # for dires in ${jiffy[@]}; do 
   #   pkgjsonfinder $dires
   # done;
-  for dires in $jiffy; do 
+  for dires in ${jiffy[@]}; do 
     pkgjsonfinder $dires
   done;
 
