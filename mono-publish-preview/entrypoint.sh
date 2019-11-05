@@ -93,7 +93,8 @@ function filter(){
       fi
     done
   done
-  confirmedpkgs=($(echo $diffy | xargs -n1 | sort -u | xargs))
+  pre=$(echo $diffy | xargs -n1 | sort -u | xargs)
+  confirmedpkgs=($pre)
   publish
 }
 
