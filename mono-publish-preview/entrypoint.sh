@@ -106,7 +106,8 @@ exit 1
 
 function findy(){
   echo running: findy
-  jiffy=(${dird[@]})
+  #jiffy=(${dird[@]})
+  jiffy=($dird)
   piffy=()
 
   function pkgjsonfinder(){
