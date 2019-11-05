@@ -13,7 +13,7 @@ function danger(){
 }
 
 function publish(){
-  if [ "${#confirmedpkgs[@]}" -eq "0" ];
+  if [ "${#confirmedpkgs[@]}" -eq "0" ]; # change
     then 
 cat << "EOT" > dangerfile.js
 const { markdown } = require('danger');
@@ -24,7 +24,7 @@ const second_line = `You are receiving this message because there were no packag
 markdown(`${first_line}\n\n${second_line}`)
 EOT
     else
-      for dir in ${confirmedpkgs[@]}; do
+      for dir in ${confirmedpkgs[@]}; do # change
         cd $dir
 
         echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" >> .npmrc
@@ -85,7 +85,7 @@ EOT
 }
 
 function filter(){
-  diffy=${piffy[@]}
+  diffy=(${piffy[@]})
   for ignoree in ${ignores[@]}; do
     for i in ${!diffy[@]}; do
       if [ -z "$(echo ${diffy[$i]} | sed "s:^$ignoree.*::")" ]; then
@@ -93,14 +93,13 @@ function filter(){
       fi
     done
   done
-  pre=$(echo $diffy | xargs -n1 | sort -u | xargs)
-  confirmedpkgs=$pre
+  confirmedpkgs=($(echo ${diffy[@]} | xargs -n1 | sort -u | xargs))
   publish
 }
 
 function findy(){
-  jiffy=${dird[@]}
-  #piffy=()
+  jiffy=(${dird[@]})
+  piffy=()
 
   function pkgjsonfinder(){
     cd $GITHUB_WORKSPACE
