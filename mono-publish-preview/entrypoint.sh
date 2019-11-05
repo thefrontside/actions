@@ -161,7 +161,6 @@ function runit(){
       else 
         echo $(echo $diff | sed 's:\(.*\)\/.*:\1:g');
       fi;
-      echo diffydiff: $diff
     done;
   }
 
