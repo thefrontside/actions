@@ -202,7 +202,9 @@ function runit(){
   arraychecker ${diffs[@]}
   dird=$(diffytodir $diffs)
   echo dird arraychecker
-  arraychecker ${dird[@]}
+  for arg in ${dird[@]}; do
+    echo array: $arg
+  done;
 
 #  git diff --name-only $GITHUB_BASE_REF..$GITHUB_HEAD_REF
 
