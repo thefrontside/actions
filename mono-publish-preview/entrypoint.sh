@@ -125,12 +125,16 @@ function findy(){
     cd $GITHUB_WORKSPACE
   }
 
-  for dires in ${jiffy[@]}; do 
-    echo looping f0r pkgfinder
+  # for dires in ${jiffy[@]}; do 
+  #   pkgjsonfinder $dires
+  # done;
+  for dires in $jiffy; do 
     pkgjsonfinder $dires
   done;
 
-  filter
+  echo $piffy
+
+#  filter
 }
 
 function setup(){
