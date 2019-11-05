@@ -100,7 +100,7 @@ function filter(){
 
 function findy(){
   jiffy=${dird[@]}
-  piffy=()
+  #piffy=()
 
   function pkgjsonfinder(){
     cd $GITHUB_WORKSPACE
