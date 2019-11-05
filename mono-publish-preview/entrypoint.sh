@@ -197,7 +197,9 @@ function runit(){
         git config user.name "$GITHUB_ACTOR"
 
   diffs=$(git diff --name-only $GITHUB_BASE_REF..$GITHUB_HEAD_REF)
+  echo diffs: $diffs
   dird=$(diffytodir $diffs)
+  echo dird: $dird
 
   PR="$(jq '."pull_request"' ../workflow/event.json)"
   jsonpath="../workflow/event.json"
