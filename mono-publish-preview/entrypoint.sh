@@ -202,7 +202,7 @@ function runit(){
   arraychecker ${diffs[@]}
   dird=$(diffytodir $diffs)
   echo dird arraychecker
-  for arg in ${dird[@]}; do
+  for arg in $dird; do
     echo array: $arg
   done;
 
