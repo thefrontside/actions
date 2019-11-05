@@ -99,8 +99,8 @@ function filter(){
     done
   done
   confirmedpkgs=($(echo ${diffy[@]} | xargs -n1 | sort -u | xargs))
-  echo oh yes
-  for confirmy in ${diffy[@]}; do echo confirmy: $confirmy; done
+  echo oh puffy
+  for confirmy in ${piffy[@]}; do echo confirmy: $confirmy; done
   echo oh no
 #  publish
 exit 1
