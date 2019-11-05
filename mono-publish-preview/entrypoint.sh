@@ -84,6 +84,8 @@ EOT
   fi;
 
   rundanger
+  echo -e "${GREEBN}SUCCESS${NC}"
+  exit 1
 }
 
 function filter(){
