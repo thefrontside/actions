@@ -198,11 +198,9 @@ function runit(){
         git config user.name "$GITHUB_ACTOR"
 
   diffs=$(git diff --name-only $GITHUB_BASE_REF..$GITHUB_HEAD_REF)
-  echo diffs arraychecker
-  arraychecker ${diffs[@]}
   dird=$(diffytodir $diffs)
   echo dird arraychecker
-  for arg in $dird; do
+  for arg in $diffs; do
     echo array: $arg
   done;
 
@@ -246,3 +244,11 @@ function arraychecker(){
 }
 
 runit
+
+
+  # diffs=$(git diff --name-only $GITHUB_BASE_REF..$GITHUB_HEAD_REF)
+  # dird=$(diffytodir $diffs)
+  # echo dird arraychecker
+  # for arg in $diffs; do
+  #   echo array: $arg
+  # done;
