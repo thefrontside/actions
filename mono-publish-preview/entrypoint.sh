@@ -6,6 +6,8 @@ GREEN='\033[1;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m'
 
+echo $SHELL
+
 function rundanger(){
   echo running: danger
   yarn global add danger --dev
@@ -174,12 +176,11 @@ function runit(){
   # arraychecker $ignores
   # echo end of checking array
 
-  # placeholder variables for testing offline
-  # diffs=$(git diff --name-only base..head)
-  # diffs=$(git diff --name-only 6208be7..b496d63)
-  # INPUT_IGNORE="minorepo/dos/sub/ minorepo/uno/sub2/ minorepo/dos"
-  # GITHUB_HEAD_REF=nolatest
-  # GITHUB_WORKSPACE=~/projects/georgia # ~/../workspace 
+  placeholder variables for testing offline
+  diffs=$(git diff --name-only 2e5c6c9..91dd994)
+  INPUT_IGNORE="minorepo/dos/sub/ minorepo/uno/sub2/ minorepo/dos"
+  GITHUB_HEAD_REF=nolatest
+  GITHUB_WORKSPACE=~/projects/georgia # ~/../workspace 
 
         git remote set-url origin https://${GITHUB_TOKEN}:x-oauth-basic@github.com/${GITHUB_REPOSITORY}.git
         git fetch origin # +refs/heads/*:refs/heads/*
@@ -193,7 +194,7 @@ function runit(){
         git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
         git config user.name "$GITHUB_ACTOR"
 
-  diffs=$(git diff --name-only $GITHUB_BASE_REF..$GITHUB_HEAD_REF)
+#  diffs=$(git diff --name-only $GITHUB_BASE_REF..$GITHUB_HEAD_REF)
   dird=$(diffytodir $diffs)
 
   # testing purposes
