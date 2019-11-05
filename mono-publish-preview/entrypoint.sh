@@ -85,7 +85,7 @@ EOT
 }
 
 function filter(){
-  diffy=($piffy)
+  diffy=${piffy[@]}
   for ignoree in ${ignores[@]}; do
     for i in ${!diffy[@]}; do
       if [ -z "$(echo ${diffy[$i]} | sed "s:^$ignoree.*::")" ]; then
