@@ -5,12 +5,13 @@ RUN apk add --no-cache \
   bash \ 
   git-subtree \
   jq \ 
-  zsh \
-  && chsh -s /bin/zsh || true
+  zsh
+
+RUN sed -i -e "s/bin\/ash/bin\/zsh/" /etc/passwd
 
 COPY entrypoint.sh /entrypoint.sh
 
-ENV SHELL /usr/bin/zsh
+ENV SHELL /bin/zsh
 
 ENTRYPOINT ["zsh", "/entrypoint.sh"]
 
