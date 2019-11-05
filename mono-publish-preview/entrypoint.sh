@@ -90,9 +90,9 @@ function filter(){
   echo running: filter
   diffy=(${piffy[@]})
   for ignoree in ${ignores[@]}; do
-    for i in ${!diffy[@]}; do
-      if [ -z "$(echo ${diffy[$i]} | sed "s:^$ignoree.*::")" ]; then
-        unset diffy[$i]
+    for diffydir in ${diffy[@]}; do
+      if [ -z "$(echo $diffydir | sed "s:^$ignoree.*::")" ]; then
+        unset diffy[${diffy[(ie)$diffydir]}]
       fi
     done
   done
@@ -121,11 +121,9 @@ function findy(){
     cd $GITHUB_WORKSPACE
   }
 
-  # for i in ${!jiffy[@]}; do 
-  #   pkgjsonfinder ${jiffy[$i]}
-  # done;
-
-#  filter
+  for dires in ${jiffy[@]}; do 
+    pkgjsonfinder $dires
+  done;
 }
 
 function setup(){
