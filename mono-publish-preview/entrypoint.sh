@@ -1,14 +1,12 @@
 #!/usr/bin/env zsh
 set -e
 
-echo $SHELL
-
 RED='\033[1;31m'
 GREEN='\033[1;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m'
 
-echo $SHELL
+echo shelly: $SHELL
 
 function rundanger(){
   echo running: danger
