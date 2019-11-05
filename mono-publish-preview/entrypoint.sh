@@ -158,7 +158,13 @@ function runit(){
   defaults=("node_modules" ".github")
   ignores=($(unslash $INPUT_IGNORE) ${defaults[@]})
 
-  echo array checking ignores arg
+  echo array checking ignores arg ver 1 brackets inside brakcet
+  arraychecker (${ignores[@]})
+  echo end of checking array
+  echo array checking ignores arg ver 2 brackets
+  arraychecker ${ignores[@]}
+  echo end of checking array
+  echo array checking ignores arg ver 2 just var
   arraychecker $ignores
   echo end of checking array
 
