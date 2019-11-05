@@ -106,12 +106,7 @@ exit 1
 
 function findy(){
   echo running: findy
-  jiffy=$dird
-  echo oh jiffy
-  for confirmy in $jiffy; do echo confirmy: $confirmy; done
-  echo oh jiffy2
-  for confirmy in ${jiffy[@]}; do echo confirmy2: $confirmy; done
-  echo oh no
+  jiffy=(${dird[@]})
   piffy=()
 
   function pkgjsonfinder(){
@@ -131,10 +126,11 @@ function findy(){
   }
 
   for dires in ${jiffy[@]}; do 
+    echo looping f0r pkgfinder
     pkgjsonfinder $dires
   done;
 
-#  filter
+  filter
 }
 
 function setup(){
