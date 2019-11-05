@@ -1,11 +1,12 @@
 # Mono Publish
-<!-- This action will authenticate for Github Package Registry and loop over the `PACKAGES` argument to publish each package with the branch name as its tag. Once the action is done publishing, it will generate a comment (if this action is run on a pull request) with instructions on how to access each package. --> rewrite
+This action will detect which files have been modified in the monorepo and publish the packages within the monorepo with the branch name as its tag. Once published it will generate a comment on the pull request with instructions on how to access each package.
 
 ## Requirements
+- Meant to only run on a pull request
+- Currently only configured for Github Package Registry and not NPMJS
 - Pass in `GITHUB_TOKEN` for authentication
-  - Currently tailored for Github Package Registry and not NPMJS
 - Specify `IGNORE` argument for directory of packages you don't want published
-  - Directories specified in .gitignore won't be processed to begin with so for example if you don't want to include `./node_modules` and it's already included in your `.gitignore` then there's no point in adding it into the `IGNORE` arg.
+  - Directories specified in `.gitignore` won't be processed to begin with so for example if you don't want to include `./node_modules` and it's already included in your `.gitignore` file then there's no point in adding it to the `IGNORE` arg in the workflow.
 
 ## Usage
 ```yaml

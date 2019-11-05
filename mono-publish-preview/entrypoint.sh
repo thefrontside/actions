@@ -6,6 +6,12 @@ GREEN='\033[1;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m'
 
+function danger(){
+  yarn global add danger --dev
+  export PATH="$(yarn global bin):$PATH"
+  danger ci
+}
+
 function publish(){
   if [ "${#confirmedpkgs[@]}" -eq "0" ]; # change
     then 
@@ -78,8 +84,21 @@ EOT
   danger
 }
 
+function filter(){
+  diffy=(${piffy[@]})
+  for ignoree in ${ignores[@]}; do
+    for i in ${!diffy[@]}; do
+      if [ -z "$(echo ${diffy[$i]} | sed "s:^$ignoree.*::")" ]; then
+        unset diffy[$i]
+      fi
+    done
+  done
+  confirmedpkgs=($(echo ${diffy[@]} | xargs -n1 | sort -u | xargs))
+  publish
+}
+
 function findy(){
-  jiffy=(${diffy[@]})
+  jiffy=(${dird[@]})
   piffy=()
 
   function pkgjsonfinder(){
@@ -102,20 +121,7 @@ function findy(){
     pkgjsonfinder ${jiffy[$i]}
   done;
 
-  confirmedpkgs=($(echo ${piffy[@]} | xargs -n1 | sort -u | xargs))
-  publish
-}
-
-function filter(){
-  diffy=(${dird[@]})
-  for ignoree in ${ignores[@]}; do
-    for i in ${!diffy[@]}; do
-      if [ -z "$(echo ${diffy[$i]} | sed "s:^$ignoree.*::")" ]; then
-        unset diffy[$i]
-      fi
-    done
-  done
-  findy
+  filter
 }
 
 function setup(){
@@ -123,13 +129,7 @@ function setup(){
   tag="$(echo $GITHUB_HEAD_REF | sed -E 's:_:__:g;s:\/:_:g')"
   echo '{"tag":"","packages":[]}' > published.json
   echo $(jq --arg TEST "$tag" '.tag = $TEST' published.json) > published.json
-  filter
-}
-
-function danger(){
-  yarn global add danger --dev
-  export PATH="$(yarn global bin):$PATH"
-  danger ci
+  findy
 }
 
 function runit(){
@@ -149,13 +149,13 @@ function runit(){
     done;
   }
 
-  INPUT_IGNORE="minorepo/dos/sub/ minorepo/uno/sub2/ minorepo/dos"
   defaults=("node_modules" ".github")
   ignores=($(unslash $INPUT_IGNORE) ${defaults[@]})
 
   # placeholder variables for testing offline
   # diffs=$(git diff --name-only base..head)
   # diffs=$(git diff --name-only 6208be7..b496d63)
+  # INPUT_IGNORE="minorepo/dos/sub/ minorepo/uno/sub2/ minorepo/dos"
   # GITHUB_HEAD_REF=nolatest
   # GITHUB_WORKSPACE=~/projects/georgia # ~/../workspace 
 
