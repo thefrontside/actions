@@ -1,4 +1,3 @@
-#!/usr/bin/env sh
 set -e
 
 RED='\033[1;31m'
