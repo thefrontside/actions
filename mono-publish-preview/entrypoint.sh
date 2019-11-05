@@ -99,9 +99,7 @@ function filter(){
     done
   done
   confirmedpkgs=($(echo ${diffy[@]} | xargs -n1 | sort -u | xargs))
-  echo oh puffy
-  for confirmy in ${dird[@]}; do echo confirmy: $confirmy; done
-  echo oh no
+
 #  publish
 exit 1
 }
@@ -109,6 +107,11 @@ exit 1
 function findy(){
   echo running: findy
   jiffy=(${dird[@]})
+  echo oh jiffy
+  for confirmy in $jiffy; do echo confirmy: $confirmy; done
+  echo oh jiffy2
+  for confirmy in ${jiffy[@]}; do echo confirmy2: $confirmy; done
+  echo oh no
   piffy=()
 
   function pkgjsonfinder(){
