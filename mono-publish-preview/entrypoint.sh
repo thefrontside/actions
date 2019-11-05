@@ -199,7 +199,8 @@ function runit(){
   diffs=$(git diff --name-only $GITHUB_BASE_REF..$GITHUB_HEAD_REF)
   dird=$(diffytodir $diffs)
 
-  git diff --name-only $GITHUB_BASE_REF..$GITHUB_HEAD_REF
+#  git diff --name-only $GITHUB_BASE_REF..$GITHUB_HEAD_REF
+  echo $dird
 
   PR="$(jq '."pull_request"' ../workflow/event.json)"
   jsonpath="../workflow/event.json"
