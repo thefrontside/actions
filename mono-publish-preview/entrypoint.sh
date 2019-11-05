@@ -126,6 +126,8 @@ function findy(){
   for dires in ${jiffy[@]}; do 
     pkgjsonfinder $dires
   done;
+
+  filter
 }
 
 function setup(){
