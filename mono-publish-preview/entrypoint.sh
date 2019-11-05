@@ -93,12 +93,12 @@ function filter(){
       fi
     done
   done
-  confirmedpkgs=($(echo ${diffy[@]} | xargs -n1 | sort -u | xargs))
+  confirmedpkgs=($(echo $diffy | xargs -n1 | sort -u | xargs))
   publish
 }
 
 function findy(){
-  jiffy=(${dird[@]})
+  jiffy=${dird[@]}
   piffy=()
 
   function pkgjsonfinder(){
