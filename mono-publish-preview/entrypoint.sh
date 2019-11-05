@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/usr/bin/env sh
 set -e
 
 RED='\033[1;31m'
@@ -15,7 +15,7 @@ function rundanger(){
 
 function publish(){
   echo running: publish
-  if [ "${#confirmedpkgs[@]}" -eq "0" ]; # change
+  if [ "${#confirmedpkgs[@]}" -eq "0" ];
     then 
 cat << "EOT" > dangerfile.js
 const { markdown } = require('danger');
@@ -26,7 +26,7 @@ const second_line = `You are receiving this message because there were no packag
 markdown(`${first_line}\n\n${second_line}`)
 EOT
     else
-      for dir in ${confirmedpkgs[@]}; do # change
+      for dir in ${confirmedpkgs[@]}; do
         cd $dir
 
         echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" >> .npmrc
@@ -100,14 +100,13 @@ function filter(){
   done
   confirmedpkgs=($(echo ${diffy[@]} | xargs -n1 | sort -u | xargs))
 
-#  publish
+# publish
 exit 1
 }
 
 function findy(){
   echo running: findy
-  #jiffy=(${dird[@]})
-  jiffy=($dird)
+  jiffy=(${dird[@]})
   piffy=()
 
   function pkgjsonfinder(){
@@ -126,11 +125,8 @@ function findy(){
     cd $GITHUB_WORKSPACE
   }
 
-  # for dires in ${jiffy[@]}; do 
-  #   pkgjsonfinder $dires
-  # done;
-  for dires in ${jiffy[@]}; do 
-    pkgjsonfinder $dires
+  for i in ${!jiffy[@]}; do 
+    pkgjsonfinder ${jiffy[$i]}
   done;
 
   echo $piffy
@@ -200,7 +196,7 @@ function runit(){
   diffs=$(git diff --name-only $GITHUB_BASE_REF..$GITHUB_HEAD_REF)
   dird=$(diffytodir $diffs)
   echo dird arraychecker
-  for arg in $diffs; do
+  for arg in ${diffs[@]}; do
     echo array: $arg
   done;
 
