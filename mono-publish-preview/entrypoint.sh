@@ -162,7 +162,7 @@ function runit(){
         git remote set-url origin https://${GITHUB_TOKEN}:x-oauth-basic@github.com/${GITHUB_REPOSITORY}.git
         git fetch origin +refs/heads/*:refs/heads/*
 
-        branch="${GITHUB_REF#*refs\/heads\/}"
+        branch="${GITHUB_HEAD_REF#*refs\/heads\/}"
         git checkout $branch
 
         git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
