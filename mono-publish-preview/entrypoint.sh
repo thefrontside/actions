@@ -102,8 +102,7 @@ function filter(){
   done
   confirmedpkgs=($(echo ${diffy[@]} | xargs -n1 | sort -u | xargs))
 
-# publish
-exit 1
+publish
 }
 
 function findy(){
