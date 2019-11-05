@@ -94,7 +94,7 @@ function filter(){
     done
   done
   pre=$(echo $diffy | xargs -n1 | sort -u | xargs)
-  confirmedpkgs=($pre)
+  confirmedpkgs=$pre
   publish
 }
 
