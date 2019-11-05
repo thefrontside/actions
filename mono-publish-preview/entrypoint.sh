@@ -1,3 +1,4 @@
+#!/usr/bin/env zsh
 set -e
 
 RED='\033[1;31m'

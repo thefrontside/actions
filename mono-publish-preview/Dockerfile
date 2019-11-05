@@ -4,6 +4,8 @@ RUN apk add --no-cache git bash git-subtree jq zsh
 
 COPY entrypoint.sh /entrypoint.sh
 
-ENTRYPOINT ["zsh", "/entrypoint.sh"]
+ENV SHELL /usr/bin/zsh
+
+ENTRYPOINT ["/entrypoint.sh"]
 
 
