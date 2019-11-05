@@ -155,13 +155,16 @@ function runit(){
   }
 
   function diffytodir(){
+    echo running diffytodir
     for diff in $*; do 
       if [ "$(echo $diff | grep -c "/")" = "0" ]; then 
         echo ".";
       else 
         dir_of_files_changed=$(echo $diff | sed 's:\(.*\)\/.*:\1:g');
       fi;
+      echo diffydiff: $diff
     done;
+    echo finished diffytodir
   }
 
   defaults=("node_modules" ".github")
@@ -200,7 +203,6 @@ function runit(){
   dird=$(diffytodir $diffs)
 
 #  git diff --name-only $GITHUB_BASE_REF..$GITHUB_HEAD_REF
-  echo $dird
 
   PR="$(jq '."pull_request"' ../workflow/event.json)"
   jsonpath="../workflow/event.json"
