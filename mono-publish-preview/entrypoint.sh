@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 set -e
 
 RED='\033[1;31m'
@@ -158,6 +158,15 @@ function runit(){
   # INPUT_IGNORE="minorepo/dos/sub/ minorepo/uno/sub2/ minorepo/dos"
   # GITHUB_HEAD_REF=nolatest
   # GITHUB_WORKSPACE=~/projects/georgia # ~/../workspace 
+
+        git remote set-url origin https://${GITHUB_TOKEN}:x-oauth-basic@github.com/${GITHUB_REPOSITORY}.git
+        git fetch origin +refs/heads/*:refs/heads/*
+
+        branch="${GITHUB_REF#*refs\/heads\/}"
+        git checkout $branch
+
+        git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+        git config user.name "$GITHUB_ACTOR"
 
   diffs=$(git diff --name-only $GITHUB_BASE_REF..$GITHUB_HEAD_REF)
   dird=$(diffytodir $diffs)
