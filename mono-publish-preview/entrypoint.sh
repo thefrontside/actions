@@ -99,7 +99,9 @@ function filter(){
     done
   done
   confirmedpkgs=($(echo ${diffy[@]} | xargs -n1 | sort -u | xargs))
-  publish
+  for confirmy in ${confirmedpkgs[@]}; do echo confirmy: $confirmy; done
+#  publish
+exit 1
 }
 
 function findy(){
