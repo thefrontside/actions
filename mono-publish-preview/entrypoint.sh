@@ -151,7 +151,8 @@ function findy(){
   done;
 
   echo piffy array checker
-  arraychecker $piffy
+  arraychecker "${piffy[@]}"
+  echo piffy length: ${#piffy[@]}
 
 # filter
 }
