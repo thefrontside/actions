@@ -108,17 +108,19 @@ function filter(){
       if [ -z "$(echo ${diffydir[$i]} | sed "s:^$ignoree.*::")" ]; then
         #unset diffy[${diffy[(ie)$diffydir]}]
         unset diffy[$i]
+        echo $i: removing ${diffy[$i]}
       fi
     done
   done
   confirmedpkgs=($(echo ${diffy[@]} | xargs -n1 | sort -u | xargs))
 
   echo confirmedpkgs array checker
-  arraychecker $confirmedpkgs
+  arraychecker "${confirmedpkgs}"
   echo diffy array checker
-  arraychecker $diffy
+  arraychecker "${diffy[@]}"
 
-  publish
+#  publish
+exit 1
 }
 
 function findy(){
@@ -154,7 +156,7 @@ function findy(){
   arraychecker "${piffy[@]}"
   echo piffy length: ${#piffy[@]}
 
-# filter
+  filter
 }
 
 function setup(){
@@ -259,7 +261,6 @@ function arraychecker(){
 }
 
 runit
-
 
   # diffs=$(git diff --name-only $GITHUB_BASE_REF..$GITHUB_HEAD_REF)
   # dird=$(diffytodir $diffs)
