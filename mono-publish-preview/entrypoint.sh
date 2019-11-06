@@ -11,7 +11,6 @@ function doublechecky(){
 #  cd services/Consumer
   echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" >> .npmrc
   #npm version "`node -e \"console.log(require('./package.json').version)\"`-`git log --pretty=format:'%h' -n 1`" --no-git-tag-version
-  npm version patch
   npm publish
   cd $GITHUB_WORKSPACE
 }
