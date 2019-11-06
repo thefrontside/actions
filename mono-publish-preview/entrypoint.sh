@@ -243,14 +243,16 @@ function runit(){
   # INPUT_IGNORE="minorepo/dos/sub/ minorepo/uno/sub2/ minorepo/dos"
   # GITHUB_HEAD_REF=nolatest
   # GITHUB_WORKSPACE=~/projects/georgia # ~/../workspace 
-
+echo "before remote url set"
         git remote set-url origin https://${GITHUB_TOKEN}:x-oauth-basic@github.com/${GITHUB_REPOSITORY}.git
         git fetch origin # +refs/heads/*:refs/heads/*
 
         branch="${GITHUB_HEAD_REF#*refs\/heads\/}"
+echo "before checkout"
         
         git checkout $GITHUB_BASE_REF
         git checkout $GITHUB_HEAD_REF
+echo "before config"
         
         git config user.email "resideo@users.noreply.github.com"
         git config user.name "resideo"
