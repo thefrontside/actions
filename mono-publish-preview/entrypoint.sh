@@ -6,6 +6,8 @@ GREEN='\033[1;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m'
 
+cd
+
 function rundanger(){
   echo running: danger
   yarn global add danger --dev
@@ -116,23 +118,26 @@ function findy(){
   piffy=()
 
   function pkgjsonfinder(){
+    echo -e "${GREEN}pkgjsonfinder with $1"
     cd $GITHUB_WORKSPACE
     cd $1
     if [ ! -f "package.json" ]; then
       if [ "$(echo $1 | grep -c "/")" = "1" ]; then
         sub=$(echo $1 | sed 's:\(.*\)\/.*:\1:g');
+        echo -e "${RED}no pkgjson for $1 so looping with $sub"
         pkgjsonfinder $sub
       else
+        echo -e "${RED}no pkgjson and last dir so ."
         piffy+=(".")
       fi
     else
+      echo -e "${GREEN}pkgjson found so adding $1 to piffy"
       piffy+=("$1")
     fi
     cd $GITHUB_WORKSPACE
   }
 
   for i in ${!jiffy[@]}; do 
-    echo loop of jiffy with $i out of ${#jiffy[@]}
     pkgjsonfinder ${jiffy[$i]}
   done;
 
