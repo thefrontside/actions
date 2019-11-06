@@ -1,12 +1,7 @@
 # FROM frapsoft/zsh
 FROM node:12-alpine
 
-RUN apk add --no-cache \
-  git \
-  bash \ 
-  git-subtree \
-  jq \ 
-  zsh
+RUN apk add --no-cache git bash git-subtree jq
 
 # RUN sed -i -e "s/bin\/ash/bin\/zsh/" /etc/passwd
 

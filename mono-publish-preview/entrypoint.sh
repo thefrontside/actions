@@ -135,6 +135,7 @@ function findy(){
 
 function setup(){
   echo running: setup
+  echo yarn version $(yarn -v)
   yarn install
   tag="$(echo $GITHUB_HEAD_REF | sed -E 's:_:__:g;s:\/:_:g')"
   echo '{"tag":"","packages":[]}' > published.json
@@ -191,15 +192,12 @@ function runit(){
         git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
         git config user.name "$GITHUB_ACTOR"
 
- diffs=$(git diff --name-only $GITHUB_BASE_REF..$GITHUB_HEAD_REF)
+  diffs=$(git diff --name-only $GITHUB_BASE_REF..$GITHUB_HEAD_REF)
   dird=$(diffytodir $diffs)
 
   # testing purposes
   echo dird arraychecker
-  arraychecker ${dird[@]}
-  for arg in ${dird[@]}; do
-    echo array: $arg
-  done;
+  arraychecker $dird
 
   PR="$(jq '."pull_request"' ../workflow/event.json)"
   jsonpath="../workflow/event.json"
