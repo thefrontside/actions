@@ -14,8 +14,8 @@ function doublechecky(){
   npm publish
   cd $GITHUB_WORKSPACE
 }
-doublechecky
-exit 1
+# doublechecky
+# exit 1
 
 function rundanger(){
   echo running: danger
