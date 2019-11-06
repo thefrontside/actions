@@ -17,11 +17,12 @@ NC='\033[0m'
 # # doublechecky
 # # exit 1
 
-if [ "$INPUT_RUNNY" = "gateway" ]; then
+if [ "$INPUT_RUNNY" != "gateway" ]; then
   echo gateways
 else
   echo not gateways
 fi
+exit 1
 
 function rundanger(){
   echo running: danger
