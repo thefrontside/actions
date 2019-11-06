@@ -17,18 +17,38 @@ NC='\033[0m'
 # # doublechecky
 # # exit 1
 
-if [ "$INPUT_RUNNY" != "gateway" ]; then
-  echo gateways
-else
-  echo not gateways
-fi
-exit 1
-
 function rundanger(){
   echo running: danger
   yarn global add danger --dev
   export PATH="$(yarn global bin):$PATH"
   danger ci
+}
+
+function publishgateway(){
+  cd gateways/pro-portal
+  npm version "`node -e \"console.log(require('./package.json').version)\"`-`git log --pretty=format:'%h' -n 1`" --no-git-tag-version
+  npm publish --tag $tag
+  cd $GITHUB_WORKSPACE
+
+cat << "EOT" > dangerfile.js
+const { markdown } = require('danger');
+const pjson = require('./package.json');
+
+const current = `https://www.npmjs.com/package/${pjson.name}/v/${pjson.version}`
+const branch = process.env.GITHUB_HEAD_REF;
+const masked = branch.replace(/\//g, '_');
+
+const install_version = `npm install ${pjson.name}@${pjson.version}`;
+
+const first_line = `A preview package of this pull request has been released to NPM with the tag \`${masked}\`.`;
+const second_line = `You can try it out by running the following command:`;
+const install_tag = `$ npm install ${pjson.name}@${masked}`;
+const fourth_line = `or by updating your package.json to:`
+const update_json = `\{\n  \"${pjson.name}\": \"${masked}\"\n\}`
+const last_line = `Once the branch associated with this tag is deleted (usually once the PR is merged or closed), it will no longer be available. However, it currently references [${pjson.name}@${pjson.version}](${current}) which will be available to install forever.`;
+
+markdown(`${first_line}\n${second_line}\n\`\`\`bash\n${install_tag}\n\`\`\`\n${fourth_line}\n\`\`\`bash\n${update_json}\n\`\`\`\n${last_line}`)
+EOT
 }
 
 function publish(){
@@ -51,10 +71,11 @@ EOT
         pkgname="`node -e \"console.log(require('./package.json').name)\"`"
         pkgver="`node -e \"console.log(require('./package.json').version)\"`"
         
-        echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" >> .npmrc
+        # jordan says he will do
+        #echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" >> .npmrc
+
         npm version "`node -e \"console.log(require('./package.json').version)\"`-`git log --pretty=format:'%h' -n 1`" --no-git-tag-version
 
-        echo -e "${BLUE}fake publishing of ${pkgname}@${pkgver}${NC}"
         npm publish --tag $tag
         
         echo $(jq --arg PKG "$pkgname" '.packages[.packages | length] |= . + {"name": $PKG}' $GITHUB_WORKSPACE/published.json) > $GITHUB_WORKSPACE/published.json
@@ -179,7 +200,13 @@ function setup(){
   tag="$(echo $GITHUB_HEAD_REF | sed -E 's:_:__:g;s:\/:_:g')"
   echo '{"tag":"","packages":[]}' > published.json
   echo $(jq --arg TEST "$tag" '.tag = $TEST' published.json) > published.json
-  findy
+  if [ "$INPUT_RUNNY" = "zeusgateway" ]; then
+    echo gateways
+    publishgateway
+  else
+    echo not gateways
+    findy
+  fi
 }
 
 function runit(){
