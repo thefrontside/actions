@@ -196,6 +196,7 @@ function runit(){
 
   # testing purposes
   echo dird arraychecker
+  arraychecker ${dird[@]}
   for arg in ${dird[@]}; do
     echo array: $arg
   done;
