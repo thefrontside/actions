@@ -148,6 +148,9 @@ function filter(){
         # unset diffy[$i]
         echo $i: skipping "${diffy[$i]}" because of $ignoree
 #        fiffy+=(${diffy[$i]})
+      elif [ "${diffy[$i]}" = "." ]; then
+        echo $i: removing because we should not publish root on monorepo
+        unset diffy[$i]
       else
         echo $i: removing "${diffy[$i]}" because of $ignoree
         unset diffy[$i]
