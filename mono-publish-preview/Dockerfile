@@ -1,4 +1,5 @@
-FROM frapsoft/zsh
+# FROM frapsoft/zsh
+FROM node:12-alpine
 
 RUN apk add --no-cache \
   git \
@@ -7,14 +8,15 @@ RUN apk add --no-cache \
   jq \ 
   zsh
 
-RUN sed -i -e "s/bin\/ash/bin\/zsh/" /etc/passwd
+# RUN sed -i -e "s/bin\/ash/bin\/zsh/" /etc/passwd
 
 COPY entrypoint.sh /entrypoint.sh
 
-RUN chmod +x /entrypoint.sh
+# RUN chmod +x /entrypoint.sh
 
-ENV SHELL /bin/zsh
+# ENV SHELL /bin/zsh
 
-ENTRYPOINT ["/entrypoint.sh"]
+# ENTRYPOINT ["/entrypoint.sh"]
 
 
+ENTRYPOINT ["bash", "/entrypoint.sh"]
