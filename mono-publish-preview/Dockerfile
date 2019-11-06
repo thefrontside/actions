@@ -11,10 +11,10 @@ RUN sed -i -e "s/bin\/ash/bin\/zsh/" /etc/passwd
 
 COPY entrypoint.sh /entrypoint.sh
 
-RUN whereis zsh
+RUN chmod +x /entrypoint.sh
 
 ENV SHELL /bin/zsh
 
-ENTRYPOINT ["zsh", "/entrypoint.sh"]
+ENTRYPOINT ["/entrypoint.sh"]
 
 
