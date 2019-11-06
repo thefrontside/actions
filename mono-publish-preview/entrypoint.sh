@@ -212,6 +212,8 @@ function setup(){
 
 function runit(){
   echo running: runit
+  echo repo: $GITHUB_REPOSITORY
+  echo actor: $GITHUB_ACTOR
   function unslash(){
     for unslash in $*; do
       echo $unslash | sed 's:\/$::g';
