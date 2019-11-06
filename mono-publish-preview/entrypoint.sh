@@ -8,7 +8,7 @@ NC='\033[0m'
 
 function doublechecky(){
   echo test publishing
-  cd minorepo/topublish/sub1
+  cd services/consumer
   echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" >> .npmrc
   npm version "`node -e \"console.log(require('./package.json').version)\"`-`git log --pretty=format:'%h' -n 1`" --no-git-tag-version
   npm publish
@@ -256,7 +256,7 @@ function arraychecker(){
   done;
 }
 
-runit
+#runit
 
 
   # diffs=$(git diff --name-only $GITHUB_BASE_REF..$GITHUB_HEAD_REF)
