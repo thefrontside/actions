@@ -6,7 +6,14 @@ GREEN='\033[1;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m'
 
-cd
+function doublechecky(){
+  echo test publishing
+  cd minorepo/topublish/sub1
+  echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" >> .npmrc
+  npm version "`node -e \"console.log(require('./package.json').version)\"`-`git log --pretty=format:'%h' -n 1`" --no-git-tag-version
+  cd $GITHUB_WORKSPACE
+}
+doublechecky
 
 function rundanger(){
   echo running: danger
@@ -236,8 +243,7 @@ markdown(`${first_line}\n\n${second_line}`)
 EOT
         rundanger
       else
-        #setup
-        echo setup
+        setup
       fi
     fi
   fi
