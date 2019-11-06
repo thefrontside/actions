@@ -109,7 +109,7 @@ function filter(){
   echo diffy array checker
   arraychecker $diffy
 
-publish
+  publish
 }
 
 function findy(){
@@ -236,7 +236,8 @@ markdown(`${first_line}\n\n${second_line}`)
 EOT
         rundanger
       else
-        setup
+        #setup
+        echo setup
       fi
     fi
   fi
