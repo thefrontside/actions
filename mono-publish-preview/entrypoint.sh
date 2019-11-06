@@ -25,7 +25,7 @@ function rundanger(){
 }
 
 function publishgateway(){
-  cd "gateways/pro-portal"
+  cd $GITHUB_WORKSPACE/gateways/pro-portal
   ls
   echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" >> .npmrc
   npm version "`node -e \"console.log(require('./package.json').version)\"`-`git log --pretty=format:'%h' -n 1`" --no-git-tag-version
