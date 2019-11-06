@@ -103,20 +103,29 @@ EOT
 function filter(){
   echo running: filter
   diffy=(${piffy[@]})
+  fiffy=()
   for ignoree in ${ignores[@]}; do
     for i in ${!diffy[@]}; do
       if [ -z "$(echo ${diffydir[$i]} | sed "s:^$ignoree.*::")" ]; then
         #unset diffy[${diffy[(ie)$diffydir]}]
-        unset diffy[$i]
-        echo $i: removing ${diffy[$i]}
+        # unset diffy[$i]
+        echo $i: skipping "${diffy[$i]}" because of $ignoree
+      else
+        echo $i: adding "${diffy[$i]}" because of $ignoree
+        fiffy+=(${diffy[$i]})
       fi
     done
   done
-  confirmedpkgs=($(echo ${diffy[@]} | xargs -n1 | sort -u | xargs))
+  confirmedpkgs=($(echo ${fiffy[@]} | xargs -n1 | sort -u | xargs))
 
+  echo fiffy array checker
+  echo fiffy length: ${#fiffy[@]}
+  arraychecker "${fiffy[@]}"
   echo confirmedpkgs array checker
-  arraychecker "${confirmedpkgs}"
+  echo confirmedpkgs length: ${#confirmedpkgs[@]}
+  arraychecker "${confirmedpkgs[@]}"
   echo diffy array checker
+  echo diffy length: ${#diffy[@]}
   arraychecker "${diffy[@]}"
 
 #  publish
@@ -152,9 +161,9 @@ function findy(){
     pkgjsonfinder ${jiffy[$i]}
   done;
 
-  echo piffy array checker
-  arraychecker "${piffy[@]}"
-  echo piffy length: ${#piffy[@]}
+  # echo piffy array checker
+  # arraychecker "${piffy[@]}"
+  # echo piffy length: ${#piffy[@]}
 
   filter
 }
