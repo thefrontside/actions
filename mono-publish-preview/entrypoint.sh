@@ -27,6 +27,7 @@ markdown(`${first_line}\n\n${second_line}`)
 EOT
     else
       for dir in ${confirmedpkgs[@]}; do
+        echo publish loop of $dir
         cd $dir
 
         echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" >> .npmrc
@@ -101,6 +102,11 @@ function filter(){
   done
   confirmedpkgs=($(echo ${diffy[@]} | xargs -n1 | sort -u | xargs))
 
+  echo confirmedpkgs array checker
+  arraychecker $confirmedpkgs
+  echo diffy array checker
+  arraychecker $diffy
+
 publish
 }
 
@@ -130,6 +136,9 @@ function findy(){
   done;
 
   echo $piffy
+
+  echo piffy array checker
+  arraychecker $piffy
 
  filter
 }
@@ -196,9 +205,9 @@ function runit(){
   diffs=$(git diff --name-only $GITHUB_BASE_REF..$GITHUB_HEAD_REF)
   dird=$(diffytodir $diffs)
 
-  # testing purposes
-  echo dird arraychecker
-  arraychecker $dird
+  # testing purposes OKAY PASS
+  # echo dird arraychecker
+  # arraychecker $dird
 
   PR="$(jq '."pull_request"' ../workflow/event.json)"
   jsonpath="../workflow/event.json"
