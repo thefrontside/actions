@@ -249,16 +249,16 @@ function runit(){
   # GITHUB_HEAD_REF=nolatest
   # GITHUB_WORKSPACE=~/projects/georgia # ~/../workspace 
 
-        git remote set-url origin https://${GITHUB_TOKEN}:x-oauth-basic@github.com/${GITHUB_REPOSITORY}.git
-        git fetch origin # +refs/heads/*:refs/heads/*
+        # git remote set-url origin https://${GITHUB_TOKEN}:x-oauth-basic@github.com/${GITHUB_REPOSITORY}.git
+        # git fetch origin # +refs/heads/*:refs/heads/*
 
-        branch="${GITHUB_HEAD_REF#*refs\/heads\/}"
+        # branch="${GITHUB_HEAD_REF#*refs\/heads\/}"
         
-        git checkout $GITHUB_BASE_REF
-        git checkout $GITHUB_HEAD_REF
+        # git checkout $GITHUB_BASE_REF
+        # git checkout $GITHUB_HEAD_REF
         
-        git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
-        git config user.name "$GITHUB_ACTOR"
+        # git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+        # git config user.name "$GITHUB_ACTOR"
 
   diffs=$(git diff --name-only $GITHUB_BASE_REF..$GITHUB_HEAD_REF)
   dird=$(diffytodir $diffs)
