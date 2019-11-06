@@ -92,9 +92,10 @@ function filter(){
   echo running: filter
   diffy=(${piffy[@]})
   for ignoree in ${ignores[@]}; do
-    for diffydir in ${diffy[@]}; do
-      if [ -z "$(echo $diffydir | sed "s:^$ignoree.*::")" ]; then
-        unset diffy[${diffy[(ie)$diffydir]}]
+    for i in ${!diffy[@]}; do
+      if [ -z "$(echo ${diffydir[$i]} | sed "s:^$ignoree.*::")" ]; then
+        #unset diffy[${diffy[(ie)$diffydir]}]
+        unset diffy[$i]
       fi
     done
   done
