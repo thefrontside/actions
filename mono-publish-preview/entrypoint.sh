@@ -15,6 +15,7 @@ function doublechecky(){
   cd $GITHUB_WORKSPACE
 }
 doublechecky
+exit 1
 
 function rundanger(){
   echo running: danger
