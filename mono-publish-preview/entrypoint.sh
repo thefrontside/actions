@@ -143,17 +143,19 @@ function filter(){
   #fiffy=()
   for ignoree in ${ignores[@]}; do
     for i in ${!diffy[@]}; do
-      if [ $(echo "${diffy[$i]}" | sed -E "s:^$ignoree.*::") ]; then
-        #unset diffy[${diffy[(ie)$diffydir]}]
-        # unset diffy[$i]
-        echo $i: skipping "${diffy[$i]}" because of $ignoree
-#        fiffy+=(${diffy[$i]})
-      elif [[ "${diffy[$i]}" = "." ]]; then
-        echo $i: removing because we should not publish root on monorepo
+      if [ "${diffy[$i]}" = "." ]; then
+        echo $i: removing "${diffy[$i]}" because monorepo should not publish root
         unset diffy[$i]
       else
-        echo $i: removing "${diffy[$i]}" because of $ignoree
-        unset diffy[$i]
+        if [ $(echo "${diffy[$i]}" | sed -E "s:^$ignoree.*::") ]; then
+          #unset diffy[${diffy[(ie)$diffydir]}]
+          # unset diffy[$i]
+          echo $i: skipping "${diffy[$i]}" because of $ignoree
+  #        fiffy+=(${diffy[$i]})
+        else
+          echo $i: removing "${diffy[$i]}" because of $ignoree
+          unset diffy[$i]
+        fi
       fi
     done
   done
