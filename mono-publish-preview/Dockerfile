@@ -11,6 +11,8 @@ RUN sed -i -e "s/bin\/ash/bin\/zsh/" /etc/passwd
 
 COPY entrypoint.sh /entrypoint.sh
 
+RUN whereis zsh
+
 ENV SHELL /bin/zsh
 
 ENTRYPOINT ["zsh", "/entrypoint.sh"]
