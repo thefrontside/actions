@@ -116,17 +116,11 @@ function filter(){
       fi
     done
   done
-  confirmedpkgs=($(echo ${fiffy[@]} | xargs -n1 | sort -u | xargs))
+  confirmedpkgs=($(echo "${fiffy[@]}" | xargs -n1 | sort -u | xargs))
 
-  echo fiffy array checker
-  echo fiffy length: ${#fiffy[@]}
-  arraychecker "${fiffy[@]}"
   echo confirmedpkgs array checker
   echo confirmedpkgs length: ${#confirmedpkgs[@]}
   arraychecker "${confirmedpkgs[@]}"
-  echo diffy array checker
-  echo diffy length: ${#diffy[@]}
-  arraychecker "${diffy[@]}"
 
 #  publish
 exit 1
