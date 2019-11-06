@@ -233,7 +233,7 @@ EOT
 
 function arraychecker(){
   for arg in $*; do
-    echo array: $arg
+    echo -e "${RED}array: ${YELLOW}$arg${NC}"
   done;
 }
 
