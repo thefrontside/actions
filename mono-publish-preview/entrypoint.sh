@@ -209,8 +209,6 @@ function setup(){
 
 function runit(){
   echo running: runit
-  echo repo: $GITHUB_REPOSITORY
-  echo actor: $GITHUB_ACTOR
   function unslash(){
     for unslash in $*; do
       echo $unslash | sed 's:\/$::g';
@@ -254,8 +252,8 @@ function runit(){
         git checkout $GITHUB_BASE_REF
         git checkout $GITHUB_HEAD_REF
         
-        git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
-        git config user.name "$GITHUB_ACTOR"
+        git config user.email "resideo@users.noreply.github.com"
+        git config user.name "resideo"
 
         diffs=$(git diff --name-only $GITHUB_BASE_REF..$GITHUB_HEAD_REF)
         dird=$(diffytodir $diffs)
