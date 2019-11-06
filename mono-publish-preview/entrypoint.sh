@@ -17,6 +17,12 @@ NC='\033[0m'
 # # doublechecky
 # # exit 1
 
+if [ "$INPUT_RUNNY" = "gateway" ]; then
+  echo gateways
+else
+  echo not gateways
+fi
+
 function rundanger(){
   echo running: danger
   yarn global add danger --dev
@@ -267,7 +273,7 @@ function arraychecker(){
   done;
 }
 
-runit
+#runit
 
   # diffs=$(git diff --name-only $GITHUB_BASE_REF..$GITHUB_HEAD_REF)
   # dird=$(diffytodir $diffs)
