@@ -103,20 +103,21 @@ EOT
 function filter(){
   echo running: filter
   diffy=(${piffy[@]})
-  fiffy=()
+  #fiffy=()
   for ignoree in ${ignores[@]}; do
     for i in ${!diffy[@]}; do
       if [ $(echo "${diffy[$i]}" | sed -E "s:^$ignoree.*::") ]; then
         #unset diffy[${diffy[(ie)$diffydir]}]
         # unset diffy[$i]
-        echo $i: adding "${diffy[$i]}" because of $ignoree
-        fiffy+=(${diffy[$i]})
-      else
         echo $i: skipping "${diffy[$i]}" because of $ignoree
+#        fiffy+=(${diffy[$i]})
+      else
+        echo $i: removing "${diffy[$i]}" because of $ignoree
+        unset diffy[$i]
       fi
     done
   done
-  confirmedpkgs=($(echo "${fiffy[@]}" | xargs -n1 | sort -u | xargs))
+  confirmedpkgs=($(echo "${diffy[@]}" | xargs -n1 | sort -u | xargs))
 
   echo confirmedpkgs array checker
   echo confirmedpkgs length: ${#confirmedpkgs[@]}
