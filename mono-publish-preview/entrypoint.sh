@@ -6,17 +6,6 @@ GREEN='\033[1;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m'
 
-# function doublechecky(){
-#   echo test publishing
-#   cd services/Consumer
-#   echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" >> .npmrc
-#   npm version "`node -e \"console.log(require('./package.json').version)\"`-`git log --pretty=format:'%h' -n 1`" --no-git-tag-version
-#   npm publish
-#   cd $GITHUB_WORKSPACE
-# }
-# # doublechecky
-# # exit 1
-
 function rundanger(){
   echo running: danger
   yarn global add danger --dev
@@ -26,8 +15,6 @@ function rundanger(){
 
 function publishgateway(){
   cd $GITHUB_WORKSPACE/gateways/pro-portal
-  ls
-  # echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" >> .npmrc
   npm version "`node -e \"console.log(require('./package.json').version)\"`-`git log --pretty=format:'%h' -n 1`" --no-git-tag-version
   npm publish --tag $tag
   cd $GITHUB_WORKSPACE
@@ -68,14 +55,10 @@ markdown(`${first_line}\n\n${second_line}`)
 EOT
     else
       for dir in ${confirmedpkgs[@]}; do
-        echo publish loop of $dir
         cd $dir
 
         pkgname="`node -e \"console.log(require('./package.json').name)\"`"
         pkgver="`node -e \"console.log(require('./package.json').version)\"`"
-        
-        # jordan says he will do
-        #echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" >> .npmrc
 
         npm version "`node -e \"console.log(require('./package.json').version)\"`-`git log --pretty=format:'%h' -n 1`" --no-git-tag-version
 
@@ -123,7 +106,7 @@ function package(name){
   </details>`
 }
 
-const first_line = `The packages of this pull request has been released to Github Package Registry.`;
+const first_line = `The packages of this pull request have been released to Github Package Registry.`;
 const second_line = `Click on the following packages for instructions on how to install them:`;
 
 markdown(`${first_line}\n${second_line}\n${packages()}`)
@@ -141,16 +124,11 @@ function filter(){
   for ignoree in ${ignores[@]}; do
     for i in ${!diffy[@]}; do
       if [ "${diffy[$i]}" = "." ]; then
-        echo $i: removing "${diffy[$i]}" because monorepo should not publish root
         unset diffy[$i]
       else
         if [ $(echo "${diffy[$i]}" | sed -E "s:^$ignoree.*::") ]; then
-          #unset diffy[${diffy[(ie)$diffydir]}]
-          # unset diffy[$i]
           echo $i: skipping "${diffy[$i]}" because of $ignoree
-  #        fiffy+=(${diffy[$i]})
         else
-          echo $i: removing "${diffy[$i]}" because of $ignoree
           unset diffy[$i]
         fi
       fi
@@ -158,11 +136,7 @@ function filter(){
   done
   confirmedpkgs=($(echo "${diffy[@]}" | xargs -n1 | sort -u | xargs))
 
-  echo confirmedpkgs array checker
-  echo confirmedpkgs length: ${#confirmedpkgs[@]}
-  arraychecker "${confirmedpkgs[@]}"
-
-publish
+  publish
 }
 
 function findy(){
@@ -233,39 +207,22 @@ function runit(){
   defaults=("node_modules" ".github")
   ignores=($(unslash $INPUT_IGNORE) ${defaults[@]})
 
-  # echo array checking ignores arg ver 1 brackets inside brakcet
-  # arraychecker (${ignores[@]})
-  # echo end of checking array
-  # echo array checking ignores arg ver 2 brackets
-  # arraychecker ${ignores[@]}
-  # echo end of checking array
-  # echo array checking ignores arg ver 2 just var
-  # arraychecker $ignores
-  # echo end of checking array
-
-  # placeholder variables for testing offline
+  # variables for testing offline
   # diffs=$(git diff --name-only 2e5c6c9..91dd994)
   # INPUT_IGNORE="minorepo/dos/sub/ minorepo/uno/sub2/ minorepo/dos"
   # GITHUB_HEAD_REF=nolatest
   # GITHUB_WORKSPACE=~/projects/georgia # ~/../workspace 
-  echo "before remote v"
-  git remote -v
-echo "before remote url set"
-#        git remote set-url origin https://${GITHUB_TOKEN}:x-oauth-basic@github.com/${GITHUB_REPOSITORY}.git
-        # git fetch origin # +refs/heads/*:refs/heads/*
 
-        branch="${GITHUB_HEAD_REF#*refs\/heads\/}"
-echo "before checkout"
-        
-        git checkout $GITHUB_BASE_REF
-        git checkout $GITHUB_HEAD_REF
-echo "before config"
-        
-        git config user.email "resideo@users.noreply.github.com"
-        git config user.name "resideo"
+  branch="${GITHUB_HEAD_REF#*refs\/heads\/}"
+  
+  git checkout $GITHUB_BASE_REF
+  git checkout $GITHUB_HEAD_REF
+  
+  git config user.email "resideo@users.noreply.github.com"
+  git config user.name "resideo"
 
-        diffs=$(git diff --name-only $GITHUB_BASE_REF..$GITHUB_HEAD_REF)
-        dird=$(diffytodir $diffs)
+  diffs=$(git diff --name-only $GITHUB_BASE_REF..$GITHUB_HEAD_REF)
+  dird=$(diffytodir $diffs)
 
   PR="$(jq '."pull_request"' ../workflow/event.json)"
   jsonpath="../workflow/event.json"
@@ -298,17 +255,4 @@ EOT
   fi
 }
 
-function arraychecker(){
-  for arg in $*; do
-    echo -e "${RED}array: ${YELLOW}$arg${NC}"
-  done;
-}
-
 runit
-
-  # diffs=$(git diff --name-only $GITHUB_BASE_REF..$GITHUB_HEAD_REF)
-  # dird=$(diffytodir $diffs)
-  # echo dird arraychecker
-  # for arg in $diffs; do
-  #   echo array: $arg
-  # done;
