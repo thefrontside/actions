@@ -132,10 +132,9 @@ function findy(){
   }
 
   for i in ${!jiffy[@]}; do 
+    echo loop of jiffy with $i out of ${#jiffy[@]}
     pkgjsonfinder ${jiffy[$i]}
   done;
-
-  echo $piffy
 
   echo piffy array checker
   arraychecker $piffy
@@ -145,7 +144,6 @@ function findy(){
 
 function setup(){
   echo running: setup
-  echo yarn version $(yarn -v)
   yarn install
   tag="$(echo $GITHUB_HEAD_REF | sed -E 's:_:__:g;s:\/:_:g')"
   echo '{"tag":"","packages":[]}' > published.json
@@ -195,7 +193,6 @@ function runit(){
 
         branch="${GITHUB_HEAD_REF#*refs\/heads\/}"
         
-        # git checkout $branch
         git checkout $GITHUB_BASE_REF
         git checkout $GITHUB_HEAD_REF
         
