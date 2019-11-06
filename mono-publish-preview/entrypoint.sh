@@ -152,7 +152,7 @@ function findy(){
   echo piffy array checker
   arraychecker $piffy
 
- filter
+# filter
 }
 
 function setup(){
@@ -256,7 +256,7 @@ function arraychecker(){
   done;
 }
 
-# runit
+runit
 
 
   # diffs=$(git diff --name-only $GITHUB_BASE_REF..$GITHUB_HEAD_REF)
