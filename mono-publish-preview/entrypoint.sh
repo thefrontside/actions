@@ -243,6 +243,8 @@ function runit(){
   # INPUT_IGNORE="minorepo/dos/sub/ minorepo/uno/sub2/ minorepo/dos"
   # GITHUB_HEAD_REF=nolatest
   # GITHUB_WORKSPACE=~/projects/georgia # ~/../workspace 
+  echo "before remote v"
+  git remote -v
 echo "before remote url set"
         git remote set-url origin https://${GITHUB_TOKEN}:x-oauth-basic@github.com/${GITHUB_REPOSITORY}.git
         git fetch origin # +refs/heads/*:refs/heads/*
