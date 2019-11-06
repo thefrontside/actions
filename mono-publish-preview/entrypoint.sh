@@ -48,7 +48,7 @@ EOT
         npm version "`node -e \"console.log(require('./package.json').version)\"`-`git log --pretty=format:'%h' -n 1`" --no-git-tag-version
 
         echo -e "${BLUE}fake publishing of ${pkgname}@${pkgver}${NC}"
-        #npm publish --tag $tag
+        npm publish --tag $tag
         
         echo $(jq --arg PKG "$pkgname" '.packages[.packages | length] |= . + {"name": $PKG}' $GITHUB_WORKSPACE/published.json) > $GITHUB_WORKSPACE/published.json
 
