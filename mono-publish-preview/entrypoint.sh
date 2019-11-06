@@ -50,6 +50,8 @@ const last_line = `Once the branch associated with this tag is deleted (usually 
 
 markdown(`${first_line}\n${second_line}\n\`\`\`bash\n${install_tag}\n\`\`\`\n${fourth_line}\n\`\`\`bash\n${update_json}\n\`\`\`\n${last_line}`)
 EOT
+
+rundanger
 }
 
 function publish(){
