@@ -247,7 +247,7 @@ function runit(){
   git remote -v
 echo "before remote url set"
 #        git remote set-url origin https://${GITHUB_TOKEN}:x-oauth-basic@github.com/${GITHUB_REPOSITORY}.git
-        git fetch origin # +refs/heads/*:refs/heads/*
+        # git fetch origin # +refs/heads/*:refs/heads/*
 
         branch="${GITHUB_HEAD_REF#*refs\/heads\/}"
 echo "before checkout"
