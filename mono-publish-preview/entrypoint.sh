@@ -188,10 +188,6 @@ function findy(){
     pkgjsonfinder ${jiffy[$i]}
   done;
 
-  # echo piffy array checker
-  # arraychecker "${piffy[@]}"
-  # echo piffy length: ${#piffy[@]}
-
   filter
 }
 
@@ -260,12 +256,8 @@ function runit(){
         # git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
         # git config user.name "$GITHUB_ACTOR"
 
-  diffs=$(git diff --name-only $GITHUB_BASE_REF..$GITHUB_HEAD_REF)
-  dird=$(diffytodir $diffs)
-
-  # testing purposes OKAY PASS
-  # echo dird arraychecker
-  # arraychecker $dird
+        # diffs=$(git diff --name-only $GITHUB_BASE_REF..$GITHUB_HEAD_REF)
+        # dird=$(diffytodir $diffs)
 
   PR="$(jq '."pull_request"' ../workflow/event.json)"
   jsonpath="../workflow/event.json"
