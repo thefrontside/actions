@@ -1,4 +1,4 @@
-FROM node:12-alpine
+FROM frapsoft/zsh
 
 RUN apk add --no-cache \
   git \
