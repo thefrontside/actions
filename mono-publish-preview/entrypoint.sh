@@ -43,7 +43,8 @@ EOT
 
         echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" >> .npmrc
         npm version "`node -e \"console.log(require('./package.json').version)\"`-`git log --pretty=format:'%h' -n 1`" --no-git-tag-version
-        echo fake publish
+
+        echo -e "${BLUE}fake publishing of "`node -e \"console.log(require('./package.json').name)\"`"@"`node -e \"console.log(require('./package.json').version)\"`"${NC}"
         #npm publish --tag $tag
         
         pkgname="`node -e \"console.log(require('./package.json').name)\"`"
