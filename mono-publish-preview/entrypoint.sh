@@ -69,10 +69,7 @@ EOT
     else
       for dir in ${confirmedpkgs[@]}; do
         echo publish loop of $dir
-        cd $GITHUB_WORKSPACE/$dir
-        echo before ls
-        ls
-        echo afterr ls
+        cd $dir
 
         pkgname="`node -e \"console.log(require('./package.json').name)\"`"
         pkgver="`node -e \"console.log(require('./package.json').version)\"`"
