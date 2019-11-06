@@ -130,7 +130,7 @@ function findy(){
 
   echo $piffy
 
-#  filter
+ filter
 }
 
 function setup(){
