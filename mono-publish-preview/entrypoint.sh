@@ -43,7 +43,8 @@ EOT
 
         echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" >> .npmrc
         npm version "`node -e \"console.log(require('./package.json').version)\"`-`git log --pretty=format:'%h' -n 1`" --no-git-tag-version
-        npm publish --tag $tag
+        echo fake publish
+        #npm publish --tag $tag
         
         pkgname="`node -e \"console.log(require('./package.json').name)\"`"
         echo $(jq --arg PKG "$pkgname" '.packages[.packages | length] |= . + {"name": $PKG}' $GITHUB_WORKSPACE/published.json) > $GITHUB_WORKSPACE/published.json
@@ -123,8 +124,7 @@ function filter(){
   echo confirmedpkgs length: ${#confirmedpkgs[@]}
   arraychecker "${confirmedpkgs[@]}"
 
-#  publish
-exit 1
+publish
 }
 
 function findy(){
