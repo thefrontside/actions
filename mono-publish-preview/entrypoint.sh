@@ -8,11 +8,13 @@ NC='\033[0m'
 
 function doublechecky(){
   echo test publishing
-  cd services/consumer
-  echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" >> .npmrc
-  npm version "`node -e \"console.log(require('./package.json').version)\"`-`git log --pretty=format:'%h' -n 1`" --no-git-tag-version
-  npm publish
-  cd $GITHUB_WORKSPACE
+  echo ls
+  ls
+  # cd services/consumer
+  # echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" >> .npmrc
+  # npm version "`node -e \"console.log(require('./package.json').version)\"`-`git log --pretty=format:'%h' -n 1`" --no-git-tag-version
+  # npm publish
+  # cd $GITHUB_WORKSPACE
 }
 doublechecky
 
