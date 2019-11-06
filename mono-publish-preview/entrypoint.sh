@@ -106,7 +106,7 @@ function filter(){
   fiffy=()
   for ignoree in ${ignores[@]}; do
     for i in ${!diffy[@]}; do
-      if [ "$(echo "${diffydir[$i]}" | sed -E "s:^$ignoree.*::")" ]; then
+      if [ $(echo "${diffy[$i]}" | sed -E "s:^$ignoree.*::") ]; then
         #unset diffy[${diffy[(ie)$diffydir]}]
         # unset diffy[$i]
         echo $i: skipping "${diffy[$i]}" because of $ignoree
@@ -117,7 +117,7 @@ function filter(){
     done
   done
   confirmedpkgs=($(echo ${fiffy[@]} | xargs -n1 | sort -u | xargs))
-
+  
   echo fiffy array checker
   echo fiffy length: ${#fiffy[@]}
   arraychecker "${fiffy[@]}"
