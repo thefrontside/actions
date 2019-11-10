@@ -23,7 +23,7 @@ function publish(){
   }
 
   function authenticate_publish(){
-    if [ $INPUT_GPR = true ]; then
+    if [[ $INPUT_GPR = true ]]; then
       echo "//npm.pkg.github.com/:_authToken=$GITHUB_TOKEN" > ~/.npmrc
     else
       echo "//registry.npmjs.org/:_authToken=$NPM_AUTH_TOKEN" > ~/.npmrc
