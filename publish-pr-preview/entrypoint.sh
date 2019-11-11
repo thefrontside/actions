@@ -254,7 +254,7 @@ EOT
 cat << "EOT" > dangerfile.js
 const { markdown } = require('danger');
 
-const first_line = `:mega: Heads up!`;
+const first_line = `:warning: WARNING :warning:`;
 const second_line = `I couldn't detect a NPM_AUTH_TOKEN which is necessary to publish a preview version of this package, However, this is perfectly normal for pull requests that are submitted from a forked repository, so no need to worry if that's what's going on here.`;
 const third_line = `You do not need to pass in a NPM_AUTH_TOKEN if you wish to publish to Github Package Registry, but you will need to specify so in the workflow.`;
 
