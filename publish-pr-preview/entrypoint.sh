@@ -8,16 +8,20 @@ BLUE='\033[1;34m'
 NC='\033[0m'
 
 function run_danger(){
+  echo -e "${YELLOW}Installing Danger CI..${NC}"
   yarn global add danger --dev
   export PATH="$(yarn global bin):$PATH"
+  echo -e "${YELLOW}Running Danger CI..${NC}"
   danger ci
 }
 
 function publish(){
   function install_with_CLI(){
     if [ -f "yarn.lock" ]; then
+      echo -e "${RED}'yarn.lock'${YELLOW} detected. Proceeding with ${BLUE}yarn ${YELLOW}CLI.${NC}"
       yarn
     else
+      echo -e "${RED}'yarn.lock'${YELLOW} not detected. Proceeding with ${BLUE}npm ${YELLOW}CLI.${NC}"
       npm config set unsafe-perm true
       npm install
     fi
@@ -25,9 +29,10 @@ function publish(){
 
   function authenticate_publish(){
     if [[ $INPUT_GPR = true ]]; then
-      echo -e "${RED}GPR authing"
+      echo -e "${YELLOW}Authenticating for ${BLUE}Github Package Registry${YELLOW}.${NC}"
       echo "//npm.pkg.github.com/:_authToken=$GITHUB_TOKEN" > ~/.npmrc
     else
+      echo -e "${YELLOW}Authenticating for ${BLUE}npm${YELLOW}.${NC}"
       echo "//registry.npmjs.org/:_authToken=$NPM_AUTH_TOKEN" > ~/.npmrc
     fi
   }
@@ -44,24 +49,22 @@ function publish(){
 cat << "EOT" > dangerfile.js
 const { markdown } = require('danger');
 
-const first_line = `:warning: NOTIFICATION :warning:`;
-const second_line = `You are receiving this message because there were no packages to publish..`;
+const first_line = `:mega: NOTIFICATION`;
+const second_line = `You are receiving this message because there were no packages to publish.`;
 
 markdown(`${first_line}\n\n${second_line}`)
 EOT
   else
     install_with_CLI
     for dir in ${confirmed_packages[@]}; do
-      echo -e "${BLUE}$dir"
+      echo -e "${YELLOW}Running publishing process for: ${BLUE}$dir${YELLOW}.${NC}"
       cd $dir
-      echo -e "${YELLOW}$(ls)"
 
       authenticate_publish
-      echo -e "${RED}Authenticated and proceeding..."
       npm_version_SHA
 
+      echo -e "${YELLOW}Publishing...${NC}"
       if [ "${#INPUT_NPM_PUBLISH}" -eq "0" ]; then
-        echo -e "${RED}Publishing..."
         npm publish --access=public --tag $tag
       else
         $INPUT_NPM_PUBLISH --access=public --tag $tag
@@ -226,15 +229,15 @@ function check_prerequisites(){
   baseurl="$(jq '."pull_request"|."base"|."repo"|."url"' $jsonpath)"
   
   if [[ "$PR" = "null" ]]; then
-    echo -e "${RED}Not generating comment because this is not a pull request.${NC}"
+    echo -e "${RED}Error: ${YELLOW}This action should only be called from a pull request. Please check your workflow configuration.${NC}"
   else
     if [[ "$headurl" != "$baseurl" ]]; then
-      echo -e "${RED}Not generating a comment because this pull request was created from a forked repository.${NC}"
-      echo -e "${YELLOW}Publishing preview will not work if the pull request was created from a forked repository unless you create the pull request against your own repository.${NC}"
+      echo -e "${RED}Error: ${YELLOW}Not generating a comment because this pull request was created from a forked repository.${NC}"
+      echo -e "${BLUE}Tip: ${YELLOW}Publishing preview will not work if the pull request was created from a forked repository unless you create the pull request against your own repository.${NC}"
     else
       if [[ "$GITHUB_HEAD_REF" = "latest" ]]; then
-        echo -e "${RED}ERROR: Unable to publish preview because your branch conflicts with NPM's protected 'latest' tag.${NC}"
-        echo -e "${YELLOW}Please change the name of your branch and resubmit the pull request.${NC}"
+        echo -e "${RED}ERROR: ${YELLOW}Unable to publish preview because your branch conflicts with NPM's protected 'latest' tag.${NC}"
+        echo -e "${BLUE}Tip: ${YELLOW}Please change the name of your branch and resubmit the pull request.${NC}"
 cat << "EOT" > dangerfile.js
 const { markdown } = require('danger');
 
@@ -245,15 +248,17 @@ markdown(`${first_line}\n\n${second_line}`)
 EOT
         run_danger
       elif [ "${#INPUT_GPR}" -eq "0" ] && [ "${#NPM_AUTH_TOKEN}" -eq "0" ]; then
-        echo -e "${RED}ERROR: NPM_AUTH_TOKEN not detected. Please add your NPM Token to your repository's secrets.${NC}"
+        echo -e "${RED}ERROR: ${YELLOW}NPM_AUTH_TOKEN not detected. Please add your NPM Token to your repository's secrets.${NC}"
+        echo -e "${BLUE}Tip: ${YELLOW}If you meant to publish to Github Package Registry, you must specify so in the workflow configuration.${NC}"
     
 cat << "EOT" > dangerfile.js
 const { markdown } = require('danger');
 
 const first_line = `:mega: Heads up!`;
-const second_line = `I didn't detect an NPM_AUTH_TOKEN which is necessary to publish a preview version of this package, and so I wasn't able to. However, this is perfectly normal for pull requests that are submitted from a forked repository, so no need to worry if that's what's going on here.`;
+const second_line = `I couldn't detect a NPM_AUTH_TOKEN which is necessary to publish a preview version of this package, However, this is perfectly normal for pull requests that are submitted from a forked repository, so no need to worry if that's what's going on here.`;
+const third_line = `You do not need to pass in a NPM_AUTH_TOKEN if you wish to publish to Github Package Registry, but you will need to specify so in the workflow.`;
 
-markdown(`${first_line}\n\n${second_line}`)
+markdown(`${first_line}\n\n${second_line}\n\n${third_line}`)
 EOT
         run_danger
       else
