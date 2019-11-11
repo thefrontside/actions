@@ -151,7 +151,7 @@ function remove_packages_to_skip(){
   skip_directories=($(unslash_end_of_args $INPUT_IGNORE) ${defaults[@]})
   package_directories_array=(${package_directories[@]})
 
-  all_json=$(find . -name 'package.json');
+  all_json=($(find . -name 'package.json'));
   total_packages_count=${#all_json[@]};
 
   for skip_directory in ${skip_directories[@]}; do
