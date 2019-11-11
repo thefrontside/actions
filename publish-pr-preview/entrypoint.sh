@@ -24,6 +24,7 @@ function publish(){
 
   function authenticate_publish(){
     if [[ $INPUT_GPR = true ]]; then
+      echo -e "${RED}GPR authing"
       echo "//npm.pkg.github.com/:_authToken=$GITHUB_TOKEN" > ~/.npmrc
     else
       echo "//registry.npmjs.org/:_authToken=$NPM_AUTH_TOKEN" > ~/.npmrc
@@ -53,9 +54,11 @@ EOT
       cd $dir
 
       authenticate_publish
+      echo -e "${RED}Authenticated and proceeding..."
       npm_version_SHA
 
       if [ "${#INPUT_NPM_PUBLISH}" -eq "0" ]; then
+        echo -e "${RED}Publishing..."
         npm publish --access=public --tag $tag
       else
         $INPUT_NPM_PUBLISH --access=public --tag $tag
