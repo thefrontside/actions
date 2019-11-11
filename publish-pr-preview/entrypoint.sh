@@ -4,6 +4,7 @@ set -e
 RED='\033[1;31m'
 GREEN='\033[1;32m'
 YELLOW='\033[1;33m'
+BLUE='\033[1;34m'
 NC='\033[0m'
 
 function run_danger(){
@@ -51,7 +52,9 @@ EOT
   else
     install_with_CLI
     for dir in ${confirmed_packages[@]}; do
+      echo -e "${BLUE}$dir"
       cd $dir
+      echo -e "${YELLOW}$(ls)"
 
       authenticate_publish
       echo -e "${RED}Authenticated and proceeding..."
