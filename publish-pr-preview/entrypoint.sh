@@ -57,13 +57,13 @@ EOT
   else
     install_with_CLI
     for dir in ${confirmed_packages[@]}; do
-      echo -e "${YELLOW}Running publishing process for: ${BLUE}$dir${YELLOW}.${NC}"
       cd $dir
 
       json_within=($(find . -name 'package.json'));
       json_count=${#json_within[@]};
 
       if [ "json_count" = "1" ]; then
+        echo -e "${YELLOW}Running publishing process for: ${BLUE}$dir${YELLOW}.${NC}"
         authenticate_publish
         npm_version_SHA
 
@@ -77,7 +77,7 @@ EOT
         pkgname="`node -e \"console.log(require('./package.json').name)\"`"
         echo $(jq --arg PKG "$pkgname" '.packages[.packages | length] |= . + {"name": $PKG}' $GITHUB_WORKSPACE/published.json) > $GITHUB_WORKSPACE/published.json
       else
-        :
+        echo -e "${YELLOW}Skipping publishing process for: ${BLUE}$dir${YELLOW} because there is a sub-package.${NC}"
       fi
 
       cd $GITHUB_WORKSPACE
@@ -85,22 +85,20 @@ EOT
     if [ "${#confirmed_packages[@]}" -eq "1" ]; then
 cat << "EOT" > dangerfile.js
 const { markdown } = require('danger');
-const pjson = require('./package.json');
+const pjson = require('./published.json');
 
-const current = `https://www.npmjs.com/package/${pjson.name}/v/${pjson.version}`
 const branch = process.env.GITHUB_HEAD_REF;
 const masked = branch.replace(/\//g, '_');
 
-const install_version = `npm install ${pjson.name}@${pjson.version}`;
+const install_version = `npm install ${pjson.packages[0].name}@${pjson.packages[0].version}`;
 
-const first_line = `A preview package of this pull request has been released to NPM with the tag \`${masked}\`.`;
+const first_line = `A preview package of this pull request has been published with the tag \`${masked}\`.`;
 const second_line = `You can try it out by running the following command:`;
-const install_tag = `$ npm install ${pjson.name}@${masked}`;
+const install_tag = `$ npm install ${pjson.packages[0].name}@${masked}`;
 const fourth_line = `or by updating your package.json to:`
-const update_json = `\{\n  \"${pjson.name}\": \"${masked}\"\n\}`
-const last_line = `Once the branch associated with this tag is deleted (usually once the PR is merged or closed), it will no longer be available. However, it currently references [${pjson.name}@${pjson.version}](${current}) which will be available to install forever.`;
+const update_json = `\{\n  \"${pjson.packages[0].name}\": \"${masked}\"\n\}`
 
-markdown(`${first_line}\n${second_line}\n\`\`\`bash\n${install_tag}\n\`\`\`\n${fourth_line}\n\`\`\`bash\n${update_json}\n\`\`\`\n${last_line}`)
+markdown(`${first_line}\n${second_line}\n\`\`\`bash\n${install_tag}\n\`\`\`\n${fourth_line}\n\`\`\`bash\n${update_json}\n\`\`\``)
 EOT
     else
 cat << "EOT" > dangerfile.js
@@ -189,6 +187,8 @@ function package_json_finder(){
   diff_directories=$(format_dit_giff $diffs)
   diff_directories_array=(${diff_directories[@]})
 
+  echo -e "${GREEN}Full list: ${BLUE}${diff_directories_array[@]}${NC}"
+
   package_directories=()
 
   function json_locater(){
@@ -207,6 +207,7 @@ function package_json_finder(){
   }
 
   for i in ${!diff_directories_array[@]}; do 
+    echo -e "${RED}Running json_locator for: ${YELLOW}${diff_directories_array[$i]}${RED}.${NC}"
     json_locater ${diff_directories_array[$i]}
   done;
 
