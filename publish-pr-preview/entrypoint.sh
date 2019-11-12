@@ -60,18 +60,26 @@ EOT
       echo -e "${YELLOW}Running publishing process for: ${BLUE}$dir${YELLOW}.${NC}"
       cd $dir
 
-      authenticate_publish
-      npm_version_SHA
+      json_within=($(find . -name 'package.json'));
+      json_count=${#json_within[@]};
 
-      echo -e "${YELLOW}Publishing...${NC}"
-      if [ "${#INPUT_NPM_PUBLISH}" -eq "0" ]; then
-        npm publish --access=public --tag $tag
+      if [ "json_count" = "1" ]; then
+        authenticate_publish
+        npm_version_SHA
+
+        echo -e "${YELLOW}Publishing...${NC}"
+        if [ "${#INPUT_NPM_PUBLISH}" -eq "0" ]; then
+          npm publish --access=public --tag $tag
+        else
+          $INPUT_NPM_PUBLISH --access=public --tag $tag
+        fi
+        
+        pkgname="`node -e \"console.log(require('./package.json').name)\"`"
+        echo $(jq --arg PKG "$pkgname" '.packages[.packages | length] |= . + {"name": $PKG}' $GITHUB_WORKSPACE/published.json) > $GITHUB_WORKSPACE/published.json
       else
-        $INPUT_NPM_PUBLISH --access=public --tag $tag
+        :
       fi
-      
-      pkgname="`node -e \"console.log(require('./package.json').name)\"`"
-      echo $(jq --arg PKG "$pkgname" '.packages[.packages | length] |= . + {"name": $PKG}' $GITHUB_WORKSPACE/published.json) > $GITHUB_WORKSPACE/published.json
+
       cd $GITHUB_WORKSPACE
     done;
     if [ "${#confirmed_packages[@]}" -eq "1" ]; then
@@ -148,23 +156,12 @@ function remove_packages_to_skip(){
   skip_directories=($(unslash_end_of_args $INPUT_IGNORE) ${defaults[@]})
   package_directories_array=(${package_directories[@]})
 
-  all_json=($(find . -name 'package.json'));
-  total_packages_count=${#all_json[@]};
-
   for skip_directory in ${skip_directories[@]}; do
     for i in ${!package_directories_array[@]}; do
-      if [ "${package_directories_array[$i]}" = "." ]; then
-        if [ "$total_packages_count" = "1" ]; then
-          :
-        else
-          unset package_directories_array[$i]
-        fi
+      if [ $(echo "${package_directories_array[$i]}" | sed -E "s:^$skip_directory.*::") ]; then
+        :
       else
-        if [ $(echo "${package_directories_array[$i]}" | sed -E "s:^$skip_directory.*::") ]; then
-          :
-        else
-          unset package_directories_array[$i]
-        fi
+        unset package_directories_array[$i]
       fi
     done
   done
