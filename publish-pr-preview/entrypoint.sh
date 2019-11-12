@@ -99,13 +99,7 @@ cat << "EOT" > dangerfile.js
 const { markdown } = require('danger');
 const pjson = require('./published.json');
 
-function packages(){
-  let stringy = "";
-  pjson.packages.map(x=>{
-    stringy += package(x.name)
-  })
-  return stringy;
-}
+let packages = pjson.packages.reduce((acc, item) => acc + package(item.name), '');
 
 function package(name){
   const first_line = `Install using the following command:`
@@ -136,7 +130,7 @@ function package(name){
 const first_line = `The packages of this pull request have been released to Github Package Registry.`;
 const second_line = `Click on the following packages for instructions on how to install them:`;
 
-markdown(`${first_line}\n${second_line}\n${packages()}`)
+markdown(`${first_line}\n${second_line}\n${packages}`)
 EOT
     fi;
   fi;
