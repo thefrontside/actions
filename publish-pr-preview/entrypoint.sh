@@ -52,7 +52,7 @@ pjson.packages.map(x=>published.push(x.name));
 let formatted = published.join('\`, \`');
 
 function already_published(){
-  if(pjson.packages.length = 0){
+  if(pjson.packages.length = 0 || pjson.packages[0] == undefined){
     return '';
   } else if(pjson.packages.length = 1){
     return `\nWe were able to publish \`${formatted}\`.\n`
