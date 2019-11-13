@@ -62,7 +62,7 @@ EOT
       json_within=($(find . -name 'package.json'));
       json_count=${#json_within[@]};
 
-      if [ "json_count" != "1" ]; then
+      if [ "$json_count" != "1" ]; then
         echo -e "${YELLOW}Skipping publishing process for: ${BLUE}$dir${YELLOW} because there is a sub-package.${NC}"
       else
         echo -e "${YELLOW}Running publishing process for: ${BLUE}$dir${YELLOW}.${NC}"
