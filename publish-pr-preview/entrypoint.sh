@@ -62,7 +62,9 @@ EOT
       json_within=($(find . -name 'package.json'));
       json_count=${#json_within[@]};
 
-      if [ "json_count" = "1" ]; then
+      if [ "json_count" != "1" ]; then
+        echo -e "${YELLOW}Skipping publishing process for: ${BLUE}$dir${YELLOW} because there is a sub-package.${NC}"
+      else
         echo -e "${YELLOW}Running publishing process for: ${BLUE}$dir${YELLOW}.${NC}"
         authenticate_publish
         npm_version_SHA
@@ -76,8 +78,6 @@ EOT
         
         pkgname="`node -e \"console.log(require('./package.json').name)\"`"
         echo $(jq --arg PKG "$pkgname" '.packages[.packages | length] |= . + {"name": $PKG}' $GITHUB_WORKSPACE/published.json) > $GITHUB_WORKSPACE/published.json
-      else
-        echo -e "${YELLOW}Skipping publishing process for: ${BLUE}$dir${YELLOW} because there is a sub-package.${NC}"
       fi
 
       cd $GITHUB_WORKSPACE
@@ -187,7 +187,8 @@ function package_json_finder(){
   diff_directories=$(format_dit_giff $diffs)
   diff_directories_array=(${diff_directories[@]})
 
-  echo -e "${GREEN}Full list: ${BLUE}${diff_directories_array[@]}${NC}"
+  echo -e "${GREEN}Full diffs: ${BLUE}${diffs}${NC}"
+  echo -e "${GREEN}Full diffs formatted: ${BLUE}${diff_directories_array[@]}${NC}"
 
   package_directories=()
 
@@ -207,7 +208,7 @@ function package_json_finder(){
   }
 
   for i in ${!diff_directories_array[@]}; do 
-    echo -e "${RED}Running json_locator for: ${YELLOW}${diff_directories_array[$i]}${RED}.${NC}"
+    echo -e "${RED}Running json_locator for: ${YELLOW}${diff_directories_array[$i]}${RED} because of ${i}.${NC}"
     json_locater ${diff_directories_array[$i]}
   done;
 
