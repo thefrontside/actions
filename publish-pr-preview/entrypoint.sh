@@ -89,12 +89,10 @@ EOT
   for dir in ${confirmed_directories_array[@]}; do
     cd $dir
 
-    json_within=($(find . -name 'package.json'));
+    json_within=($(find . -name 'package.json' -not -path './node_modules/*'));
     json_count=${#json_within[@]};
 
     pkgname="`node -e \"console.log(require('./package.json').name)\"`"
-
-    echo -e "${RED}count: $json_count"
 
     if [ "$json_count" != "1" ]; then
       echo -e "${RED}Skipping publishing process for: ${YELLOW}$dir${RED} because there is a sub-package.${NC}"
