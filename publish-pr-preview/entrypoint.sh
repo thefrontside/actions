@@ -232,18 +232,22 @@ function package_json_finder(){
   package_directories=()
 
   function json_locater(){
-    cd $GITHUB_WORKSPACE/$1
-    if [ ! -f "package.json" ]; then
-      if [ "$(echo $1 | grep -c "/")" = "1" ]; then
-        super_directory=$(echo $1 | sed 's:\(.*\)\/.*:\1:g');
-        json_locater $super_directory
+    if [ -d "${GITHUB_WORKSPACE}/${1}" ]; then
+      cd $GITHUB_WORKSPACE/$1
+      if [ ! -f "package.json" ]; then
+        if [ "$(echo $1 | grep -c "/")" = "1" ]; then
+          super_directory=$(echo $1 | sed 's:\(.*\)\/.*:\1:g');
+          json_locater $super_directory
+        else
+          package_directories+=(".")
+        fi
       else
-        package_directories+=(".")
+        package_directories+=("$1")
       fi
+      cd $GITHUB_WORKSPACE
     else
-      package_directories+=("$1")
+      echo -e "${RED}Skipping ${YELLOW}$1${RED} because the directory does not exist.${NC}"
     fi
-    cd $GITHUB_WORKSPACE
   }
 
   for i in ${!diff_directories_array[@]}; do 
