@@ -55,9 +55,9 @@ function already_published(){
   if(pjson.packages.length = 0 || pjson.packages[0] == undefined){
     return '';
   } else if(pjson.packages.length = 1){
-    return `\nWe were able to publish \`${formatted}\`.\n`
+    return `\nWe were able to publish \`${formatted}\`. However... \n`
   } else {
-    return `\nWe were able to publish these packages: \`${formatted}\`.\n`;
+    return `\nWe were able to publish these packages: \`${formatted}\`. However... \n`;
   }
 }
   
@@ -66,7 +66,7 @@ const first_solution = `\`\`\`yml\n# .github/workflows/your_workflow.yml\n\njobs
 const second_solution = `\`\`\`yml\n# ../${pjson.error.directory}/package.json\n\n{\n  \"name\": \"${pjson.error.name}\",\n  \"publishConfig\": \{\n    \"registry\": \"https://npm.pkg.github.com/\"\n  \}\n\}\n\`\`\``
 
 const first_line = `:warning: WARNING :warning:`;
-const second_line = `However, we were \*not\* able to publish \`${pjson.error.name}\` because of one of two reasons:`
+const second_line = `We were \*not\* able to publish \`${pjson.error.name}\` because of one of two reasons:`
 const third_line = `1. You forgot to pass in \`NPM_AUTH_TOKEN\` in the workflow configuration:\n${first_solution}\n\n2. You meant to publish to \`Github Package Registry\` in which case you must configure the \`package.json\` file:\n${second_solution}`
 
 markdown(`${first_line}\n${already_published()}\n${second_line}\n\n${third_line}`)
