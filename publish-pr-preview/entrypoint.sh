@@ -41,6 +41,8 @@ function publish(){
         echo $(jq --arg NAME "$pkgname" --arg DIRECTORY "$dir" '.error.name = $NAME | .error.directory = $DIRECTORY' $GITHUB_WORKSPACE/published.json) > $GITHUB_WORKSPACE/published.json 
         cd $GITHUB_WORKSPACE
 
+        echo $(jq '.' ./published.json)
+
 cat << "EOT" > dangerfile.js
 const { markdown } = require('danger');
 const pjson = require('./published.json');
@@ -53,7 +55,7 @@ function already_published(){
   if(pjson.packages.length = 0){
     return '';
   } else if(pjson.packages.length = 1){
-    return `\nWe were able to publish \`${formatted}\`.\n${published.length} ${published[0]}`
+    return `\nWe were able to publish \`${formatted}\`.\n`
   } else {
     return `\nWe were able to publish these packages: \`${formatted}\`.\n`;
   }
