@@ -53,7 +53,7 @@ function already_published(){
   if(pjson.packages.length = 0){
     return '';
   } else if(pjson.packages.length = 1){
-    return `\nWe were able to publish \`${formatted}\`.\n`
+    return `\nWe were able to publish \`${formatted}\`.\n${published.length} ${published[0]}`
   } else {
     return `\nWe were able to publish these packages: \`${formatted}\`.\n`;
   }
@@ -189,13 +189,12 @@ function remove_packages_to_skip(){
     done;
   }
 
-  defaults=("node_modules" ".github")
+  defaults=("node_modules")
   skip_directories=($(unslash_end_of_args $INPUT_IGNORE) ${defaults[@]})
   confirmed_directories_array=(${confirmed_directories[@]})
 
   for skip_directory in ${skip_directories[@]}; do
     for i in ${!confirmed_directories_array[@]}; do
-      echo -e "${RED}Checking ${YELLOW}$skip_directory${RED} against ${YELLOW}${confirmed_directories_array[$i]}"
       if [ $(echo "${confirmed_directories_array[$i]}" | sed -E "s:^$skip_directory.*::") ]; then
         :
       else
