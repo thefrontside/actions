@@ -195,6 +195,7 @@ function remove_packages_to_skip(){
 
   for skip_directory in ${skip_directories[@]}; do
     for i in ${!confirmed_directories_array[@]}; do
+      echo -e "${RED}Checking ${YELLOW}$skip_directory${RED} against ${YELLOW}${confirmed_directories_array[$i]}"
       if [ $(echo "${confirmed_directories_array[$i]}" | sed -E "s:^$skip_directory.*::") ]; then
         :
       else
