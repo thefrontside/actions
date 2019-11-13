@@ -94,6 +94,8 @@ EOT
 
     pkgname="`node -e \"console.log(require('./package.json').name)\"`"
 
+    echo -e "${RED}count: $json_count"
+
     if [ "$json_count" != "1" ]; then
       echo -e "${RED}Skipping publishing process for: ${YELLOW}$dir${RED} because there is a sub-package.${NC}"
     else
