@@ -17,12 +17,12 @@ function run_danger(){
 
 function publish(){
   function install_with_CLI(){
+    npm config set unsafe-perm true
     if [ -f "yarn.lock" ]; then
       echo -e "${YELLOW}Running yarn...${NC}"
       yarn
     else
       echo -e "${YELLOW}Running npm...${NC}"
-      npm config set unsafe-perm true
       npm install
     fi
   }
