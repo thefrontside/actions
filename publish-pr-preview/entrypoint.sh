@@ -191,7 +191,7 @@ function remove_packages_to_skip(){
     done;
   }
 
-  defaults=("node_modules")
+  defaults=("node_modules .github")
   skip_directories=($(unslash_end_of_args $INPUT_IGNORE) ${defaults[@]})
   confirmed_directories_array=(${confirmed_directories[@]})
 
