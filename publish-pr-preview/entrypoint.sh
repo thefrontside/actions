@@ -8,11 +8,15 @@ BLUE='\033[1;34m'
 NC='\033[0m'
 
 function run_danger(){
-  echo -e "${BLUE}Installing Danger CI..${NC}"
-  yarn global add danger --dev
-  export PATH="$(yarn global bin):$PATH"
-  echo -e "${BLUE}Running Danger CI..${NC}"
-  danger ci
+  if [ "$NO_COMMENT" = true ]; then
+    echo "skipping danger..."
+  else
+    echo -e "${BLUE}Installing Danger CI..${NC}"
+    yarn global add danger --dev
+    export PATH="$(yarn global bin):$PATH"
+    echo -e "${BLUE}Running Danger CI..${NC}"
+    danger ci
+  fi
 }
 
 function publish(){
@@ -56,7 +60,7 @@ function publish(){
         echo -e "${RED}ERROR: ${YELLOW}NPM_AUTH_TOKEN not detected. Please add your NPM Token to your repository's secrets.${NC}"
         echo -e "${BLUE}Tip: ${YELLOW}If you meant to publish to Github Package Registry, you must specify so in the package.json file.${NC}"
 
-        echo $(jq --arg NAME "$pkgname" --arg DIRECTORY "$dir" '.error.name = $NAME | .error.directory = $DIRECTORY' $GITHUB_WORKSPACE/published.json) > $GITHUB_WORKSPACE/published.json 
+        echo $(jq --arg NAME "$pkgname" --arg DIRECTORY "$dir" '.error.name = $NAME | .error.directory = $DIRECTORY' $GITHUB_WORKSPACE/published.json) > $GITHUB_WORKSPACE/published.json
         cd $GITHUB_WORKSPACE
 
         echo $(jq '.' ./published.json)
@@ -78,7 +82,7 @@ function already_published(){
     return `\nWe were able to publish these packages: \`${formatted}\`. However... \n`;
   }
 }
-  
+
 const first_solution = `\`\`\`yml\n# .github/workflows/your_workflow.yml\n\njobs:\n  job-name:\n    name: Job Name\n    runs-on: ubuntu-latest\n    steps:\n    - uses: actions/checkout@v1\n    - uses: thefrontside/actions/publish-pr-preview@master\n      env:\n      NPM_AUTH_TOKEN: \$\{\{ secrets.NPM_AUTH_TOKEN \}\}\n\`\`\``
 
 const second_solution = `\`\`\`yml\n# ../${pjson.error.directory}/package.json\n\n{\n  \"name\": \"${pjson.error.name}\",\n  \"publishConfig\": \{\n    \"registry\": \"https://npm.pkg.github.com/\"\n  \}\n\}\n\`\`\``
@@ -92,8 +96,9 @@ EOT
         run_danger
         exit 1
       else
-        echo "registry=https://registry.npmjs.org/" >> .npmrc
-        echo "//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}" >> .npmrc
+        echo 'publishin'
+        # echo "registry=https://registry.npmjs.org/" >> .npmrc
+        # echo "//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}" >> .npmrc
       fi
     fi
   }
@@ -128,7 +133,7 @@ EOT
       else
         $INPUT_NPM_PUBLISH --access=public --tag $tag
       fi
-      
+
       echo $(jq --arg PKG "$pkgname" '.packages[.packages | length] |= . + {"name": $PKG}' $GITHUB_WORKSPACE/published.json) > $GITHUB_WORKSPACE/published.json
     fi
 
@@ -175,21 +180,21 @@ function package(name){
   const json_line = `\"${name}\": \"${pjson.tag}\"`
 
   return `<details><summary>${name}</summary>
-  
+
   ---
   ${first_line}
-  
+
   \`\`\`bash
   ${install_tag}
   \`\`\`
   ${or_line}
-  
+
   \`\`\`bash
   {
     ${json_line}
   }
   \`\`\`
-  
+
   ---
   </details>`
 }
@@ -230,15 +235,15 @@ function remove_packages_to_skip(){
 
 function package_json_finder(){
   function format_dit_giff(){
-    for to_format in $*; do 
-      if [ "$(echo $to_format | grep -c "/")" = "0" ]; then 
+    for to_format in $*; do
+      if [ "$(echo $to_format | grep -c "/")" = "0" ]; then
         echo ".";
-      else 
+      else
         echo $(echo $to_format | sed 's:\(.*\)\/.*:\1:g');
       fi;
     done;
   }
-  
+
   git checkout $GITHUB_BASE_REF
   git checkout $GITHUB_HEAD_REF
 
@@ -269,7 +274,7 @@ function package_json_finder(){
     fi
   }
 
-  for i in ${!diff_directories_array[@]}; do 
+  for i in ${!diff_directories_array[@]}; do
     echo -e "${GREEN}Running json_locator for: ${YELLOW}${diff_directories_array[$i]}${NC}"
     json_locater ${diff_directories_array[$i]}
   done;
@@ -286,7 +291,8 @@ function check_prerequisites(){
   jsonpath="../workflow/event.json"
   headurl="$(jq '."pull_request"|."head"|."repo"|."url"' $jsonpath)"
   baseurl="$(jq '."pull_request"|."base"|."repo"|."url"' $jsonpath)"
-  
+
+
   if [[ "$PR" = "null" ]]; then
     echo -e "${RED}Error: ${YELLOW}This action should only be called from a pull request. Please check your workflow configuration.${NC}"
   else

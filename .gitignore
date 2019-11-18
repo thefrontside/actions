@@ -1,1 +1,5 @@
 node_modules/
+/test/run
+/test/registry/storage
+/yarn-error.log
+/test/registry/htpasswd
