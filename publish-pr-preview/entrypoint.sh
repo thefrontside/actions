@@ -48,7 +48,8 @@ function publish(){
     gpr_publish_config=$(jq '."publishConfig"|."registry"' ./package.json | sed 's:.*npm.pkg.github.*:true:');
     if [ "$gpr_publish_config" = true ]; then
       echo -e "${GREEN}Authenticating for ${YELLOW}Github Package Registry${NC}"
-      echo "//npm.pkg.github.com/:_authToken=$GITHUB_TOKEN" >> .npmrc
+      echo "registry=https://npm.pkg.github.com/" >> .npmrc
+      echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" >> .npmrc
     else
       echo -e "${GREEN}Authenticating for ${YELLOW}NPMjs${NC}"
       if [ "${#NPM_AUTH_TOKEN}" -eq "0" ]; then
@@ -91,7 +92,8 @@ EOT
         run_danger
         exit 1
       else
-        echo "//registry.npmjs.org/:_authToken=$NPM_AUTH_TOKEN" >> .npmrc
+        echo "registry=https://registry.npmjs.org/" >> .npmrc
+        echo "//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}" >> .npmrc
       fi
     fi
   }
