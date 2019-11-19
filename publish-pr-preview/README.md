@@ -4,22 +4,15 @@
 ## Monorepo Support
 This action now supports monorepos and will do all of the heavy lifting without burdening the developer with any complicated setup process. The action automatically detects which files have been modified and will only publish packages that have changes proposed as to not use up unnecessary resources.
 
-## Package Registry
-The registry to which the packages will be published is determined by the `publishConfig` settings in the `package.json` file. If you wish to publish to `Github Package Registry`, please include the following in your `package.json` file for each of the packages in your repository:
-```
-{
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com/"
-  }
-}
-```
-Without this configuration, the action will default to publishing to `npmjs` and will require `NPM_AUTH_TOKEN` to be passed in through the workflow.
+## Registry
+This action will publish to `npmjs` by default but you can specify to which registry you want to publish by using the `REGISTRY` argument in your workflow. See `USAGE` for example.
 
 This is not to be mistaken with the `SCOPES` argument which is for retrieving packages from private organizations and does not have anything to do with publishing.
 
 ## Requirements
 - Meant to only run on a pull request
 - Pass in `GITHUB_TOKEN` (but see `Private Dependencies` below)
+- Optional: Specify `REGISTRY` argument for which registry you want this action to publish.
 - Optional: Specify `IGNORE` argument for directory of packages you don't want published for monorepos
   - Directories specified in `.gitignore` won't be processed to begin with so for example if you don't want to include `./node_modules` and it's already included in your `.gitignore` file then there's no need to add it to the `IGNORE` arg in the workflow
   - Packages that have sub-packages within its directory will intentionally skip during the publish process.
@@ -50,6 +43,7 @@ jobs:
       uses: thefrontside/actions/publish-pr-preview@master
       with:
         NPM_PUBLISH: npm run my-script
+        REGISTRY: https://npm.pkg.github.com
         IGNORE: folder/example_package folder/example_package2
         SCOPES: minkimcello@npm thefrontisde@gpr
       env:

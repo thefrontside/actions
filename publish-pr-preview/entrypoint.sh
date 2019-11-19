@@ -23,33 +23,33 @@ function publish(){
       name=$(echo $scope | sed "s:@.*::")
       if [ "$registry" = "gpr" ]; then
         echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" >> ~/.npmrc
-        echo "@$name:registry=https://npm.pkg.github.com/" >> ~/.npmrc
+        echo "@$name:registry=https://npm.pkg.github.com" >> ~/.npmrc
       elif [ "$registry" = "npm" ]; then
         if [ "${#NPM_AUTH_TOKEN}" -eq "0" ]; then
           echo -e "${RED}ERROR: ${YELLOW}NPM_AUTH_TOKEN not detected. Please add your NPM Token to your repository's secrets.${NC}"
           echo -e "${BLUE}Tip: ${YELLOW}If you meant to publish to Github Package Registry, you must specify so in the package.json file.${NC}"
           exit 1
         else
-          echo "@${name}:registry=https://registry.npmjs.org/" >> ~/.npmrc
+          echo "@${name}:registry=https://registry.npmjs.org" >> ~/.npmrc
           echo "//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}" >> ~/.npmrc
         fi
       fi
     done;
     if [ -f "yarn.lock" ]; then
-      echo -e "${YELLOW}Running yarn...${NC}"
+      echo -e "${YELLOW}Installing using yarn...${NC}"
       yarn
     else
-      echo -e "${YELLOW}Running npm...${NC}"
+      echo -e "${YELLOW}Installing using npm...${NC}"
       npm install
     fi
   }
 
   function authenticate_publish(){
-    gpr_publish_config=$(jq '."publishConfig"|."registry"' ./package.json | sed 's:.*npm.pkg.github.*:true:');
-    if [ "$gpr_publish_config" = true ]; then
-      echo -e "${GREEN}Authenticating for ${YELLOW}Github Package Registry${NC}"
-      echo "registry=https://npm.pkg.github.com/" >> .npmrc
-      echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" >> .npmrc
+    if [ ! "${#INPUT_REGISTRY}" -eq "0" ]; then 
+      registry_unslashed=$(echo ${INPUT_REGISTRY} | sed 's:\/$::' | sed 's:.*\/\/:\/\/:')
+      echo -e "${GREEN}Authenticating for ${YELLOW}$registry_unslashed${NC}"
+      echo "registry=${INPUT_REGISTRY}" >> .npmrc
+      echo "${registry_unslashed}/:_authToken=${GITHUB_TOKEN}" >> .npmrc
     else
       echo -e "${GREEN}Authenticating for ${YELLOW}NPMjs${NC}"
       if [ "${#NPM_AUTH_TOKEN}" -eq "0" ]; then
@@ -81,18 +81,18 @@ function already_published(){
   
 const first_solution = `\`\`\`yml\n# .github/workflows/your_workflow.yml\n\njobs:\n  job-name:\n    name: Job Name\n    runs-on: ubuntu-latest\n    steps:\n    - uses: actions/checkout@v1\n    - uses: thefrontside/actions/publish-pr-preview@master\n      env:\n      NPM_AUTH_TOKEN: \$\{\{ secrets.NPM_AUTH_TOKEN \}\}\n\`\`\``
 
-const second_solution = `\`\`\`yml\n# ../${pjson.error.directory}/package.json\n\n{\n  \"name\": \"${pjson.error.name}\",\n  \"publishConfig\": \{\n    \"registry\": \"https://npm.pkg.github.com/\"\n  \}\n\}\n\`\`\``
+const second_solution = `\`\`\`yml\n# .github/workflows/your_workflow.yml\n\njobs:\n  job-name:\n    name: Job Name\n    runs-on: ubuntu-latest\n    steps:\n    - uses: actions/checkout@v1\n    - uses: thefrontside/actions/publish-pr-preview@master\n      with:\n      REGISTRY: https:\/\/npm.pkg.github.com\n\`\`\``
 
 const first_line = `:warning: WARNING :warning:`;
 const second_line = `We were \*not\* able to publish \`${pjson.error.name}\` because of one of two reasons:`
-const third_line = `1. You forgot to pass in \`NPM_AUTH_TOKEN\` in the workflow configuration:\n${first_solution}\n\n2. You meant to publish to \`Github Package Registry\` in which case you must configure the \`package.json\` file:\n${second_solution}`
+const third_line = `1. You forgot to pass in \`NPM_AUTH_TOKEN\` in the workflow configuration:\n${first_solution}\n\n2. You meant to publish to a different registry in which case you must pass in the \`REGISTRY\` argument in your workflow file:\n${second_solution}`
 
 markdown(`${first_line}\n${already_published()}\n${second_line}\n\n${third_line}`)
 EOT
         run_danger
         exit 1
       else
-        echo "registry=https://registry.npmjs.org/" >> .npmrc
+        echo "registry=https://registry.npmjs.org" >> .npmrc
         echo "//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}" >> .npmrc
       fi
     fi
