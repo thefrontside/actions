@@ -46,10 +46,10 @@ function publish(){
 
   function authenticate_publish(){
     if [ ! "${#INPUT_REGISTRY}" -eq "0" ]; then 
-      registry_unslashed=$(echo ${INPUT_REGISTRY} | sed 's:\/$::' | sed 's:.*\/\/:\/\/:')
-      echo -e "${GREEN}Authenticating for ${YELLOW}$registry_unslashed${NC}"
+      registry_formatted=$(echo ${INPUT_REGISTRY} | sed 's:\/$::' | sed 's:.*\/\/:\/\/:')
+      echo -e "${GREEN}Authenticating for ${YELLOW}$registry_formatted${NC}"
       echo "registry=${INPUT_REGISTRY}" >> .npmrc
-      echo "${registry_unslashed}/:_authToken=${GITHUB_TOKEN}" >> .npmrc
+      echo "${registry_formatted}/:_authToken=${GITHUB_TOKEN}" >> .npmrc
     else
       echo -e "${GREEN}Authenticating for ${YELLOW}NPMjs${NC}"
       if [ "${#NPM_AUTH_TOKEN}" -eq "0" ]; then
@@ -92,7 +92,7 @@ EOT
         run_danger
         exit 1
       else
-        echo "registry=https://registry.npmjs.org" >> .npmrc
+        echo "registry=https://registry.npmjs.org/" >> .npmrc
         echo "//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}" >> .npmrc
       fi
     fi
