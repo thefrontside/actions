@@ -45,7 +45,7 @@ jobs:
         NPM_PUBLISH: npm run my-script
         REGISTRY: https://npm.pkg.github.com
         IGNORE: folder/example_package folder/example_package2
-        SCOPES: minkimcello@npm thefrontisde@gpr
+        SCOPES: minkimcello@npm thefrontside@gpr
       env:
         GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
