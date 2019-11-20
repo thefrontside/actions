@@ -22,16 +22,16 @@ function publish(){
       registry=$(echo $scope | sed "s:.*@::")
       name=$(echo $scope | sed "s:@.*::")
       if [ "$registry" = "gpr" ]; then
-        echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" >> ~/.npmrc
-        echo "@$name:registry=https://npm.pkg.github.com/" >> ~/.npmrc
+        echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" >> .npmrc
+        echo "@$name:registry=https://npm.pkg.github.com/" >> .npmrc
       elif [ "$registry" = "npm" ]; then
         if [ "${#NPM_AUTH_TOKEN}" -eq "0" ]; then
           echo -e "${RED}ERROR: ${YELLOW}NPM_AUTH_TOKEN not detected. Please add your NPM Token to your repository's secrets.${NC}"
           echo -e "${BLUE}Tip: ${YELLOW}If you meant to publish to Github Package Registry, you must specify so in the package.json file.${NC}"
           exit 1
         else
-          echo "@${name}:registry=https://registry.npmjs.org/" >> ~/.npmrc
-          echo "//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}" >> ~/.npmrc
+          echo "@${name}:registry=https://registry.npmjs.org/" >> .npmrc
+          echo "//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}" >> .npmrc
         fi
       fi
     done;

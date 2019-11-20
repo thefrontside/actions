@@ -5,7 +5,7 @@
 This action now supports monorepos and will do all of the heavy lifting without burdening the developer with any complicated setup process. The action automatically detects which files have been modified and will only publish packages that have changes proposed as to not use up unnecessary resources.
 
 ## Registry
-This action will publish to `npmjs` by default but you can specify to which registry you want to publish by using the `REGISTRY` argument in your workflow. See `USAGE` for example.
+This action will publish to `npmjs` by default but you can specify to which registry you want to publish by using the `REGISTRY` argument in your workflow. The user-specified registry will authenticate with `GITHUB_TOKEN` so you will need to pass in your own personal access token in the workflow. See example in `USAGE` below.
 
 This is not to be mistaken with the `SCOPES` argument which is for retrieving packages from private organizations and does not have anything to do with publishing.
 
