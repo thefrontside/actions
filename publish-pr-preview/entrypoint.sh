@@ -48,8 +48,7 @@ function publish(){
     gpr_publish_config=$(jq '."publishConfig"|."registry"' ./package.json | sed 's:.*npm.pkg.github.*:true:');
     if [ "$gpr_publish_config" = true ]; then
       echo -e "${GREEN}Authenticating for ${YELLOW}Github Package Registry${NC}"
-      echo "registry=https://npm.pkg.github.com/" >> .npmrc
-      echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" >> .npmrc
+      echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" >> ~/.npmrc
     else
       echo -e "${GREEN}Authenticating for ${YELLOW}NPMjs${NC}"
       if [ "${#NPM_AUTH_TOKEN}" -eq "0" ]; then
@@ -92,8 +91,7 @@ EOT
         run_danger
         exit 1
       else
-        echo "registry=https://registry.npmjs.org/" >> .npmrc
-        echo "//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}" >> .npmrc
+        echo "//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}" >> ~/.npmrc
       fi
     fi
   }
@@ -124,9 +122,9 @@ EOT
 
       echo -e "${GREEN}Publishing...${NC}"
       if [ "${#INPUT_NPM_PUBLISH}" -eq "0" ]; then
-        npm publish --access=public --tag $tag
+        npm_config_registry=$INPUT_REGISTRY npm_config_unsafe_perm="true" npm publish --access=public --tag $tag
       else
-        $INPUT_NPM_PUBLISH --access=public --tag $tag
+        npm_config_registry=$INPUT_REGISTRY npm_config_unsafe_perm="true" $INPUT_NPM_PUBLISH --access=public --tag $tag
       fi
       
       echo $(jq --arg PKG "$pkgname" '.packages[.packages | length] |= . + {"name": $PKG}' $GITHUB_WORKSPACE/published.json) > $GITHUB_WORKSPACE/published.json
