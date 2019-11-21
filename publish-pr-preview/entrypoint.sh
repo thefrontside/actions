@@ -48,8 +48,8 @@ function publish(){
     if [ ! "${#INPUT_REGISTRY}" -eq "0" ]; then 
       registry_formatted=$(echo ${INPUT_REGISTRY} | sed 's:\/$::' | sed 's:.*\/\/:\/\/:')
       echo -e "${GREEN}Authenticating for ${YELLOW}$registry_formatted${NC}"
-      echo "registry=${INPUT_REGISTRY}" >> .npmrc # temporary until PR #43
-      echo "${registry_formatted}/:_authToken=${GITHUB_TOKEN}" >> .npmrc
+      echo "registry=${INPUT_REGISTRY}" >> ~/.npmrc # temporary until PR #43
+      echo "${registry_formatted}/:_authToken=${GITHUB_TOKEN}" >> ~/.npmrc
     else
       echo -e "${GREEN}Authenticating for ${YELLOW}NPMjs${NC}"
       if [ "${#NPM_AUTH_TOKEN}" -eq "0" ]; then
@@ -92,8 +92,8 @@ EOT
         run_danger
         exit 1
       else
-        echo "registry=https://registry.npmjs.org/" >> .npmrc
-        echo "//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}" >> .npmrc
+        echo "registry=https://registry.npmjs.org/" >> ~/.npmrc
+        echo "//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}" >> ~/.npmrc
       fi
     fi
   }
