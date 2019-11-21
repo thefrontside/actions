@@ -48,7 +48,7 @@ function publish(){
     if [ ! "${#INPUT_REGISTRY}" -eq "0" ]; then 
       registry_formatted=$(echo ${INPUT_REGISTRY} | sed 's:\/$::' | sed 's:.*\/\/:\/\/:')
       echo -e "${GREEN}Authenticating for ${YELLOW}$registry_formatted${NC}"
-      echo "registry=${INPUT_REGISTRY}" >> .npmrc
+      echo "registry=${INPUT_REGISTRY}" >> .npmrc # temporary until PR #43
       echo "${registry_formatted}/:_authToken=${GITHUB_TOKEN}" >> .npmrc
     else
       echo -e "${GREEN}Authenticating for ${YELLOW}NPMjs${NC}"
