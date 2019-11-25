@@ -17,7 +17,6 @@ function run_danger(){
 
 function publish(){
   function install_with_CLI(){
-    npm config set unsafe-perm true
     if [ -f "yarn.lock" ]; then
       npm_config_unsafe_perm="true" yarn
     else
