@@ -7,7 +7,7 @@ This action now supports monorepos and will do all of the heavy lifting without 
 ## Requirements
 - Meant to only run on a pull request
 - Pass in `GITHUB_TOKEN`
-- Pass in `NPM_TOKEN`
+- Pass in `NPM_AUTH_TOKEN`
 - Optional: Specify `IGNORE` argument for directory of packages you don't want published for monorepos
   - Directories specified in `.gitignore` won't be processed to begin with so for example if you don't want to include `./node_modules` and it's already included in your `.gitignore` file then there's no need to add it to the `IGNORE` arg in the workflow
   - Packages that have sub-packages within its directory will intentionally skip during the publish process.
@@ -22,6 +22,11 @@ By default this action will attempt to publish to `npmjs`. If you wish to publis
 
 ## Usage
 ```yaml
+on:
+  pull_request:
+    branches:
+      - master
+
 jobs:
   job_name:
     name: Job Name
@@ -35,5 +40,5 @@ jobs:
         IGNORE: folder/example_package folder/example_package2
       env:
         GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-        NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
 ```
