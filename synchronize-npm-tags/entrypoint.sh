@@ -23,7 +23,7 @@ for tag in $npmtags; do
     then
       echo -e "${GREEN}Keeping tag, ${YELLOW}$tag${GREEN}, because it is protected.${NC}"
   else
-    echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
+    echo "//registry.npmjs.org/:_authToken=$NPM_AUTH_TOKEN" > ~/.npmrc
     npm dist-tag rm $package $tag
     echo -e "${RED}Removed tag, ${YELLOW}$tag${RED} from NPM because it did not match any existing branches.${NC}"
   fi

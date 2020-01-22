@@ -2,7 +2,7 @@
 With the exception of `latest` and any other tag labels that are passed in as arguments, this action will remove tags from NPM that do not match any existing branch names.
 
 ## Requirements
-- Pass in `NPM_TOKEN`.
+- Pass in `NPM_AUTH_TOKEN`.
 - Optional: You can specify any NPM tags you'd like to `preserve`.
 
 ## Usage
@@ -17,5 +17,5 @@ jobs:
       with:
         preserve: dev beta alpha
       env:
-        NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
 ```
