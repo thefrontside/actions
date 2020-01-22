@@ -3,7 +3,7 @@ This action will push a tag to Github and then publish to NPM after it confirms 
 
 ## Requirements
 - Pass in `GITHUB_TOKEN`. 
-- Pass in `NPM_AUTH_TOKEN`.
+- Pass in `NPM_TOKEN`.
 - Optional: `NPM_PUBLISH` argument is available if you want to run a different command. `npm publish` will run as default.
 
 ## Usage
@@ -20,5 +20,5 @@ jobs:
         NPM_PUBLISH: npm run my-script
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+        NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 ```
