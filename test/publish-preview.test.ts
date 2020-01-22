@@ -7,8 +7,10 @@ describe('publishing a preview package', () => {
 
   describe('when a PR event happens within the repository', () => {
     let output: Output;
+
     beforeEach(async () => {
       output = await actions.run('publish-pr-preview', {
+        packageName: 'coolpackage',
         headRef: 'cool-branch',
         change: {
           'index.js': 'export default { hello: "world" }'
@@ -37,5 +39,20 @@ describe('publishing a preview package', () => {
     it('publishes the preview package to NPM with a SHA', () => {
       expect(output.stdout).toMatch(/\+ coolpackage@1.0.0-\w{7}/)
     });
+
+    describe('downloading the package', () => {
+      let version: string, index: string;
+      beforeEach(async () => {
+        [ , version ]  = output.stdout.match(/\+ coolpackage@(1.0.0-\w{7})/);
+        await actions.spawn("npm", ["pack", "coolpackage"]);
+        await actions.spawn("tar", ["xzvf", `coolpackage-${version}.tgz`]);
+        index = await actions.readFile("package/index.js");
+      });
+      it('contains the contents that we put into it', () => {
+        expect(index).toEqual('export default { hello: "world" }');
+      });
+
+    });
+
   });
 });

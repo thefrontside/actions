@@ -8,6 +8,8 @@ export interface Output {
   stderr: string;
 }
 
+export type SpawnOptions = cp.SpawnOptions;
+
 
 export function* spawn(command: string, args: string[], options: cp.SpawnOptions = {}): Operation {
   let action = cp.spawn(command, args, {...options, stdio: process.env.debug ? 'inherit' : 'pipe' });

@@ -22,3 +22,10 @@ export function writeFile(path: string, content: string): Operation {
     }
   }
 }
+
+export function readFile(path: string): Operation {
+  return function* readContents() {
+    let [ content ]: [ string ] = yield errback(cb => Fs.readFile(path, { encoding: 'utf8' }, cb));
+    return content;
+  }
+}

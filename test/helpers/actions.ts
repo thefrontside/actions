@@ -3,8 +3,8 @@ import * as Path from 'path';
 import { Index, Repository, Signature, Oid, Reference } from 'nodegit';
 import { Operation } from 'effection';
 
-import { rimraf, mkdir, writeFile } from './fs';
-import { spawn, Output } from './spawn';
+import { rimraf, mkdir, writeFile, readFile } from './fs';
+import { spawn, Output, SpawnOptions } from './spawn';
 import { World } from './world';
 
 type ActionName = 'publish-pr-preview';
@@ -19,10 +19,26 @@ interface ActionSpec {
   change: Patch;
   event: any;
   env: NodeJS.ProcessEnv
+  packageName: string;
 }
 
 
 export const actions = {
+  spawn(command: string, args: string[], options: SpawnOptions = {
+    cwd: Path.join(process.cwd(), 'test', 'run'),
+    env: {
+      PATH: process.env.PATH,
+      HOME: Path.join(process.cwd(), 'test', 'run', 'home')
+    }
+  }) {
+
+    return World.fork(spawn(command, args, options));
+  },
+
+  readFile(path: string): Promise<string> {
+    return World.fork(readFile(Path.join(process.cwd(), 'test', 'run', path)));
+  },
+
   run(name: ActionName, spec: ActionSpec): Promise<Output> {
     return World.fork(function* runAction() {
       let path = Path.join(process.cwd(), 'test', 'run');
@@ -54,7 +70,7 @@ export const actions = {
 
       let repoPath = Path.join(path, 'repo');
       let { headRef, baseRef = 'master' } = spec;
-      let repo: Repository = yield createGitRepository(repoPath);
+      let repo: Repository = yield createGitRepository(repoPath, spec.packageName);
 
       yield spawn("npm-auth-to-token", ['-u', 'user', '-p', 'password', '-e', 'user@example.com', '-r', 'http://localhost:4873'], {
         cwd: repoPath,
@@ -123,7 +139,7 @@ function* applyChanges(repo: Repository, patch: Patch, path: string[] = []) {
   return files;
 }
 
-function createGitRepository(path: string): Operation {
+function createGitRepository(path: string, packageName: string): Operation {
   return function* createRepository() {
     yield mkdir(path);
 
@@ -132,7 +148,7 @@ function createGitRepository(path: string): Operation {
 
     // setup the npm package sources
     yield writeFile(Path.join(path, 'package.json'), JSON.stringify({
-      "name": "coolpackage",
+      "name": packageName,
       "version": "1.0.0",
       "private": false,
       "description": "Just a test package"
