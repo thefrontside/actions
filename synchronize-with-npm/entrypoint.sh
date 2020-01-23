@@ -6,9 +6,9 @@ GREEN='\033[1;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m'
 
-if [ "${#NPM_AUTH_TOKEN}" -eq "0" ]
+if [ "${#NPM_TOKEN}" -eq "0" ]
   then
-    echo -e "${RED}NPM_AUTH_TOKEN not detected. Please add your NPM Token to your repository's secrets.${NC}"
+    echo -e "${RED}NPM_TOKEN not detected. Please add your NPM Token to your repository's secrets.${NC}"
   else 
     version="`node -e \"console.log(require('./package.json').version)\"`"
     package="`node -e \"console.log(require('./package.json').name)\"`"
@@ -26,7 +26,7 @@ if [ "${#NPM_AUTH_TOKEN}" -eq "0" ]
         git tag --force "v$version"
         git push --force  --tags "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY.git"
 
-        echo "//registry.npmjs.org/:_authToken=$NPM_AUTH_TOKEN" > ~/.npmrc
+        echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
         npm config set unsafe-perm true
         npm install
         if [ "${#INPUT_NPM_PUBLISH}" -eq "0" ]
