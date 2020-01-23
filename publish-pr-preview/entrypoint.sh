@@ -42,11 +42,14 @@ function publish(){
 
     json_within=($(find . -name 'package.json' -not -path './node_modules/*'));
     json_count=${#json_within[@]};
+    is_private=$(echo $(jq '.private' package.json))
 
     pkgname="`node -e \"console.log(require('./package.json').name)\"`"
 
     if [ "$json_count" != "1" ]; then
       echo -e "${RED}Skipping publishing process for: ${YELLOW}$dir${RED} because there is a sub-package.${NC}"
+    elif [ "$is_private" = "true" ]; then
+      echo -e "${RED}Skipping publishing process for: ${YELLOW}$dir${RED} because package is marked as private and therefore not intended to be published.${NC}"
     else
       echo -e "${GREEN}Running publishing process for: ${YELLOW}$dir${NC}"
       npm_version_SHA
