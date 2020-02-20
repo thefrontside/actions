@@ -1,10 +1,15 @@
 # Synchronize with NPM
-This action will push a tag to Github and then publish to NPM after it confirms the package version has not been published already.
+This action will automatically detect which packages of a monorepo have changed to determine which packages to publish (and works fine with single repositories too).
+
+The action will not publish packages that has a `package.json` within its sub-directories.
 
 ## Requirements
-- Pass in `GITHUB_TOKEN`. 
+- Pass in `secrets.GITHUB_TOKEN` into `GITHUB_TOKEN`.
+  - :exclamation: Must be `GITHUB_TOKEN` and not a personal access token of a bot. :exclamation:
 - Pass in `NPM_TOKEN`.
+- Optional: Specify `IGNORE` argument for directory of packages you don't want published.
 - Optional: `NPM_PUBLISH` argument is available if you want to run a different command. `npm publish` will run as default.
+  - :warning: However, if you provide this argument, it will run that script to publish for every package. :warning:
 
 ## Usage
 ```yaml
