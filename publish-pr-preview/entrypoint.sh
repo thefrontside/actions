@@ -36,6 +36,11 @@ function publish(){
 
   install_with_CLI
   echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" >> ~/.npmrc
+  
+  if [ "${#INPUT_BEFORE_ALL}" -ne "0" ]; then
+    echo -e "${RED}Runnning before_all: ${YELLOW}$INPUT_BEFORE_ALL${RED}${NC}"
+    $INPUT_BEFORE_ALL
+  fi
 
   for dir in ${confirmed_directories_array[@]}; do
     cd $dir
