@@ -121,6 +121,11 @@ function publish(){
 
   install_with_CLI
 
+  if [ "${#INPUT_BEFORE_ALL}" -ne "0" ]; then
+    echo -e "${RED}Runnning before_all: ${YELLOW}$INPUT_BEFORE_ALL${RED}${NC}"
+    $INPUT_BEFORE_ALL
+  fi
+
   for package in ${publish_directories[@]}; do
     cd $GITHUB_WORKSPACE/$package
 
