@@ -8,7 +8,7 @@ BLUE='\033[1;34m'
 NC='\033[0m'
 
 function git_setup(){
-  git remote set-url origin https://${GITHUB_TOKEN}:x-oauth-basic@github.com/${GITHUB_REPOSITORY}.git
+  git remote set-url origin https://x-oauth-basic:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
   git fetch origin +refs/heads/*:refs/heads/*
 
   branch="${GITHUB_REF#*refs\/heads\/}"
