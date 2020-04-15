@@ -140,6 +140,8 @@ function publish(){
 
       if [ -z "$(npm view ${package_name}@${version})" ]; then
         publish_command --access=public
+        git tag $package_name-v$version
+        git push origin $package_name-v$version --tags
         echo -e "${GREEN}Successfully published version ${BLUE}${version}${GREEN} of ${BLUE}${package_name}${GREEN}!${NC}"
       else
         echo -e "${RED}Version ${YELLOW}$version${RED} of ${YELLOW}$package_name${RED} already exists.${NC}"
