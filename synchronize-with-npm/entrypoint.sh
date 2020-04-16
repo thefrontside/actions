@@ -8,7 +8,7 @@ BLUE='\033[1;34m'
 NC='\033[0m'
 
 function git_setup(){
-  git remote set-url origin https://${GITHUB_TOKEN}:x-oauth-basic@github.com/${GITHUB_REPOSITORY}.git
+  git remote set-url origin https://x-oauth-basic:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
   git fetch origin +refs/heads/*:refs/heads/*
 
   branch="${GITHUB_REF#*refs\/heads\/}"
@@ -140,6 +140,8 @@ function publish(){
 
       if [ -z "$(npm view ${package_name}@${version})" ]; then
         publish_command --access=public
+        git tag $package_name-v$version
+        git push origin $package_name-v$version
         echo -e "${GREEN}Successfully published version ${BLUE}${version}${GREEN} of ${BLUE}${package_name}${GREEN}!${NC}"
       else
         echo -e "${RED}Version ${YELLOW}$version${RED} of ${YELLOW}$package_name${RED} already exists.${NC}"
