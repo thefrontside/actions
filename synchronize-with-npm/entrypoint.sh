@@ -70,7 +70,7 @@ function get_directories(){
 
   function filter_ignores(){
     defaults=("node_modules" ".github")
-    skip_directories=($(unslash_end $INPUT_IGNORE) ${defaults[@]})
+    skip_directories=($(unslash_end $INPUT_IGNORE) ${defaults[@]} ${deprecate_paths[@]})
     for skip_directory in ${skip_directories[@]}; do
       for i in ${!package_directories[@]}; do
         if [ $(echo "${package_directories[$i]}" | sed -E "s:^$skip_directory.*::") ]; then
@@ -83,6 +83,16 @@ function get_directories(){
     done
   }
 
+  function packages_to_deprecate(){
+    all_package_jsons=($(find . -name 'package.json' -not -path '**/node_modules/**'))
+    for i in ${all_package_jsons[@]}; do
+      if [ "$(jq .deprecate $i)" == "true" ]; then
+        deprecate_paths+=($(echo $i | sed 's:\(.*\)\/.*:\1:g'));
+        deprecate_names+=("$(jq .name $i)");
+      fi
+    done;
+  }
+
   before=$(git --no-pager log --pretty=%P -n 1 $GITHUB_SHA)
   current=$GITHUB_SHA
   diff_directories=($(echo $(format_dit_giff $(git diff --name-only $before..$current)) | xargs -n1 | sort -u | xargs))
@@ -91,6 +101,10 @@ function get_directories(){
   for i in ${!diff_directories[@]}; do
     json_locater ${diff_directories[$i]}
   done
+
+  deprecate_paths=()
+  deprecate_names=()
+  packages_to_deprecate
 
   filter_ignores
 
@@ -153,6 +167,15 @@ function publish(){
   done
 }
 
+function deprecate(){
+  for to_deprecate in ${deprecate_names[@]}; do
+    echo -e "${RED}Deprecating${YELLOW} ${to_deprecate}${RED}...${NC}"
+    npm deprecate $to_deprecate "Package has been deprecated and is no longer supported."
+    echo -e "${GREEN}Deprecation of ${to_deprecate} complete.${NC}"
+  done
+}
+
 git_setup
 get_directories
 publish
+deprecate
