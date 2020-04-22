@@ -3,6 +3,8 @@ This action will automatically detect which packages of a monorepo have changed 
 
 The action will not publish packages that has a `package.json` within its sub-directories.
 
+:star: NEW :star: deprecation feature: See below in `Deprecate Packages` section below.
+
 ## Requirements
 - Pass in `secrets.GITHUB_TOKEN` into `GITHUB_TOKEN`.
   - :exclamation: Must be `GITHUB_TOKEN` and not a personal access token of a bot. :exclamation:
@@ -30,3 +32,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 ```
+
+## Deprecate Packages
+When a package in a monorepo needs to be deprecated, this action will take care of that. All you need to do is add `"deprecate": true` inside the `package.json` of the package you wish to deprecate on NPM.
