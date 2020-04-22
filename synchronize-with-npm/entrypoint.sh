@@ -87,7 +87,7 @@ function get_directories(){
     all_package_jsons=($(find . -name 'package.json' -not -path '**/node_modules/**'))
     for i in ${all_package_jsons[@]}; do
       if [ "$(jq .deprecate $i)" == "true" ]; then
-        deprecate_paths+=($(echo $i | sed 's:\(.*\)\/.*:\1:g'));
+        deprecate_paths+=($(echo $i | sed 's:\(.*\)\/.*:\1:g;s:^./::g'));
         deprecate_names+=("$(jq .name $i)");
       fi
     done;
