@@ -160,7 +160,7 @@ function deprecate(){
     all_package_jsons=($(find . -name 'package.json' -not -path '**/node_modules/**'))
     for i in ${all_package_jsons[@]}; do
       if [ "$(jq .deprecate $i)" == "true" ]; then
-        deprecate_names+=("$(jq .name $i)");
+        deprecate_names+=($(jq .name $i | sed 's/^"//g;s/"$//g'));
       fi
     done;
   }
