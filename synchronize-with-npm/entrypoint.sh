@@ -154,24 +154,17 @@ function publish(){
 }
 
 function deprecate(){
-  deprecate_names=()
-
-  function find_packages_to_deprecate(){
-    all_package_jsons=($(find . -name 'package.json' -not -path '**/node_modules/**'))
-    for i in ${all_package_jsons[@]}; do
-      if [ "$(jq .deprecate $i)" == "true" ]; then
-        deprecate_names+=($(jq .name $i | sed 's/^"//g;s/"$//g'));
-      fi
-    done;
-  }
-
-  find_packages_to_deprecate
+  all_package_jsons=($(find . -name 'package.json' -not -path '**/node_modules/**'))
   
-  for to_deprecate in ${deprecate_names[@]}; do
-    echo -e "${RED}Deprecating${YELLOW} ${to_deprecate}${RED}...${NC}"
-    npm deprecate $to_deprecate "Package has been deprecated and is no longer supported."
-    echo -e "${GREEN}Deprecation of ${to_deprecate} complete.${NC}"
-  done
+  for i in ${all_package_jsons[@]}; do
+    if [ "$(jq .deprecate $i)" != "null" ]; then
+      deprecate_name=$(jq .name $i | sed 's/^"//g;s/"$//g');
+      deprecate_description=$(jq .deprecate $i);
+      echo -e "${RED}Deprecating${YELLOW} ${deprecate_name}${RED}...${NC}"
+      npm deprecate $deprecate_name $deprecate_description
+      echo -e "${GREEN}Deprecation of ${deprecate_name} complete.${NC}"
+    fi
+  done;
 }
 
 git_setup

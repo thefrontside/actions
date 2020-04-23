@@ -34,4 +34,4 @@ jobs:
 ```
 
 ## Deprecate Packages
-When a package in a monorepo needs to be deprecated, this action will take care of that. All you need to do is add `"deprecate": true` inside the `package.json` of the package you wish to deprecate on NPM.
+When a package in a monorepo needs to be deprecated, this action will take care of that. All you need to do is add `"deprecate": "deprecation message"` inside the `package.json` of the package you wish to deprecate on NPM.
