@@ -1,7 +1,5 @@
 # Synchronize with NPM
-This action will automatically detect which packages of a monorepo have changed to determine which packages to publish (and works fine with single repositories too).
-
-The action will not publish packages that has a `package.json` within its sub-directories.
+This action will review all the available packages and see if the user intends on publishing any of them by evaluating if the current package version exists.
 
 :star: NEW :star: deprecation feature: See below in `Deprecate Packages` section below.
 
