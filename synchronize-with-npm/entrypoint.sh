@@ -18,8 +18,29 @@ function git_setup(){
   git config user.name "$GITHUB_ACTOR"
 }
 
-function get_directories(){
-  function format_dit_giff(){
+function find_packages(){
+  function filter_ignores(){
+    function unslash_end(){
+      for to_unslash in $*; do
+        echo $to_unslash | sed 's:\/$::g';
+      done;
+    }
+
+    defaults=("node_modules" ".github")
+    skip_directories=($(unslash_end $INPUT_IGNORE) ${defaults[@]})
+    for skip_directory in ${skip_directories[@]}; do
+      for i in ${!all_package_jsons[@]}; do
+        if [ $(echo "${all_package_jsons[$i]}" | sed -E "s:^$skip_directory.*::") ]; then
+          :
+        else
+          echo -e "${RED}Removing ${YELLOW}${all_package_jsons[$i]} ${RED}because of ${YELLOW}${skip_directory}${NC}"
+          unset all_package_jsons[$i]
+        fi
+      done
+    done
+  }
+
+  function format_get_directory(){
     for to_format in $*; do 
       if [ "$(echo $to_format | grep -c "/")" = "0" ]; then 
         echo ".";
@@ -28,73 +49,34 @@ function get_directories(){
       fi;
     done;
   }
-
-  function unslash_end(){
-    for to_unslash in $*; do
-      echo $to_unslash | sed 's:\/$::g';
-    done;
-  }
-
-  function json_locater(){
-    echo -e "${GREEN}Running json_locator for: ${YELLOW}$1${NC}"
-    if [ -d ${GITHUB_WORKSPACE}/$1 ]; then
-      cd $GITHUB_WORKSPACE/$1        
-      if [ ! -f "package.json" ]; then
-        if [ "$(echo $1 | grep -c "/")" = "1" ]; then
-          super_directory+=$(echo $1 | sed 's:\(.*\)\/.*:\1:g');
-          json_locater $super_directory
-        else
-          cd $GITHUB_WORKSPACE
-          json_within=($(find . -name 'package.json' -not -path './node_modules/*'));
-          json_count=${#json_within[@]};
-          if [ "$json_count" != "1" ]; then
-            echo -e "${RED}Excluding: ${YELLOW}.${RED} because there is a sub-package.${NC}"
-          else
-            package_directories+=(".")
-          fi
-        fi
-      else
-        json_within=($(find . -name 'package.json' -not -path './node_modules/*'));
-        json_count=${#json_within[@]};
-        if [ "$json_count" != "1" ]; then
-          echo -e "${RED}Excluding: ${YELLOW}$1${RED} because there is a sub-package.${NC}"
-        else
-          package_directories+=("$1")
-        fi
-      fi
-      cd $GITHUB_WORKSPACE
-    else
-      echo -e "${RED}Skipping ${YELLOW}$1${RED} because the directory does not exist.${NC}"
-    fi
-  }
-
-  function filter_ignores(){
-    defaults=("node_modules" ".github")
-    skip_directories=($(unslash_end $INPUT_IGNORE) ${defaults[@]})
-    for skip_directory in ${skip_directories[@]}; do
-      for i in ${!package_directories[@]}; do
-        if [ $(echo "${package_directories[$i]}" | sed -E "s:^$skip_directory.*::") ]; then
-          :
-        else
-          echo -e "${RED}Removing ${YELLOW}${package_directories[$i]} ${RED}because of ${YELLOW}${skip_directory}${NC}"
-          unset package_directories[$i]
-        fi
-      done
-    done
-  }
-
-  before=$(git --no-pager log --pretty=%P -n 1 $GITHUB_SHA)
-  current=$GITHUB_SHA
-  diff_directories=($(echo $(format_dit_giff $(git diff --name-only $before..$current)) | xargs -n1 | sort -u | xargs))
-  package_directories=()
-
-  for i in ${!diff_directories[@]}; do
-    json_locater ${diff_directories[$i]}
-  done
-
+  
+  all_package_jsons=($(find . -name 'package.json' -not -path '**/node_modules/**' | sed 's/^.\///g'))
   filter_ignores
 
-  publish_directories=($(echo ${package_directories[@]} | xargs -n1 | sort -u | xargs))
+  for i in ${all_package_jsons[@]}; do
+    echo $i
+  done;
+
+  for i in ${!all_package_jsons[@]}; do
+    pkg_name=$(jq .name ${all_package_jsons[$i]} | sed 's/^"//g;s/"$//g');
+    pkg_ver=$(jq .version ${all_package_jsons[$i]} | sed 's/^"//g;s/"$//g');
+    pkg_private=$(jq '.private' ${all_package_jsons[$i]});
+    if [ "$pkg_private" = "true" ]; then
+      echo -e "${RED}Skipping publishing process for: ${YELLOW}$pkg_name${RED} because package is marked as private and therefore not intended to be published.${NC}";
+      unset all_package_jsons[$i];
+    elif [ "$pkg_ver" == "null" ]; then
+      echo -e "${RED}Skipping publishing process for: ${YELLOW}$pkg_name${RED} because there is no version specified in the package's package.json file${NC}";
+      unset all_package_jsons[$i];
+    elif $(echo $(npm search $pkg_name) | grep -q -v 'No matches found'); then
+      if [ "$(npm view $pkg_name@$pkg_ver)" ]; then
+        echo -e "${RED}Version ${YELLOW}$pkg_ver${RED} of ${YELLOW}$pkg_name${RED} already exists.${NC}";
+        echo -e "${BLUE}Tip:${YELLOW}To publish the changes of this commit, you must update package version in the package.json file.${NC}";
+        unset all_package_jsons[$i];
+      fi
+    fi
+  done;
+
+  validated_directories=($(echo $(format_get_directory ${all_package_jsons[@]}) | xargs -n1 | sort -u | xargs))
 }
 
 function publish(){
@@ -110,9 +92,9 @@ function publish(){
 
   function publish_command(){
     if [ "${#INPUT_NPM_PUBLISH}" = "0" ]; then
-      npm publish
+      npm publish --access=public
     else
-      $INPUT_NPM_PUBLISH
+      $INPUT_NPM_PUBLISH --access=public
     fi
   }
 
@@ -126,37 +108,26 @@ function publish(){
     $INPUT_BEFORE_ALL
   fi
 
-  for package in ${publish_directories[@]}; do
+  for package in ${validated_directories[@]}; do
     cd $GITHUB_WORKSPACE/$package
 
-    is_private=$(echo $(jq '.private' package.json))
+    package_name="`node -e \"console.log(require('./package.json').name)\"`"
+    version="`node -e \"console.log(require('./package.json').version)\"`"
+    echo -e "${GREEN}Running publishing process for: ${YELLOW}$package_name${NC}"
 
-    if [ "$is_private" = "true" ]; then
-      echo -e "${RED}Skipping publishing process for: ${YELLOW}$dir${RED} because package is marked as private and therefore not intended to be published.${NC}"
-    else
-      package_name="`node -e \"console.log(require('./package.json').name)\"`"
-      version="`node -e \"console.log(require('./package.json').version)\"`"
-      echo -e "${GREEN}Running publishing process for: ${YELLOW}$package_name${NC}"
-
-      if [ -z "$(npm view ${package_name}@${version})" ]; then
-        publish_command --access=public
-        git tag $package_name-v$version
-        git push origin $package_name-v$version
-        echo -e "${GREEN}Successfully published version ${BLUE}${version}${GREEN} of ${BLUE}${package_name}${GREEN}!${NC}"
-      else
-        echo -e "${RED}Version ${YELLOW}$version${RED} of ${YELLOW}$package_name${RED} already exists.${NC}"
-        echo -e "${BLUE}Tip:${YELLOW}To publish the changes of this commit, you must update package version in the package.json file.${NC}"
-      fi
-    fi
+    publish_command
+    git tag $package_name-v$version
+    git push origin $package_name-v$version
+    echo -e "${GREEN}Successfully published version ${BLUE}${version}${GREEN} of ${BLUE}${package_name}${GREEN}!${NC}"
 
     cd $GITHUB_WORKSPACE
   done
 }
 
 function deprecate(){
-  all_package_jsons=($(find . -name 'package.json' -not -path '**/node_modules/**'))
+  pkg_jsons_for_deprecate=($(find . -name 'package.json' -not -path '**/node_modules/**'))
   
-  for i in ${all_package_jsons[@]}; do
+  for i in ${pkg_jsons_for_deprecate[@]}; do
     if [ "$(jq .deprecate $i)" != "null" ]; then
       deprecate_name=$(jq .name $i | sed 's/^"//g;s/"$//g');
       deprecate_description=$(jq .deprecate $i);
@@ -168,6 +139,6 @@ function deprecate(){
 }
 
 git_setup
-get_directories
+find_packages
 publish
 deprecate
