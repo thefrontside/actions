@@ -1,5 +1,5 @@
 # Yarn
-This action is to replace the standard `yarn` command so that the workflow will fail if there are any warnings.
+This action is to replace the standard `yarn` command so that the workflow will exit if there are any warnings.
 
 ## Usage
 ```yaml
