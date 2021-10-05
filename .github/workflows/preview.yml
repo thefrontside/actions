@@ -1,0 +1,13 @@
+name: Testing Preview Action
+
+on: push
+
+jobs:
+  preview:
+    name: Preview Testing
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: ./publish-pr-preview
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
