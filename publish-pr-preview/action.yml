@@ -1,0 +1,6 @@
+name: Publish PR Preview
+description: Generate Preview Packages
+
+runs:
+  using: "node14"
+  main: "dist/index.js"

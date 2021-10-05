@@ -1,0 +1,28 @@
+{
+  "name": "publish-pr-preview",
+  "version": "0.0.0",
+  "private": true,
+  "author": "Frontside Engineering <engineering@frontside.com>",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "ncc build index.ts --minify",
+    "problems": "tsc --noEmit"
+  },
+  "volta": {
+    "node": "14.18.0",
+    "yarn": "1.22.11"
+  },
+  "dependencies": {
+    "@actions/core": "^1.6.0",
+    "@actions/github": "^5.0.0",
+    "@effection/process": "^2.0.0-beta.20",
+    "effection": "^2.0.0-beta.21"
+  },
+  "devDependencies": {
+    "@frontside/tsconfig": "^1.2.0",
+    "@types/node": "^16.10.2",
+    "@vercel/ncc": "^0.31.1",
+    "typescript": "^4.4.3"
+  }
+}
