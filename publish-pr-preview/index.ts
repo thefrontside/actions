@@ -11,6 +11,7 @@ const octokit = github.getOctokit(token);
 
 main(
   run({
-    octokit
+    octokit,
+    core
   })
 );
