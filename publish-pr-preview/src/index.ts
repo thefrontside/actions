@@ -1,13 +1,39 @@
 import { GitHub } from "@actions/github/lib/utils";
+import { WebhookPayload } from "@actions/github/lib/interfaces";
 import * as Core from "@actions/core/lib/core";
 import { precheck } from "./precheck";
+import { findPackages } from "./findPackages";
 
-interface PreviewRun {
-  octokit: InstanceType<typeof GitHub>;
-  core: typeof Core;
+interface PullRequestBranch {
+  ref: string;
+  repo: {
+    url: string;
+  };
+  sha: string;
 }
 
-export function* run({ octokit, core }: PreviewRun) {
-  precheck({ core });
-  console.log('dingdong')
+interface PullRequestPayload extends WebhookPayload {
+  pull_request: WebhookPayload["pull_request"] & {
+    head: PullRequestBranch;
+    base: PullRequestBranch;
+  }
+}
+
+export interface PreviewRun {
+  octokit?: InstanceType<typeof GitHub>;
+  core: typeof Core;
+  payload: PullRequestPayload;
+}
+
+export type PreviewPackages = string[];
+
+export function* run({ octokit, core, payload }: PreviewRun) {
+  precheck({ core, payload });
+  // 🚨 grrrrr. see ./findPackages
+  // const packagesToPublish: PreviewPackages = yield findPackages({ payload });
+  // console.log(packagesToPublish);
+
+  // const results = yield publish({ packagesToPublish });
+  // yield generateComment({ results })
+  
 }

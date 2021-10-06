@@ -1,14 +1,14 @@
 import { GitHub } from "@actions/github/lib/utils";
 import { WebhookPayload } from "@actions/github/lib/interfaces";
 import * as Core from "@actions/core/lib/core";
-interface PullRequestBranch {
+export interface PullRequestBranch {
     ref: string;
     repo: {
         url: string;
     };
     sha: string;
 }
-interface PullRequestPayload extends WebhookPayload {
+export interface PullRequestPayload extends WebhookPayload {
     pull_request: WebhookPayload["pull_request"] & {
         head: PullRequestBranch;
         base: PullRequestBranch;
@@ -20,5 +20,3 @@ export interface PreviewRun {
     payload: PullRequestPayload;
 }
 export declare type PreviewPackages = string[];
-export declare function run({ octokit, core, payload }: PreviewRun): Generator<never, void, unknown>;
-export {};

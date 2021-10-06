@@ -11,11 +11,10 @@
   },
   "scripts": {
     "build": "yarn workspaces run build",
-    "problems": "yarn workspaces run problems",
-    "pr": "yarn workspace publish-pr-preview build && node publish-pr-preview/dist/index.js"
+    "problems": "yarn workspaces run problems"
   },
   "volta": {
-    "node": "14.18.0",
+    "node": "12.22.7",
     "yarn": "1.22.11"
   }
 }
