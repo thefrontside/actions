@@ -30,8 +30,37 @@ export function* findPackages({ payload }: FindPackagesRun) {
   const gitDiff = yield exec(`git diff ${baseSHA}...${headSHA} --name-only`);
   //@ts-ignore 🚨
   yield spawn(gitDiff.stdout.forEach(output => {
-    arrz = [...arrz, output];
+    arrz = [...arrz, Buffer.from(output).toString()];
   }));
   yield gitDiff.join();
+
+  let stdout: string[] = [];
+  let stderr: string[] = [];
+  //@ts-ignore
+  const testGitShow = yield exec(`git show whatwhat123`);
+  //@ts-ignore
+  yield spawn(testGitShow.stdout.forEach(output => {
+    stdout = [...stdout, Buffer.from(output).toString()];
+  }));
+  //@ts-ignore
+  yield spawn(testGitShow.stderr.forEach(output => {
+    stderr = [...stderr, Buffer.from(output).toString()];
+  }));
+  yield testGitShow.join();
+  console.log('yes', 'stdout', stdout, 'stderr', stderr);
+
+  //@ts-ignore
+  const testGitShow2 = yield exec(`git show 00d21aa3365d05429cb8dd769762a88a3d3c76b7`);
+  //@ts-ignore
+  yield spawn(testGitShow2.stdout.forEach(output => {
+    stdout = [...stdout, Buffer.from(output).toString()];
+  }));
+  //@ts-ignore
+  yield spawn(testGitShow2.stderr.forEach(output => {
+    stderr = [...stderr, Buffer.from(output).toString()];
+  }));
+  yield testGitShow2.join();
+  console.log('yes', 'stdout', stdout, 'stderr', stderr);
+
   return arrz;
 }
