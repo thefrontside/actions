@@ -26,11 +26,17 @@ export interface PreviewRun {
 }
 
 export function* run({ octokit, core, payload }: PreviewRun) {
-  precheck({ core, payload });
-  // 🚨 grrrrr. see ./findPackages
-  const packagesToPublish: string[] = yield findPackages({ payload });
-  console.log(packagesToPublish);
+  try {
+    precheck({ core, payload });
 
-  // const results = yield publish({ packagesToPublish });
-  // yield generateComment({ results })
+    // 🚨 grrrrr. see ./findPackages
+    const packagesToPublish: string[] = yield findPackages({ core, payload });
+    console.log('huh', packagesToPublish);
+    // const results = yield publish({ packagesToPublish });
+    // yield generateComment({ results })
+  } catch(err) {
+    if (err instanceof Error) {
+      core.setFailed(err.message);
+    }
+  }
 }

@@ -1,5 +1,5 @@
 import { PreviewRun } from ".";
-interface FindPackagesRun extends Omit<PreviewRun, 'octokit' | 'core'> {
+interface FindPackagesRun extends Omit<PreviewRun, 'octokit'> {
 }
-export declare function findPackages({ payload }: FindPackagesRun): Generator<any, string[], unknown>;
+export declare function findPackages({ core, payload }: FindPackagesRun): Generator<any, string[], unknown>;
 export {};
