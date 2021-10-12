@@ -18,15 +18,16 @@ interface FindPackagesRun extends Omit<PreviewRun, 'octokit'|'core'> {};
 export function* findPackages({ payload }: FindPackagesRun) {
   const {
     head: {
-      ref: headBranch,
+      sha: headSHA,
     },
     base: {
-      ref: baseBranch,
+      sha: baseSHA,
     },
   } = payload.pull_request;
+
   let arrz: string[] = [];
   //@ts-ignore 🚨 how do i type this
-  const gitDiff = yield exec(`git diff ${baseBranch}...${headBranch} --name-only`);
+  const gitDiff = yield exec(`git diff ${baseSHA}...${headSHA} --name-only`);
   //@ts-ignore 🚨
   yield spawn(gitDiff.stdout.forEach(output => {
     arrz = [...arrz, output];
