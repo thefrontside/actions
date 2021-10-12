@@ -23,7 +23,7 @@ export function* findPackages({ payload }: FindPackagesRun) {
     base: {
       ref: baseBranch,
     },
-  } = payload?.pull_request;
+  } = payload.pull_request;
   let arrz: string[] = [];
   //@ts-ignore 🚨 how do i type this
   const gitDiff = yield exec(`git diff ${baseBranch}...${headBranch} --name-only`);

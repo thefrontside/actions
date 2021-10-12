@@ -1,5 +1,5 @@
 import * as github from "@actions/github";
-import { PreviewRun } from '.';
+import { PreviewRun } from ".";
 
 interface PreCheckRun extends Omit<PreviewRun, 'octokit'> {};
 
@@ -18,8 +18,8 @@ export function precheck({ core, payload }: PreCheckRun) {
         repo: {
           url: baseUrl
         }
-      },
-    } = payload?.pull_request;
+      }
+    } = payload.pull_request;
     if (baseUrl !== headUrl) {
       core.setFailed("This action cannot be run on pull requests created from a forked repository");
     } else if (headBranch === "latest") {

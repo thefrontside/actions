@@ -15,10 +15,9 @@ interface PullRequestPayload extends WebhookPayload {
     };
 }
 export interface PreviewRun {
-    octokit?: InstanceType<typeof GitHub>;
+    octokit: InstanceType<typeof GitHub>;
     core: typeof Core;
     payload: PullRequestPayload;
 }
-export declare type PreviewPackages = string[];
-export declare function run({ octokit, core, payload }: PreviewRun): Generator<never, void, unknown>;
+export declare function run({ octokit, core, payload }: PreviewRun): Generator<Generator<any, string[], unknown>, void, string[]>;
 export {};

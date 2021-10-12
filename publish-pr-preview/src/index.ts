@@ -20,20 +20,17 @@ interface PullRequestPayload extends WebhookPayload {
 }
 
 export interface PreviewRun {
-  octokit?: InstanceType<typeof GitHub>;
+  octokit: InstanceType<typeof GitHub>;
   core: typeof Core;
   payload: PullRequestPayload;
 }
 
-export type PreviewPackages = string[];
-
 export function* run({ octokit, core, payload }: PreviewRun) {
   precheck({ core, payload });
   // 🚨 grrrrr. see ./findPackages
-  // const packagesToPublish: PreviewPackages = yield findPackages({ payload });
-  // console.log(packagesToPublish);
+  const packagesToPublish: string[] = yield findPackages({ payload });
+  console.log(packagesToPublish);
 
   // const results = yield publish({ packagesToPublish });
   // yield generateComment({ results })
-  
 }
