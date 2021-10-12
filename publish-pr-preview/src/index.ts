@@ -31,7 +31,7 @@ export function* run({ octokit, core, payload }: PreviewRun) {
 
     // 🚨 grrrrr. see ./findPackages
     const packagesToPublish: string[] = yield findPackages({ core, payload });
-    console.log('huh', packagesToPublish);
+    console.log('packagesToPublish:', packagesToPublish);
     // const results = yield publish({ packagesToPublish });
     // yield generateComment({ results })
   } catch(err) {

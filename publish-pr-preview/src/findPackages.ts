@@ -1,14 +1,3 @@
-// find packages
-//   - git diff and list all directories with changes
-//   - find all package jsons from the git diff
-//       for each directory with changes
-//         pkg.json
-//           ? 
-//             skip
-//               ? do nothing
-//               : add to array of confirmed packages to publish
-//           : go up one level and try again``
-
 import { spawn, } from "effection";
 import { exec } from "@effection/process";
 import { PreviewRun } from ".";
@@ -29,11 +18,9 @@ export function* findPackages({ core, payload }: FindPackagesRun) {
 
   try {
     //@ts-ignore
-    // const confirmCommitFetch = yield exec(`git show ${baseSHA}`);
-    const confirmCommitFetch = yield exec(`git show 12345`);
+    const confirmCommitFetch = yield exec(`git show ${baseSHA}`);
     yield confirmCommitFetch.expect();
   } catch {
-      console.log('in catch');
     throw new Error("The base commit could not be found. Configure the checkout action in your workflow with the correct settings. Refer to this action's README for more details.");
   }
 
@@ -43,6 +30,18 @@ export function* findPackages({ core, payload }: FindPackagesRun) {
   yield spawn(gitDiff.stdout.forEach(output => {
     arrz = [...arrz, Buffer.from(output).toString()];
   }));
-  yield gitDiff.join();
+  yield gitDiff.expect();
+
   return arrz;
 }
+
+// find packages
+//   - git diff and list all directories with changes
+//   - find all package jsons from the git diff
+//       for each directory with changes
+//         pkg.json
+//           ? 
+//             skip
+//               ? do nothing
+//               : add to array of confirmed packages to publish
+//           : go up one level and try again``
