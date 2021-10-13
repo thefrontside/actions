@@ -29,7 +29,6 @@ export function* run({ octokit, core, payload }: PreviewRun) {
   try {
     precheck({ core, payload });
 
-    // 🚨 grrrrr. see ./findPackages
     const packagesToPublish: string[] = yield findPackages({ core, payload });
     console.log('packagesToPublish:', packagesToPublish);
     // const results = yield publish({ packagesToPublish });

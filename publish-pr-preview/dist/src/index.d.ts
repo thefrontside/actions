@@ -19,5 +19,5 @@ export interface PreviewRun {
     core: typeof Core;
     payload: PullRequestPayload;
 }
-export declare function run({ octokit, core, payload }: PreviewRun): Generator<Generator<any, string[], unknown>, void, string[]>;
+export declare function run({ octokit, core, payload }: PreviewRun): Generator<Generator<any, string[], any>, void, string[]>;
 export {};

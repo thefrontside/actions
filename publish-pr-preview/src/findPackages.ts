@@ -1,10 +1,10 @@
-import { spawn, } from "effection";
-import { exec } from "@effection/process";
+import { spawn } from "effection";
+import { exec, Process } from "@effection/process";
 import { PreviewRun } from ".";
 
 interface FindPackagesRun extends Omit<PreviewRun, 'octokit'> {};
 
-export function* findPackages({ core, payload }: FindPackagesRun) {
+export function* findPackages({ core, payload }: FindPackagesRun): Generator<any, string[], any> {
   const {
     head: {
       sha: headSHA,
@@ -17,18 +17,15 @@ export function* findPackages({ core, payload }: FindPackagesRun) {
   let arrz: string[] = [];
 
   try {
-    //@ts-ignore
-    const confirmCommitFetch = yield exec(`git show ${baseSHA}`);
+    const confirmCommitFetch: Process = yield exec(`git show ${baseSHA}`);
     yield confirmCommitFetch.expect();
   } catch {
     throw new Error("The base commit could not be found. Configure the checkout action in your workflow with the correct settings. Refer to this action's README for more details.");
   }
 
-  //@ts-ignore 🚨 how do i type this
-  const gitDiff = yield exec(`git diff ${baseSHA}...${headSHA} --name-only`);
-  //@ts-ignore 🚨
+  const gitDiff: Process = yield exec(`git diff ${baseSHA}...${headSHA} --name-only`);
   yield spawn(gitDiff.stdout.forEach(output => {
-    arrz = [...arrz, Buffer.from(output).toString()];
+    arrz = [...arrz, Buffer.from(output).toString().replace(/\\n$/, '')];
   }));
   yield gitDiff.expect();
 
