@@ -1,10 +1,8 @@
 import { spawn } from "effection";
 import { exec, Process } from "@effection/process";
-import { PreviewRun } from ".";
+import { PullRequestPayload } from ".";
 
-interface FindPackagesRun extends Omit<PreviewRun, 'octokit'> {};
-
-export function* findPackages({ core, payload }: FindPackagesRun): Generator<any, string[], any> {
+export function* findPackages(payload: PullRequestPayload): Generator<any, Iterable<string>, any> {
   const {
     head: {
       sha: headSHA,
@@ -14,8 +12,6 @@ export function* findPackages({ core, payload }: FindPackagesRun): Generator<any
     },
   } = payload.pull_request;
 
-  let arrz: string[] = [];
-
   try {
     const confirmCommitFetch: Process = yield exec(`git show ${baseSHA}`);
     yield confirmCommitFetch.expect();
@@ -24,12 +20,10 @@ export function* findPackages({ core, payload }: FindPackagesRun): Generator<any
   }
 
   const gitDiff: Process = yield exec(`git diff ${baseSHA}...${headSHA} --name-only`);
-  yield spawn(gitDiff.stdout.forEach(output => {
-    arrz = [...arrz, Buffer.from(output).toString().replace(/\\n$/, '')];
-  }));
+  let packagesToPublish: Iterable<string> = yield spawn(gitDiff.stdout.map(output => output.toString().replace(/\\n$/, '')).toBuffer());
   yield gitDiff.expect();
 
-  return arrz;
+  return packagesToPublish;
 }
 
 // find packages

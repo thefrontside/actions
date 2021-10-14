@@ -1,5 +1,2 @@
-import { PreviewRun } from ".";
-interface FindPackagesRun extends Omit<PreviewRun, 'octokit'> {
-}
-export declare function findPackages({ core, payload }: FindPackagesRun): Generator<any, string[], any>;
-export {};
+import { PullRequestPayload } from ".";
+export declare function findPackages(payload: PullRequestPayload): Generator<any, Iterable<string>, any>;

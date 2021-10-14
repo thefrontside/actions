@@ -8,16 +8,16 @@ interface PullRequestBranch {
     };
     sha: string;
 }
-interface PullRequestPayload extends WebhookPayload {
+export interface PullRequestPayload extends WebhookPayload {
     pull_request: WebhookPayload["pull_request"] & {
         head: PullRequestBranch;
         base: PullRequestBranch;
     };
 }
-export interface PreviewRun {
+interface PreviewRun {
     octokit: InstanceType<typeof GitHub>;
     core: typeof Core;
     payload: PullRequestPayload;
 }
-export declare function run({ octokit, core, payload }: PreviewRun): Generator<Generator<any, string[], any>, void, string[]>;
+export declare function run({ octokit, core, payload }: PreviewRun): Generator<Generator<any, Iterable<string>, any>, void, Iterable<string>>;
 export {};

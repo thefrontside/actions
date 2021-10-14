@@ -12,14 +12,14 @@ interface PullRequestBranch {
   sha: string;
 }
 
-interface PullRequestPayload extends WebhookPayload {
+export interface PullRequestPayload extends WebhookPayload {
   pull_request: WebhookPayload["pull_request"] & {
     head: PullRequestBranch;
     base: PullRequestBranch;
   }
 }
 
-export interface PreviewRun {
+interface PreviewRun {
   octokit: InstanceType<typeof GitHub>;
   core: typeof Core;
   payload: PullRequestPayload;
@@ -27,9 +27,9 @@ export interface PreviewRun {
 
 export function* run({ octokit, core, payload }: PreviewRun) {
   try {
-    precheck({ core, payload });
+    precheck(payload);
 
-    const packagesToPublish: string[] = yield findPackages({ core, payload });
+    const packagesToPublish: Iterable<string> = yield findPackages(payload);
     console.log('packagesToPublish:', packagesToPublish);
     // const results = yield publish({ packagesToPublish });
     // yield generateComment({ results })
