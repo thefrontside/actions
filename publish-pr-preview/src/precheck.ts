@@ -1,11 +1,9 @@
 import * as github from "@actions/github";
-import { PreviewRun } from ".";
+import { PullRequestPayload } from ".";
 
-interface PreCheckRun extends Omit<PreviewRun, 'octokit'> {};
-
-export function precheck({ core, payload }: PreCheckRun) {
+export function precheck(payload: PullRequestPayload) {
   if (!github.context.payload.pull_request) {
-    core.setFailed("This action can only be run on pull requests");
+    throw new Error("This action can only be run on pull requests");
   } else {
     const {
       head: {
@@ -21,9 +19,9 @@ export function precheck({ core, payload }: PreCheckRun) {
       }
     } = payload.pull_request;
     if (baseUrl !== headUrl) {
-      core.setFailed("This action cannot be run on pull requests created from a forked repository");
+      throw new Error("This action cannot be run on pull requests created from a forked repository");
     } else if (headBranch === "latest") {
-      core.setFailed("Unable to proceed because \"latest\" is a protected NPM tag. Retrigger this action from a different branch name");
+      throw new Error("Unable to proceed because \"latest\" is a protected NPM tag. Retrigger this action from a different branch name");
     }
   }
 }
