@@ -1,4 +1,3 @@
-import { spawn } from "effection";
 import { exec, Process } from "@effection/process";
 import { PullRequestPayload } from ".";
 
@@ -20,7 +19,7 @@ export function* findPackages(payload: PullRequestPayload): Generator<any, Itera
   }
 
   const gitDiff: Process = yield exec(`git diff ${baseSHA}...${headSHA} --name-only`);
-  let packagesToPublish: Iterable<string> = yield spawn(gitDiff.stdout.map(output => output.toString().replace(/\\n$/, '')).toBuffer());
+  let packagesToPublish: Iterable<string> = yield gitDiff.stdout.map(output => output.toString().replace(/\\n$/, '')).toBuffer();
   yield gitDiff.expect();
 
   return packagesToPublish;
