@@ -1,5 +1,6 @@
 import { exec, Process } from "@effection/process";
 import { PullRequestPayload } from ".";
+import glob from "glob";
 
 export function* findPackages(payload: PullRequestPayload): Generator<any, Iterable<string>, any> {
   const {
@@ -20,59 +21,45 @@ export function* findPackages(payload: PullRequestPayload): Generator<any, Itera
 
   const gitDiff: Process = yield exec(`git diff ${baseSHA}...${headSHA} --name-only`);
 
-  let buffer: string[] = yield gitDiff.stdout.lines().toArray();
+  const buffer: string[] = yield gitDiff.stdout.lines().toArray();
 
-  let directories = new Set(buffer.map(output => {
+  const directories = [...new Set(buffer.map(output => {
     if (output.includes('/')) {
       return output.replace(/([^\/]*)$/, '');
     } else {
       return '.';
     }
-  }));
+  }))];
 
-  // remove duplicates
-  // locate package.json
-    // if not go up one level and try again until root
-  // remove private packages
+  const listAllPkgJsonsWithin = (directory: string) => glob.sync("**/package.json", {
+    cwd: directory,
+    ignore: ["node_modules/**"]
+  });
 
-  let packagesToPublish = directories; // wip
+  const depthOfPath = (directory: string): number => {
+    let matched = directory.match(/\//g);
+    return matched ? matched.length : 0;
+  }
 
-  return packagesToPublish;
-}
+  const superDirectory = (directory: string): string => {
+    return depthOfPath(directory) > 1 ? directory.replace(/[^\/]+\/?$/, '') : '.';
+  }
 
-// find packages
-//   - git diff and list all directories with changes
-//   - find all package jsons from the git diff
-//       for each directory with changes
-//         pkg.json
-//           ? 
-//             skip
-//               ? do nothing
-//               : add to array of confirmed packages to publish
-//           : go up one level and try again``
+  const findRelativePkgJsonPaths = ({ acc, directory }: { acc: string[], directory: string }) => {
+    for (let i = directory; i != '.'; i = superDirectory(i)) {
+      const pkgJsons = listAllPkgJsonsWithin(i);
+      if (pkgJsons.length === 1 && pkgJsons[0] === "package.json") {
+        return [...acc, i];
+      }
+    }
 
+    const pkgJsonsAtRoot = listAllPkgJsonsWithin('.');
+    if (pkgJsonsAtRoot.length === 1 && pkgJsonsAtRoot[0] === "package.json") {
+      return [...acc, '.'];
+    }
 
-/*
-[
-  '.github/workflows/',
-  '.',
-  'publish-pr-preview/',
-  'publish-pr-preview/',
-  'publish-pr-preview/dist/',
-  'publish-pr-preview/dist/',
-  'publish-pr-preview/dist/src/',
-  'publish-pr-preview/dist/src/',
-  'publish-pr-preview/dist/src/',
-  'publish-pr-preview/dist/src/',
-  'publish-pr-preview/',
-  'publish-pr-preview/old/',
-  'publish-pr-preview/old/',
-  'publish-pr-preview/old/',
-  'publish-pr-preview/',
-  'publish-pr-preview/src/',
-  'publish-pr-preview/src/',
-  'publish-pr-preview/src/',
-  'publish-pr-preview/',
-  '.'
-]
-*/
+    return acc;
+  }
+
+  return [... new Set(directories.reduce((acc, directory) => findRelativePkgJsonPaths({ acc, directory }), [] as string[]))];
+};

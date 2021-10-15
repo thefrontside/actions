@@ -29,9 +29,10 @@ export function* run({ octokit, core, payload }: PreviewRun) {
   try {
     precheck(payload);
 
-    const packagesToPublish: Iterable<string> = yield findPackages(payload);
-    console.log('packagesToPublish:', packagesToPublish);
+    const directoriesToPublish: Iterable<string> = yield findPackages(payload);
+    console.log('directoriesToPublish:', directoriesToPublish);
     // const results = yield publish({ packagesToPublish });
+      // skip private packages
     // yield generateComment({ results })
   } catch(err) {
     if (err instanceof Error) {
