@@ -22,13 +22,13 @@ export function* findPackages(payload: PullRequestPayload): Generator<any, Itera
 
   let buffer: string[] = yield gitDiff.stdout.lines().toArray();
 
-  let directories = buffer.map(output => {
+  let directories = new Set(buffer.map(output => {
     if (output.includes('/')) {
       return output.replace(/([^\/]*)$/, '');
     } else {
       return '.';
     }
-  });
+  }));
 
   // remove duplicates
   // locate package.json
@@ -50,3 +50,29 @@ export function* findPackages(payload: PullRequestPayload): Generator<any, Itera
 //               ? do nothing
 //               : add to array of confirmed packages to publish
 //           : go up one level and try again``
+
+
+/*
+[
+  '.github/workflows/',
+  '.',
+  'publish-pr-preview/',
+  'publish-pr-preview/',
+  'publish-pr-preview/dist/',
+  'publish-pr-preview/dist/',
+  'publish-pr-preview/dist/src/',
+  'publish-pr-preview/dist/src/',
+  'publish-pr-preview/dist/src/',
+  'publish-pr-preview/dist/src/',
+  'publish-pr-preview/',
+  'publish-pr-preview/old/',
+  'publish-pr-preview/old/',
+  'publish-pr-preview/old/',
+  'publish-pr-preview/',
+  'publish-pr-preview/src/',
+  'publish-pr-preview/src/',
+  'publish-pr-preview/src/',
+  'publish-pr-preview/',
+  '.'
+]
+*/
