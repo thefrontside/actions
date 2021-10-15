@@ -19,8 +19,23 @@ export function* findPackages(payload: PullRequestPayload): Generator<any, Itera
   }
 
   const gitDiff: Process = yield exec(`git diff ${baseSHA}...${headSHA} --name-only`);
-  let packagesToPublish: Iterable<string> = yield gitDiff.stdout.map(output => output.toString().replace(/\\n$/, '')).toBuffer();
-  yield gitDiff.expect();
+
+  let buffer: string[] = yield gitDiff.stdout.lines().toArray();
+
+  let directories = buffer.map(output => {
+    if (output.includes('/')) {
+      return output.replace(/([^\/]*)$/, '');
+    } else {
+      return '.';
+    }
+  });
+
+  // remove duplicates
+  // locate package.json
+    // if not go up one level and try again until root
+  // remove private packages
+
+  let packagesToPublish = directories; // wip
 
   return packagesToPublish;
 }
