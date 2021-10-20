@@ -6,6 +6,7 @@
   "license": "MIT",
   "main": "dist/index.js",
   "scripts": {
+    "lint": "eslint '**/*.ts'",
     "build": "ncc build index.ts -m",
     "problems": "tsc --noEmit"
   },
@@ -21,6 +22,7 @@
     "glob": "^7.2.0"
   },
   "devDependencies": {
+    "@frontside/eslint-config": "^2.1.0",
     "@frontside/tsconfig": "^1.2.0",
     "@types/glob": "^7.1.4",
     "@types/node": "^16.10.2",

@@ -11,6 +11,7 @@
   },
   "scripts": {
     "build": "yarn workspaces run build",
+    "lint": "yarn workspaces run lint",
     "problems": "yarn workspaces run problems"
   },
   "volta": {
