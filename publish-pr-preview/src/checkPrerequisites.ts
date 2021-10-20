@@ -27,24 +27,21 @@ export function* checkPrerequisites(payload: PullRequestPayload): Operation<Prer
       sha: baseSHA
     }
   } = payload.pull_request;
-  let pull_request = !!github.context.payload.pull_request;
-  let forked_repo = baseUrl !== headUrl;
-  let prohibited_branch = headBranch === "latest";
 
-  if (!pull_request) {
+  if (!github.context.payload.pull_request) {
     return { isValid: false, reason: "This action can only be run on pull requests" };
-  } else if (forked_repo) {
+  } else if (baseUrl !== headUrl) {
     return { isValid: false, reason: "This action cannot be run on pull requests created from a forked repository" };
-  } else if (prohibited_branch) {
+  } else if (headBranch === "latest") {
     return { isValid: false, reason: "Unable to proceed because \"latest\" is a protected NPM tag. Retrigger this action from a different branch name" };
   }
 
-  // 🚨 test this in github actions workflow
-  let npmAuthenticated: Process = yield exec(`npm whoami`);
-  let { code: npmAuthenticatedExitCode } = yield npmAuthenticated.join();
-  if (npmAuthenticatedExitCode !== 1) {
-    return { isValid: false, reason: "Not authenticated to publish. Configure the setup-node action in your workflow with the correct settings." };
-  }
+  // let npmAuthenticated: Process = yield exec(`npm whoami`); // 🚨 we're not signing into npm so this doesn't work
+  // let result = yield npmAuthenticated.join();
+  // console.log(result);
+  // if (result.code !== 1) {
+  //   return { isValid: false, reason: "Not authenticated to publish. Configure the setup-node action in your workflow with the correct settings." };
+  // }
 
   let gitDiff: Process = yield exec(`git diff ${baseSHA}...${headSHA} --name-only`);
   let buffer: string[] = yield gitDiff.stdout.lines().toArray();
