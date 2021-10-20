@@ -12,6 +12,6 @@ export function* publish(directoriesToPublish: Iterable<string>): Operation<stri
           : use npm
   */
   // skip private packages
-  console.log('publishing:', directoriesToPublish);
+  console.log(directoriesToPublish ? "whatever" : "whatever");
   return [''];
 }

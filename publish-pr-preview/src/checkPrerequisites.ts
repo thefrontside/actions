@@ -46,10 +46,10 @@ export function* checkPrerequisites(payload: PullRequestPayload): Operation<Prer
     return { isValid: false, reason: "Not authenticated to publish. Configure the setup-node action in your workflow with the correct settings." };
   }
 
-  let gitDiff: Process = yield exec(`git diff --quiet ${baseSHA}...${headSHA}`);
+  let gitDiff: Process = yield exec(`git diff ${baseSHA}...${headSHA} --name-only`);
   let buffer: string[] = yield gitDiff.stdout.lines().toArray();
   let { code: gitDiffExitCode } = yield gitDiff.join();
-  if (gitDiffExitCode !== 1) {
+  if (gitDiffExitCode !== 0) {
     return { isValid: false, reason: "The base commit could not be found. Configure the checkout action in your workflow with the correct settings." };
   } else {
     return { isValid: true, payload: buffer };
