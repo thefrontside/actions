@@ -1,6 +1,7 @@
 import { GitHub } from "@actions/github/lib/utils";
 import { WebhookPayload } from "@actions/github/lib/interfaces";
 import * as Core from "@actions/core/lib/core";
+import { Operation } from "effection";
 interface PullRequestBranch {
     ref: string;
     repo: {
@@ -19,5 +20,5 @@ interface PreviewRun {
     core: typeof Core;
     payload: PullRequestPayload;
 }
-export declare function run({ octokit, core, payload }: PreviewRun): Generator<Generator<any, Iterable<string>, any>, void, Iterable<string>>;
+export declare function run({ octokit, core, payload }: PreviewRun): Operation<any>;
 export {};

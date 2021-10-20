@@ -1,23 +1,8 @@
-import { exec, Process } from "@effection/process";
-import { PullRequestPayload } from ".";
 import { Operation } from "effection";
 import glob from "glob";
 
-export function* findPackages(payload: PullRequestPayload): Operation<Iterable<string>> {
-  let {
-    head: {
-      sha: headSHA,
-    },
-    base: {
-      sha: baseSHA,
-    },
-  } = payload.pull_request;
-
-  let gitDiff: Process = yield exec(`git diff ${baseSHA}...${headSHA} --name-only`);
-
-  let buffer: string[] = yield gitDiff.stdout.lines().toArray();
-
-  let directories = [...new Set(buffer.map(output => {
+export function* findPackages(gitDiff: string[]): Operation<Iterable<string>> {
+  let directories = [...new Set(gitDiff.map(output => {
     if (output.includes('/')) {
       return output.replace(/([^\/]*)$/, '');
     } else {

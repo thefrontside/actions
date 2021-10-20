@@ -1,1 +1,2 @@
-export declare function publish(directoriesToPublish: Iterable<string>): Generator<never, string[], unknown>;
+import { Operation } from "effection";
+export declare function publish(directoriesToPublish: Iterable<string>): Operation<string[]>;

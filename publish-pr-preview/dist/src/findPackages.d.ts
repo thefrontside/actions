@@ -1,2 +1,2 @@
-import { PullRequestPayload } from ".";
-export declare function findPackages(payload: PullRequestPayload): Generator<any, Iterable<string>, any>;
+import { Operation } from "effection";
+export declare function findPackages(gitDiff: string[]): Operation<Iterable<string>>;
