@@ -3,6 +3,7 @@ import { WebhookPayload } from "@actions/github/lib/interfaces";
 import * as Core from "@actions/core/lib/core";
 import { precheck } from "./precheck";
 import { findPackages } from "./findPackages";
+import { publish } from "./publish";
 
 interface PullRequestBranch {
   ref: string;
@@ -27,13 +28,20 @@ interface PreviewRun {
 
 export function* run({ octokit, core, payload }: PreviewRun) {
   try {
-    precheck(payload);
-
-    const directoriesToPublish: Iterable<string> = yield findPackages(payload);
-    console.log('directoriesToPublish:', directoriesToPublish);
-    // const results = yield publish({ packagesToPublish });
-      // skip private packages
-    // yield generateComment({ results })
+    let { pull_request, forked_repo, prohibited_branch } = precheck(payload);
+    if (!pull_request) {
+      throw new Error("This action can only be run on pull requests");
+    } else if (forked_repo) {
+      throw new Error("This action cannot be run on pull requests created from a forked repository");
+    } else if (prohibited_branch) {
+      throw new Error("Unable to proceed because \"latest\" is a protected NPM tag. Retrigger this action from a different branch name");
+    } else {
+      const directoriesToPublish: Iterable<string> = yield findPackages(payload);
+      console.log('directoriesToPublish:', directoriesToPublish);
+      const results: Iterable<string> = yield publish(directoriesToPublish);
+      console.log('results from publish:', results);
+      // yield generateComment({ results, octokit })
+    }
   } catch(err) {
     if (err instanceof Error) {
       core.setFailed(err.message);

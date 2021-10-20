@@ -1,2 +1,6 @@
 import { PullRequestPayload } from ".";
-export declare function precheck(payload: PullRequestPayload): void;
+declare type Prerequisites = {
+    [key: string]: boolean;
+};
+export declare function precheck(payload: PullRequestPayload): Prerequisites;
+export {};
