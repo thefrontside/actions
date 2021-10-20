@@ -20,5 +20,5 @@ interface PreviewRun {
     core: typeof Core;
     payload: PullRequestPayload;
 }
-export declare function run({ octokit, core, payload }: PreviewRun): Operation<any>;
+export declare function run({ octokit, core, payload }: PreviewRun): Operation<void>;
 export {};

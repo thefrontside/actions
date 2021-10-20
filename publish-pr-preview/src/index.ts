@@ -27,7 +27,7 @@ interface PreviewRun {
   payload: PullRequestPayload;
 }
 
-export function* run({ octokit, core, payload }: PreviewRun): Operation<any> {
+export function* run({ octokit, core, payload }: PreviewRun): Operation<void> {
   let { isValid, reason, payload: gitDiff } = yield checkPrerequisites(payload);
   if (!isValid) {
     core.setFailed(reason);
