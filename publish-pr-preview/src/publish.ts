@@ -1,4 +1,6 @@
-export function* publish(directoriesToPublish: Iterable<string>): Generator<any, string[], any> {
+import { Operation } from "effection";
+
+export function* publish(directoriesToPublish: Iterable<string>): Operation<string[]> {
   // detect for workspace to compare with directoresToPublish to see which one to install separately
     // ❌ bad idea; we don't know what kind of setup users will have in their monorepo
   /*

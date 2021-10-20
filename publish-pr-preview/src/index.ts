@@ -1,7 +1,8 @@
 import { GitHub } from "@actions/github/lib/utils";
 import { WebhookPayload } from "@actions/github/lib/interfaces";
 import * as Core from "@actions/core/lib/core";
-import { precheck } from "./precheck";
+import { Operation } from "effection";
+import { checkPrerequisites } from "./checkPrerequisites";
 import { findPackages } from "./findPackages";
 import { publish } from "./publish";
 
@@ -26,9 +27,9 @@ interface PreviewRun {
   payload: PullRequestPayload;
 }
 
-export function* run({ octokit, core, payload }: PreviewRun): Generator<any, any, any> {
+export function* run({ octokit, core, payload }: PreviewRun): Operation<any> {
   try {
-    let { pull_request, forked_repo, prohibited_branch } = yield precheck(payload);
+    let { pull_request, forked_repo, prohibited_branch } = yield checkPrerequisites(payload);
     if (!pull_request) {
       throw new Error("This action can only be run on pull requests");
     } else if (forked_repo) {

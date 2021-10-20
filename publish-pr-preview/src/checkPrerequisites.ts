@@ -1,12 +1,13 @@
 import * as github from "@actions/github";
 import { exec, Process } from "@effection/process";
+import { Operation } from "effection";
 import { PullRequestPayload } from ".";
 
 type Prerequisites = {
   [key: string]: boolean
 }
 
-export function* precheck(payload: PullRequestPayload): Generator<any, Prerequisites, any> {
+export function* checkPrerequisites(payload: PullRequestPayload): Operation<Prerequisites> {
   let {
     head: {
       ref: headBranch,

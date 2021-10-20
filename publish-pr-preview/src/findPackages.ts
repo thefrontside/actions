@@ -1,8 +1,9 @@
 import { exec, Process } from "@effection/process";
 import { PullRequestPayload } from ".";
+import { Operation } from "effection";
 import glob from "glob";
 
-export function* findPackages(payload: PullRequestPayload): Generator<any, Iterable<string>, any> {
+export function* findPackages(payload: PullRequestPayload): Operation<Iterable<string>> {
   let {
     head: {
       sha: headSHA,
