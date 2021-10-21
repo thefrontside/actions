@@ -9,6 +9,7 @@ type Prerequisites = {
 } | {
   isValid: true;
   payload: string[];
+  branch: string;
 }
 
 export function* checkPrerequisites(payload: PullRequestPayload): Operation<Prerequisites> {
@@ -49,6 +50,6 @@ export function* checkPrerequisites(payload: PullRequestPayload): Operation<Prer
   if (gitDiffExitCode !== 0) {
     return { isValid: false, reason: "The base commit could not be found. Configure the checkout action in your workflow with the correct settings." };
   } else {
-    return { isValid: true, payload: buffer };
+    return { isValid: true, payload: buffer, branch: headBranch };
   }
 }

@@ -28,13 +28,13 @@ interface PreviewRun {
 }
 
 export function* run({ octokit, core, payload }: PreviewRun): Operation<void> {
-  let { isValid, reason, payload: gitDiff } = yield checkPrerequisites(payload);
+  let { isValid, reason, payload: gitDiff, branch } = yield checkPrerequisites(payload);
   if (!isValid) {
     core.setFailed(reason);
   } else {
     let directoriesToPublish: Iterable<string> = yield findPackages(gitDiff);
     let installScript = core.getInput("INSTALL_SCRIPT") || "";
-    let published: Iterable<string> = yield publish({ directoriesToPublish, installScript });
+    let published: Iterable<string> = yield publish({ directoriesToPublish, installScript, branch });
     console.log('published:', published);
     // yield generateComment({ results, octokit })
   }

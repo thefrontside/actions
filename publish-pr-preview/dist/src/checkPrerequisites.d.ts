@@ -6,6 +6,7 @@ declare type Prerequisites = {
 } | {
     isValid: true;
     payload: string[];
+    branch: string;
 };
 export declare function checkPrerequisites(payload: PullRequestPayload): Operation<Prerequisites>;
 export {};
