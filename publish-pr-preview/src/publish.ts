@@ -17,23 +17,26 @@ export function* publish({ directoriesToPublish, installScript, branch }: Publis
   let tag = branch.replace(/(?!.\_)\_/g, "__").replace(/\//g, "_");
 
   directoriesToPublish.forEach(directory => {
-    let { name, version, private: prv } = JSON.parse(fs.readFileSync(`${directory}/package.json`, { encoding: "utf-8" }));
-    console.log(name, version, prv);
-    if(prv) {
-      console.log("is private");
+    let { name, version, private: privatePackage } = JSON.parse(
+      fs.readFileSync(`${directory}/package.json`, { encoding: "utf-8" })
+    );
+    if(!privatePackage) {
+      console.log("should publish preview for:", name, version);
+      // get latest minor version of the current package version
+        // calculate using npm view package version --json
+          // semver package?
+        // check package@tag to see if the last preview was published on the latest minor version (plus patch)
+          // calculate interval
+          // ? what happens if we try to publish same version twice
+            // attempt another interval bump if it fails
+        // apply new preview version
+          // npm version x --no-git-tag-version
+          // npm publish --access=public --tag tag
+        // if successful publish, add package name and version to array for comment
     }
   });
-    // for each directory, get its package json
-    //   skip if private
-    //   get latest version
-    //     patch bump
-    //       check with pre-release tag to see if any previous previews
-    //         if so capture interval
-    //       pre-release tag with branch and new interval
-    //       npm version x --no-git-tag-version
-    //       npm publish --access=public --tag tag
-    //   if successful publish, add package name and version to array for comment
-    // return array
+  // return array
+
   console.log(directoriesToPublish, install, tag);
   return [""];
 }
