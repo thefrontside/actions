@@ -1,6 +1,6 @@
 import { Operation } from "effection";
 interface PublishRun {
-    directoriesToPublish: Iterable<string>;
+    directoriesToPublish: string[];
     installScript: string;
     branch: string;
 }

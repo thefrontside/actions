@@ -10,12 +10,12 @@ const token =
     : core.getInput("token");
 const octokit = github.getOctokit(token);
 
-const payload = JSON.parse(fs.readFileSync(`${process.env.GITHUB_EVENT_PATH}`, 'utf-8'));
+const payload = JSON.parse(fs.readFileSync(`${process.env.GITHUB_EVENT_PATH}`, "utf-8"));
 
 main(
   run({
     octokit,
     core,
-    payload
+    payload,
   })
 );

@@ -32,10 +32,10 @@ export function* run({ octokit, core, payload }: PreviewRun): Operation<void> {
   if (!isValid) {
     core.setFailed(reason);
   } else {
-    let directoriesToPublish: Iterable<string> = yield findPackages(gitDiff);
+    let directoriesToPublish: string[] = yield findPackages(gitDiff);
     let installScript = core.getInput("INSTALL_SCRIPT") || "";
     let published: Iterable<string> = yield publish({ directoriesToPublish, installScript, branch });
-    console.log('published:', published);
+    console.log("published:", published);
     // yield generateComment({ results, octokit })
   }
   console.log(octokit ? "whatever" : "whatever");

@@ -17,16 +17,16 @@ export function* checkPrerequisites(payload: PullRequestPayload): Operation<Prer
     head: {
       ref: headBranch,
       repo: {
-        url: headUrl
+        url: headUrl,
       },
-      sha: headSHA
+      sha: headSHA,
     },
     base: {
       repo: {
-        url: baseUrl
+        url: baseUrl,
       },
-      sha: baseSHA
-    }
+      sha: baseSHA,
+    },
   } = payload.pull_request;
 
   if (!github.context.payload.pull_request) {
