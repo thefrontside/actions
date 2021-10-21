@@ -1,6 +1,11 @@
 name: Publish PR Preview
 description: Generate Preview Packages
 
+inputs:
+  INSTALL_SCRIPT:
+    description: "For when yarn or npm install is not enough"
+    required: false
+
 runs:
   using: "node12"
   main: "dist/index.js"

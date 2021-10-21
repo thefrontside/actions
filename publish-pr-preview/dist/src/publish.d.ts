@@ -1,2 +1,7 @@
 import { Operation } from "effection";
-export declare function publish(directoriesToPublish: Iterable<string>): Operation<string[]>;
+interface PublishRun {
+    directoriesToPublish: Iterable<string>;
+    installScript: string;
+}
+export declare function publish({ directoriesToPublish, installScript }: PublishRun): Operation<string[]>;
+export {};
