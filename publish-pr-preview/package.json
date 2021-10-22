@@ -19,13 +19,15 @@
     "@actions/github": "^5.0.0",
     "@effection/process": "2.0.1",
     "effection": "2.0.1",
-    "glob": "^7.2.0"
+    "glob": "^7.2.0",
+    "semver": "^7.3.5"
   },
   "devDependencies": {
     "@frontside/eslint-config": "^2.1.0",
     "@frontside/tsconfig": "^1.2.0",
     "@types/glob": "^7.1.4",
     "@types/node": "^16.10.2",
+    "@types/semver": "^7.3.9",
     "@vercel/ncc": "^0.31.1",
     "typescript": "^4.4.3"
   }
