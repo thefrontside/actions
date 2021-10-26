@@ -9,7 +9,8 @@
     "lint": "eslint '**/*.ts'",
     "build": "ncc build index.ts -m",
     "problems": "tsc --noEmit",
-    "test": "jest ./test/**.test.ts"
+    "test": "jest ./test/**.test.ts",
+    "watch": "yarn test --watch"
   },
   "volta": {
     "node": "12.22.7",
@@ -24,6 +25,7 @@
     "semver": "^7.3.5"
   },
   "devDependencies": {
+    "@babel/preset-env": "^7.15.8",
     "@babel/preset-typescript": "^7.15.0",
     "@frontside/eslint-config": "^2.1.0",
     "@frontside/tsconfig": "^1.2.0",
