@@ -5,38 +5,24 @@ const s = require("semver");
   temporary unit tests because i think it might be easier to organize my notes in this format
 */
 
-/*
-semver notes
-  ^1.2.0 is everything under 2.0.0
-  ^0.1.2 is everything under 0.2.0
-  latest is last published without tag, not necessarily highest
-    this is not reliable when we have multiple versions in parallel (v1 and v2)
-
-scenarios
-  first preview on normal
-    1.2.3 => 1.2.4-preview.0
-    subsequent previews with no releases
-      1.2.3 => 1.2.4-preview.1
-    new patch release
-      1.2.4 => 1.2.5-preview.0
-      same for 0.2.4
-        0.2.4 => 0.2.5-preview.0
-    new minor release
-      1.3.0 => 1.3.1-preview.0
-      same for 0.3.0
-        0.3.0 => 0.3.1-preview.0
-    new major release
-      irrelevant, get the highest minor version
-  preview on prerelease
-    1.2.3-beta.1 => 1.2.3-beta.1-preview.0
-
-what is the current version
-  is it prerelease?
-npm view package versions --json
-  to get all versions
-npm view package@tag
-  to get package@tag for interval if previous preview was published
-*/
+const previewVersioning = ({
+  current, // get from package.json
+  npmView, // npm view pkg versions --json
+  npmViewTag,
+}:{
+  current: string,
+  npmView: string[],
+  npmViewTag?: string,
+}) => {
+  let npmViewTagWithoutVersionFlag = true;
+  let currentPreviewVersion = npmViewTag && npmViewTagWithoutVersionFlag ? npmViewTag : current;
+    // npm view pkg @ invalid tag will return latest version
+      // therefore we need to do npm view pkg @ tag first, if it doesn't return anything, it means stick with package.json version
+        // if it does return something we run npm view pkg @ tag again with --version to get the last published preview version
+  let maxSat = s.maxSatisfying(npmView, "^"+currentPreviewVersion);
+  let increaseFrom = maxSat || currentPreviewVersion;
+  return s.inc(increaseFrom, "prerelease", "branch");
+};
 
 describe("correct preview versioning for all scenarios", () => {
   describe("semver inc function", () => {
@@ -64,9 +50,38 @@ describe("correct preview versioning for all scenarios", () => {
     test("maxSatisfying recognizes prerelease is lower than regular semver", () => {
       expect(s.maxSatisfying(
         ["1.2.2", "1.2.3"],
-        "^1.2.3-beta.1",
-        { includePrerelease: true }
+        "^1.2.3-beta.1"
       )).toEqual("1.2.3");
+    });
+  });
+  describe("steps of semver functions to cover all preview versioning scenarios", () => {
+    describe("generating preview version from regular semver", () => {
+      test("entering prerelease mode", () => {
+        expect(previewVersioning({ current: "1.1.1", npmView: ["1.1.1"] })).toEqual("1.1.2-branch.0");
+      });
+      test("generating the next interval of a preview version", () => {
+        expect(previewVersioning({ current: "1.1.1", npmView: ["1.1.1"], npmViewTag: "1.1.2-branch.2" })).toEqual("1.1.2-branch.3");
+      });
+      test("when patch is released before feature branch is rebased", () => {
+        expect(previewVersioning({ current: "1.1.1", npmView: ["1.1.1", "1.1.2"] })).toEqual("1.1.3-branch.0");
+      });
+      test("when minor is released before feature branch is rebased", () => {
+        expect(previewVersioning({ current: "1.1.1", npmView: ["1.1.1", "1.1.2", "1.2.0"] })).toEqual("1.2.1-branch.0");
+      });
+      test("when major is released it should not affect preview version", () => {
+        expect(previewVersioning({ current: "1.1.1", npmView: ["1.1.1", "2.0.0"] })).toEqual("1.1.2-branch.0");
+      });
+      test("maxSatisfying should grab the highest patch if version is <1.0.0", () => {
+        expect(previewVersioning({ current: "0.2.0", npmView: ["0.2.0", "0.2.1", "0.3.0"] })).toEqual("0.2.2-branch.0");
+      });
+    });
+    describe("generating preview version from prerelease", () => {
+      test("generating preview version from preexisting beta prerelease version", () => {
+        expect(previewVersioning({ current: "1.1.1-beta.2", npmView: ["1.1.0", "1.1.1-beta.2"] })).toEqual("1.1.1-branch.0");
+      });
+      test("maxSatisfying when there are higher prerelease versions", () => {
+        expect(previewVersioning({ current: "1.1.1-beta.2", npmView: ["1.1.0", "1.1.1-beta.2", "1.2.0-malicious.1"] })).toEqual("1.1.1-branch.0");
+      });
     });
   });
 });
