@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-const s = require("semver");
-const expect = require("expect");
+import s from "semver";
+import expect from "expect";
 /*
   temporary unit tests because i think it might be easier to organize my notes in this format
 */
@@ -13,15 +12,15 @@ const previewVersioning = ({
   current: string,
   npmView: string[],
   npmViewTag?: string,
-}) => {
+}): string => {
   let npmViewTagWithoutVersionFlag = true;
   let currentPreviewVersion = npmViewTag && npmViewTagWithoutVersionFlag ? npmViewTag : current;
-    // npm view pkg @ invalid tag will return latest version
+    // npm view pkg @ invalid tag will return npm version
       // therefore we need to do npm view pkg @ tag first, if it doesn't return anything, it means stick with package.json version
         // if it does return something we run npm view pkg @ tag again with --version to get the last published preview version
   let maxSat = s.maxSatisfying(npmView, "^"+currentPreviewVersion);
   let increaseFrom = maxSat || currentPreviewVersion;
-  return s.inc(increaseFrom, "prerelease", "branch");
+  return s.inc(increaseFrom, "prerelease", "branch") || "";
 };
 
 describe("correct preview versioning for all scenarios", () => {
