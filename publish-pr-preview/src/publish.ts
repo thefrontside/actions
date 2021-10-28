@@ -26,7 +26,11 @@ export function* publish({ directoriesToPublish, installScript, branch }: Publis
         let { name, version, private: privatePackage } = JSON.parse(
           fs.readFileSync(`${directory}/package.json`, { encoding: "utf-8" })
         );
+        let cat: Process = yield exec("cat package.json", { cwd: directory });
+        let result = yield cat.stdout.text().expect();
+        console.log("pkgjson:", result);
         if (!privatePackage) {
+          // we may want to not fail on error from npm view because it might be a new package
           let npmViewVersions: Process = yield exec(`npm view ${name} versions --json`);
           let everyPublishedVersions = JSON.parse(yield npmViewVersions.stdout.text().expect());
           let previouslyPublishedPreview = yield exec(`npm view ${name}@${tag}`).expect();
@@ -36,6 +40,8 @@ export function* publish({ directoriesToPublish, installScript, branch }: Publis
           let maxSatisfying = semver.maxSatisfying(everyPublishedVersions, "^"+basePreviewVersion);
           let increaseFrom = maxSatisfying || basePreviewVersion;
           let previewVersionToPublish = semver.inc(increaseFrom, "prerelease", tag);
+
+
             // ? what happens if we try to publish same version twice
               // attempt another interval bump if it fails?
             // ⚠️ test out cwd of exec in test first for the remaining steps
