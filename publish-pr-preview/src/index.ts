@@ -4,7 +4,7 @@ import * as Core from "@actions/core/lib/core";
 import { Operation } from "effection";
 import { checkPrerequisites } from "./checkPrerequisites";
 import { findPackages } from "./findPackages";
-import { publish } from "./publish";
+import { publish, PublishedPackages } from "./publish";
 
 interface PullRequestBranch {
   ref: string;
@@ -34,9 +34,9 @@ export function* run({ octokit, core, payload }: PreviewRun): Operation<void> {
   } else {
     let directoriesToPublish: string[] = yield findPackages(gitDiff);
     let installScript = core.getInput("INSTALL_SCRIPT") || "";
-    let published: Iterable<string> = yield publish({ directoriesToPublish, installScript, branch });
-    console.log("published:", published);
+    let published: Iterable<PublishedPackages> = yield publish({ directoriesToPublish, installScript, branch });
     // yield generateComment({ results, octokit })
+    console.log(published);
   }
   console.log(octokit ? "whatever" : "whatever");
 }

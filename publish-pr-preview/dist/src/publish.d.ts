@@ -4,5 +4,9 @@ interface PublishRun {
     installScript: string;
     branch: string;
 }
+export interface PublishedPackages {
+    packageName: string;
+    version: string;
+}
 export declare function publish({ directoriesToPublish, installScript, branch }: PublishRun): Operation<string[]>;
 export {};

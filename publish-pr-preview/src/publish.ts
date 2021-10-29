@@ -1,4 +1,4 @@
-import { exec, Process } from "@effection/process";
+import { exec, Process, ProcessResult } from "@effection/process";
 import { all, Operation } from "effection";
 import fs from "fs";
 import semver from "semver";
@@ -9,49 +9,87 @@ interface PublishRun {
   branch: string
 }
 
+export interface PublishedPackages {
+  packageName: string;
+  version: string;
+}
+
 export function* publish({ directoriesToPublish, installScript, branch }: PublishRun): Operation<string[]> {
-  // detect for workspace to compare with directoresToPublish to see which one to install separately
-    // ❌ bad idea; we don't know what kind of setup users will have in their monorepo
   // setup npmrc? - may or may not be necessary
     // this should happen before install as projects might have private dependencies
   let installCommand = installScript || fs.existsSync("yarn.lock") ? "yarn install --frozen-lockfile" : "npm ci";
   let tag = branch.replace(/(?!.\_)\_/g, "__").replace(/\//g, "_");
+  let published: Iterable<PublishedPackages> = [];
 
   yield exec(installCommand).join();
-
-  let published: string[] = [];
   yield all(
     directoriesToPublish.map(directory =>
       function* () {
         let { name, version, private: privatePackage } = JSON.parse(
           fs.readFileSync(`${directory}/package.json`, { encoding: "utf-8" })
         );
-        let cat: Process = yield exec("cat package.json", { cwd: directory });
-        let result = yield cat.stdout.text().expect();
-        console.log("pkgjson:", result);
         if (!privatePackage) {
-          // we may want to not fail on error from npm view because it might be a new package
-          let npmViewVersions: Process = yield exec(`npm view ${name} versions --json`);
-          let everyPublishedVersions = JSON.parse(yield npmViewVersions.stdout.text().expect());
-          let previouslyPublishedPreview = yield exec(`npm view ${name}@${tag}`).expect();
-          let basePreviewVersion = previouslyPublishedPreview
-            ? yield exec(`npm view ${name}@${tag} version`)
-            : version;
-          let maxSatisfying = semver.maxSatisfying(everyPublishedVersions, "^"+basePreviewVersion);
-          let increaseFrom = maxSatisfying || basePreviewVersion;
-          let previewVersionToPublish = semver.inc(increaseFrom, "prerelease", tag);
-
-
-            // ? what happens if we try to publish same version twice
-              // attempt another interval bump if it fails?
-            // ⚠️ test out cwd of exec in test first for the remaining steps
-              // npm version x --no-git-tag-version
-              // npm publish --access=public --tag tag
-                // if successful publish, add package name and version to array for comment
-          console.log("WIP:", published, previewVersionToPublish);
+          let increaseFrom: string = yield npmView({ name, version, tag });
+          // ⚠️ try running this with @minkimcello/georgia (and add your NPM token to github actions secrets)
+          // ⚠️ utilize the multiple attempt functionality too
+          let successfullyPublishedVersion: string | boolean = yield attemptPublish({ increaseFrom, tag, directory, attemptCount: 3 });
+          if (successfullyPublishedVersion) {
+            published = [...published, { packageName: name, version: successfullyPublishedVersion }];
+          }
         }
       }
     )
   );
-  return [""];
+  return published;
+}
+
+function* attemptPublish ({
+  increaseFrom,
+  tag,
+  directory,
+  attemptCount,
+}:{
+  increaseFrom: string,
+  tag: string,
+  directory: string,
+  attemptCount: number,
+}) {
+  let bumpVersion = (version: string) => semver.inc(version, "prerelease", tag) || "";
+  while (attemptCount > 0) {
+    increaseFrom = bumpVersion(increaseFrom);
+    yield exec(`npm version ${increaseFrom} --no-git-tag-version`, { cwd: directory }).expect();
+    let publishAttempt: ProcessResult = yield exec(`npm publish --access=public --tag ${tag}`, { cwd: directory }).join();
+    if (publishAttempt.code === 0) {
+      return increaseFrom;
+    }
+  }
+  return false;
+}
+
+function* npmView ({
+  name,
+  version,
+  tag,
+}:{
+  name: string,
+  version: string,
+  tag: string,
+}) {
+  let newPackage: ProcessResult = yield exec(`npm view ${name}`).join();
+  if (newPackage.code === 1) {
+    return version;
+  } else {
+    let { stdout: stdoutVersions }: ProcessResult = yield exec(`npm view ${name} versions --json`).expect();
+    let everyPublishedVersions = JSON.parse(stdoutVersions);
+
+    let previouslyPublishedPreview: Process = yield exec(`npm view ${name}@${tag}`).expect();
+    let { stdout: previousPreviewVersion }: ProcessResult = yield exec(`npm view ${name}@${tag} version`).expect();
+
+    let basePreviewVersion = previouslyPublishedPreview
+      ? previousPreviewVersion
+      : version;
+
+    let maxSatisfying = semver.maxSatisfying(everyPublishedVersions, "^"+basePreviewVersion);
+    return maxSatisfying || basePreviewVersion;
+  }
 }
