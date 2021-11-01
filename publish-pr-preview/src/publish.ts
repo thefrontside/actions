@@ -14,7 +14,12 @@ export interface PublishedPackages {
   version: string;
 }
 
-export function* publish({ directoriesToPublish, installScript, branch }: PublishRun): Operation<string[]> {
+export interface PublishResults {
+  publishedPackages: PublishedPackages[];
+  tag: string;
+}
+
+export function* publish({ directoriesToPublish, installScript, branch }: PublishRun): Operation<PublishResults> {
   // setup npmrc? - may or may not be necessary
     // this should happen before install as projects might have private dependencies
   let installCommand = installScript || fs.existsSync("yarn.lock") ? "yarn install --frozen-lockfile" : "npm ci";
@@ -40,7 +45,10 @@ export function* publish({ directoriesToPublish, installScript, branch }: Publis
       }
     )
   );
-  return published;
+  return {
+    tag,
+    publishedPackages: published,
+  };
 }
 
 function* attemptPublish ({

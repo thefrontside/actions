@@ -14,6 +14,11 @@ export interface PullRequestPayload extends WebhookPayload {
         head: PullRequestBranch;
         base: PullRequestBranch;
     };
+    repository: WebhookPayload["repository"] & {
+        owner: {
+            name: string;
+        };
+    };
 }
 interface PreviewRun {
     octokit: InstanceType<typeof GitHub>;

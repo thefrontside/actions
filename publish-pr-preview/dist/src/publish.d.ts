@@ -8,5 +8,9 @@ export interface PublishedPackages {
     packageName: string;
     version: string;
 }
-export declare function publish({ directoriesToPublish, installScript, branch }: PublishRun): Operation<string[]>;
+export interface PublishResults {
+    publishedPackages: PublishedPackages[];
+    tag: string;
+}
+export declare function publish({ directoriesToPublish, installScript, branch }: PublishRun): Operation<PublishResults>;
 export {};

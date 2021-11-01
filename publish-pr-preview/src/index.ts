@@ -4,7 +4,9 @@ import * as Core from "@actions/core/lib/core";
 import { Operation } from "effection";
 import { checkPrerequisites } from "./checkPrerequisites";
 import { findPackages } from "./findPackages";
-import { publish, PublishedPackages } from "./publish";
+import { publish, PublishResults } from "./publish";
+import { formatComment } from "./formatComment";
+import { postGithubComment } from "./postGithubComment";
 
 interface PullRequestBranch {
   ref: string;
@@ -18,6 +20,11 @@ export interface PullRequestPayload extends WebhookPayload {
   pull_request: WebhookPayload["pull_request"] & {
     head: PullRequestBranch;
     base: PullRequestBranch;
+  }
+  repository: WebhookPayload["repository"] & {
+    owner: {
+      name: string;
+    }
   }
 }
 
@@ -34,9 +41,8 @@ export function* run({ octokit, core, payload }: PreviewRun): Operation<void> {
   } else {
     let directoriesToPublish: string[] = yield findPackages(gitDiff);
     let installScript = core.getInput("INSTALL_SCRIPT") || "";
-    let published: Iterable<PublishedPackages> = yield publish({ directoriesToPublish, installScript, branch });
-    // yield generateComment({ results, octokit })
-    console.log(published);
+    let published: PublishResults = yield publish({ directoriesToPublish, installScript, branch });
+    let comment: string = formatComment({ published });
+    yield postGithubComment({ comment, octokit, payload });
   }
-  console.log(octokit ? "whatever" : "whatever");
 }
