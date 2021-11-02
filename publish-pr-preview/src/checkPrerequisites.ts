@@ -37,13 +37,6 @@ export function* checkPrerequisites(payload: PullRequestPayload): Operation<Prer
     return { isValid: false, reason: "Unable to proceed because \"latest\" is a protected NPM tag. Retrigger this action from a different branch name" };
   }
 
-  // let npmAuthenticated: Process = yield exec(`npm whoami`); // 🚨 we're not signing into npm so this doesn't work
-  // let result = yield npmAuthenticated.join();
-  // console.log(result);
-  // if (result.code !== 1) {
-  //   return { isValid: false, reason: "Not authenticated to publish. Configure the setup-node action in your workflow with the correct settings." };
-  // }
-
   let gitDiff: Process = yield exec(`git diff ${baseSHA}...${headSHA} --name-only`);
   let buffer: string[] = yield gitDiff.stdout.lines().toArray();
   let { code: gitDiffExitCode } = yield gitDiff.join();

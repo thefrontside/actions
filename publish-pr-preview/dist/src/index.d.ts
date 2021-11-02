@@ -16,7 +16,7 @@ export interface PullRequestPayload extends WebhookPayload {
     };
     repository: WebhookPayload["repository"] & {
         owner: {
-            name: string;
+            login: string;
         };
     };
 }

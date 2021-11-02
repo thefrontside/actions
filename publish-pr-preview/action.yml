@@ -3,7 +3,7 @@ description: Generate Preview Packages
 
 inputs:
   INSTALL_SCRIPT:
-    description: "For when yarn or npm install is not enough"
+    description: "If you need to specify your own install command"
     required: false
 
 runs:
