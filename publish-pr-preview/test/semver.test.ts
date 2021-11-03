@@ -60,6 +60,13 @@ describe("correct preview versioning for all scenarios", () => {
         "^1.2.1"
       )).toEqual("1.2.4");
     });
+
+    it("maxSatisfying when version is above range", () => {
+      expect(s.maxSatisfying(
+        ["1.2.0"],
+        "^1.2.1"
+      )).toEqual(null);
+    });
   });
   describe("steps of semver functions to cover all preview versioning scenarios", () => {
     describe("generating preview version from regular semver", () => {
