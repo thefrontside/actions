@@ -20,8 +20,6 @@ export interface PublishResults {
 }
 
 export function* publish({ directoriesToPublish, installScript, branch }: PublishRun): Operation<PublishResults> {
-  // setup npmrc? - may or may not be necessary
-    // this should happen before install as projects might have private dependencies
   let installCommand = installScript || fs.existsSync("yarn.lock") ? "yarn install --frozen-lockfile" : "npm ci";
   let tag = branch.replace(/\_/g, "-").replace(/\//g, "-");
   let published: Iterable<PublishedPackages> = [];
@@ -35,23 +33,6 @@ export function* publish({ directoriesToPublish, installScript, branch }: Publis
         );
         if (!privatePackage) {
           let increaseFrom: string = yield npmView({ name, version, tag });
-          /*
-            cases
-              [ ] - run normally
-                1.15.0 => 1.15.1-mk_preview-js.0
-              [ ] - run normally again
-                1.15.0 => 1.15.1-mk_preview-js.1
-              [ ] - manually publish 1.15.1
-                1.15.0 => 1.15.2-mk_preview-js.0
-              [ ] - manually publish 1.16.0
-                1.15.0 => 1.16.1-mk_preview-js.0
-              [ ] - manually publish 1.16.1-branch.1 and modify increaseFrom to 1.16.0 (otherwise it will see the manually published intervals)
-                1.15.0 => 1.16.1-branch.2
-              [ ] - run again
-                error from 3 attempts
-              [ ] - undo increadFrom modification
-                1.15.0 => 1.16.1-branch.3
-          */
           let successfullyPublishedVersion: string | boolean = yield attemptPublish({ increaseFrom, tag, directory, attemptCount: 3 });
 
           if (successfullyPublishedVersion) {
