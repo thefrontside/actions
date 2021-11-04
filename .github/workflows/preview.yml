@@ -13,7 +13,7 @@ jobs:
     ## test publishing with and without this action with my test repo
     - uses: actions/setup-node@v2
       with:
-        registry-url: 'https://registry.npmjs.org'
+        registry-url: https://registry.npmjs.org
     - uses: ./publish-pr-preview
       env:
         NODE_AUTH_TOKEN: ${{ secrets.JACK_NPM_TOKEN }}
