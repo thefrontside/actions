@@ -1,5 +1,6 @@
 import { Operation } from "effection";
 import glob from "glob";
+import colors from "./ansiColors";
 
 export function* findPackages(gitDiff: string[]): Operation<Iterable<string>> {
   let directories = [...new Set(gitDiff.map(output => {
@@ -9,6 +10,11 @@ export function* findPackages(gitDiff: string[]): Operation<Iterable<string>> {
       return ".";
     }
   }))];
+
+  console.log(colors.yellow("Directories from git diff:"));
+  directories.forEach(dir => {
+    console.log(colors.blue("  "+dir));
+  });
 
   let listAllPkgJsonsWithin = (directory: string) => glob.sync("**/package.json", {
     cwd: directory,
@@ -40,5 +46,12 @@ export function* findPackages(gitDiff: string[]): Operation<Iterable<string>> {
     return acc;
   };
 
-  return [... new Set(directories.reduce((acc, directory) => findRelativePkgJsonPaths({ acc, directory }), [] as string[]))];
+  let directoriesToPublish = [... new Set(directories.reduce((acc, directory) => findRelativePkgJsonPaths({ acc, directory }), [] as string[]))];
+
+  console.log("\n"+colors.yellow("Directories with package.json located:"));
+  directoriesToPublish.forEach(dir => {
+    console.log(colors.blue("  "+dir));
+  });
+
+  return directoriesToPublish;
 }

@@ -2,6 +2,7 @@ import { exec, Process, ProcessResult } from "@effection/process";
 import { all, Operation } from "effection";
 import fs from "fs";
 import semver from "semver";
+import colors from "./ansiColors";
 
 interface PublishRun {
   directoriesToPublish: string[];
@@ -24,7 +25,15 @@ export function* publish({ directoriesToPublish, installScript, branch }: Publis
   let tag = branch.replace(/\_/g, "-").replace(/\//g, "-");
   let published: Iterable<PublishedPackages> = [];
 
+  console.log(
+    "\n"+
+    colors.yellow("Installing with command"),
+    colors.blue(installCommand),
+    colors.yellow("...")
+  );
   yield exec(installCommand).join();
+  console.log("\n"+colors.yellow("Publishing packages..."));
+
   yield all(
     directoriesToPublish.map(directory =>
       function* () {
@@ -36,10 +45,20 @@ export function* publish({ directoriesToPublish, installScript, branch }: Publis
           let successfullyPublishedVersion: string | boolean = yield attemptPublish({ increaseFrom, tag, directory, attemptCount: 3 });
 
           if (successfullyPublishedVersion) {
+            console.log(
+              colors.green("  Successfully published"),
+              colors.blue(successfullyPublishedVersion),
+              colors.green("of"),
+              colors.blue(name)
+            );
             published = [...published, { packageName: name, version: successfullyPublishedVersion }];
           }
         } else {
-          console.log("Skipping", name, "because it is a private package");
+          console.log(
+            colors.red("  Skipping"),
+            colors.blue(name),
+            colors.red("because it is a private package")
+          );
         }
       }
     )
@@ -67,7 +86,6 @@ function* attemptPublish ({
 
     yield exec(`npm version ${increaseFrom} --no-git-tag-version`, { cwd: directory }).expect();
     let publishAttempt: ProcessResult = yield exec(`npm publish --access=public --tag=${tag}`, { cwd: directory }).join();
-    console.log(publishAttempt);
 
     if (publishAttempt.code === 0) {
       return increaseFrom;
