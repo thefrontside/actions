@@ -10,7 +10,6 @@ jobs:
     - uses: actions/checkout@v2
       with:
         fetch-depth: 0
-    ## test publishing with and without this action with my test repo
     - uses: actions/setup-node@v2
       with:
         registry-url: https://registry.npmjs.org
