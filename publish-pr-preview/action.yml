@@ -1,0 +1,11 @@
+name: Publish PR Preview
+description: Generate Preview Packages
+
+inputs:
+  INSTALL_SCRIPT:
+    description: "If you need to specify your own install command"
+    required: false
+
+runs:
+  using: "node12"
+  main: "dist/index.js"

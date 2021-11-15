@@ -1,0 +1,22 @@
+{
+  "name": "actions-monorepo",
+  "version": "0.0.0",
+  "private": true,
+  "author": "Frontside Engineering <engineering@frontside.com>",
+  "license": "MIT",
+  "workspaces": {
+    "packages": [
+      "publish-pr-preview"
+    ]
+  },
+  "scripts": {
+    "build": "yarn workspaces run build",
+    "lint": "yarn workspaces run lint",
+    "problems": "yarn workspaces run problems",
+    "test": "yarn workspaces run test"
+  },
+  "volta": {
+    "node": "12.22.7",
+    "yarn": "1.22.11"
+  }
+}

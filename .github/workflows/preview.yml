@@ -1,0 +1,19 @@
+name: Testing Preview Action
+
+on: pull_request
+
+jobs:
+  preview:
+    name: Preview Testing
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - uses: actions/setup-node@v2
+      with:
+        registry-url: https://registry.npmjs.org
+    - uses: ./publish-pr-preview
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.JACK_NPM_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.FRONTSIDEJACK_GITHUB_TOKEN }}

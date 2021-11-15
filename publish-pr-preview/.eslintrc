@@ -1,0 +1,7 @@
+{
+  "extends": "@frontside/eslint-config",
+  "rules": {
+    "quotes": [1, "double"],
+    "comma-dangle": [1, "always-multiline"]
+  }
+}
