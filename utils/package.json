@@ -1,5 +1,5 @@
 {
-  "name": "synchronize-npm-tags",
+  "name": "@frontside/actions-utils",
   "version": "0.0.0",
   "private": true,
   "author": "Frontside Engineering <engineering@frontside.com>",
@@ -7,23 +7,16 @@
   "main": "dist/index.js",
   "scripts": {
     "lint": "echo eslint '{src,test}**/*.ts'",
-    "build": "ncc build index.ts -m",
+    "build": "tsc --build tsconfig.json",
     "problems": "tsc --noEmit",
-    "test": "mocha -r node_modules/ts-node/register test/**.test.ts"
+    "test": "echo no op"
   },
   "dependencies": {
-    "@actions/core": "^1.6.0",
-    "@actions/github": "^5.0.0",
-    "@effection/process": "2.0.1",
-    "effection": "2.0.1"
+    "glob": "^7.2.0"
   },
   "devDependencies": {
-    "@effection/mocha": "^2.0.1",
-    "@types/mocha": "^9.0.0",
+    "@types/glob": "^7.1.4",
     "@types/node": "^16.10.2",
-    "@vercel/ncc": "^0.31.1",
-    "expect": "^27.3.1",
-    "mocha": "8.4.0",
     "ts-node": "^10.4.0",
     "typescript": "4.3.5"
   },

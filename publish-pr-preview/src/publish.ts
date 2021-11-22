@@ -2,7 +2,7 @@ import { exec, Process, ProcessResult } from "@effection/process";
 import { all, Operation } from "effection";
 import fs from "fs";
 import semver from "semver";
-import colors from "./ansiColors";
+import { colors } from "@frontside/actions-utils";
 
 interface PublishRun {
   directoriesToPublish: string[];

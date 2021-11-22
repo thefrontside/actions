@@ -1,6 +1,5 @@
 import { Operation } from "effection";
-import glob from "glob";
-import colors from "./ansiColors";
+import { colors, listAllPkgJsons } from "@frontside/actions-utils";
 
 export function* findPackages(gitDiff: string[]): Operation<Iterable<string>> {
   let directories = [...new Set(gitDiff.map(output => {
@@ -16,11 +15,6 @@ export function* findPackages(gitDiff: string[]): Operation<Iterable<string>> {
     console.log(colors.blue("  "+dir));
   });
 
-  let listAllPkgJsonsWithin = (directory: string) => glob.sync("**/package.json", {
-    cwd: directory,
-    ignore: ["node_modules/**"],
-  });
-
   let depthOfPath = (directory: string): number => {
     let matched = directory.match(/\//g);
     return matched ? matched.length : 0;
@@ -32,13 +26,13 @@ export function* findPackages(gitDiff: string[]): Operation<Iterable<string>> {
 
   let findRelativePkgJsonPaths = ({ acc, directory }: { acc: string[], directory: string }) => {
     for (let i = directory; i != "."; i = superDirectory(i)) {
-      let pkgJsons = listAllPkgJsonsWithin(i);
+      let pkgJsons = listAllPkgJsons(i);
       if (pkgJsons.length === 1 && pkgJsons[0] === "package.json") {
         return [...acc, i];
       }
     }
 
-    let pkgJsonsAtRoot = listAllPkgJsonsWithin(".");
+    let pkgJsonsAtRoot = listAllPkgJsons();
     if (pkgJsonsAtRoot.length === 1 && pkgJsonsAtRoot[0] === "package.json") {
       return [...acc, "."];
     }

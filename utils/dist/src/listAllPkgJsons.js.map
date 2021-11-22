@@ -1,0 +1,1 @@
+{"version":3,"file":"listAllPkgJsons.js","sourceRoot":"","sources":["../../src/listAllPkgJsons.ts"],"names":[],"mappings":";;;;;;AAAA,gDAAwB;AAExB,SAAgB,eAAe,CAAE,YAAoB,GAAG;IACtD,OAAO,cAAI,CAAC,IAAI,CAAC,iBAAiB,EAAE;QAClC,GAAG,EAAE,SAAS;QACd,MAAM,EAAE,CAAC,iBAAiB,CAAC;KAC5B,CAAC,CAAC;AACL,CAAC;AALD,0CAKC"}
