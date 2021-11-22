@@ -12,7 +12,7 @@ interface WebhookPayload extends DefaultPayload {
 export interface ActionPayload {
     octokit: InstanceType<typeof GitHub>;
     payload: WebhookPayload;
-    preserve?: string[];
+    preserve: string[];
 }
 export interface PackageTags {
     name: string;

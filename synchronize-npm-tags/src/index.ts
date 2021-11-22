@@ -30,7 +30,7 @@ export function* run ({ octokit, payload, preserve }: ActionPayload): Operation<
   let publicPackages: string[] = findPublicPackages();
   let gitBranches: string[] = yield getGitBranches({ octokit, payload });
   let allPackageTags: PackageTags[] = yield getTagsForEachPackage({ publicPackages });
-
+  yield removeTags({ allPackageTags, gitBranches, preserve });
 }
 
 /*
