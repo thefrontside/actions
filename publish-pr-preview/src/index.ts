@@ -39,6 +39,7 @@ export function* run({ octokit, core, payload }: PreviewRun): Operation<void> {
   if (!isValid) {
     core.setFailed(reason);
   } else {
+    // TODO: findPackages is synchronous - doesn't need to yield
     let directoriesToPublish: string[] = yield findPackages(gitDiff);
     let installScript = core.getInput("INSTALL_SCRIPT") || "";
     let published: PublishResults = yield publish({ directoriesToPublish, installScript, branch });

@@ -29,6 +29,7 @@ export function* publish({ directoriesToPublish, installScript, branch }: Publis
     "\n"+
     colors.yellow("Installing with command"),
     colors.blue(installCommand),
+    // TODO should be +colors.yellow("...") to remove unnecessary space
     colors.yellow("...")
   );
   yield exec(installCommand).join();
