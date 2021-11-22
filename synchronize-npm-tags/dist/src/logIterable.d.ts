@@ -1,1 +1,1 @@
-export declare function logIterable(description: string, iterable: string[]): void;
+export declare function logIterable(description: string, iterable: string[], emptyDescription?: string): void;

@@ -53,10 +53,11 @@ export function* removeTags({
   logIterable(
     "The following tags were removed from NPM:",
     [...new Set(deletedTags)],
+    "This workflow run did not remove any tags from NPM"
   );
 
   logIterable(
     "The following tags were preserved:",
-    [...new Set(keptTags)],
+    [...new Set(keptTags)]
   );
 }

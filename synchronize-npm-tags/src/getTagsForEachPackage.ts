@@ -6,7 +6,7 @@ import { colors } from "@frontside/actions-utils";
 export function* getTagsForEachPackage({ publicPackages }: { publicPackages: string[] }): Operation<PackageTags[]> {
   let allPackageTags: PackageTags[] = [];
 
-  console.log(colors.yellow("Retrieving NPM tags for each package...\n"));
+  console.log(colors.yellow("Retrieving NPM tags for each package of this repository...\n"));
   yield all(
     publicPackages.map(pkg =>
       function* () {

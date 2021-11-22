@@ -24,6 +24,7 @@ export function findPublicPackages(): string[] {
   logIterable(
     "Running action for the following packages:",
     eligiblePackages,
+    "There are no public packages in this repository"
   );
 
   return eligiblePackages;
