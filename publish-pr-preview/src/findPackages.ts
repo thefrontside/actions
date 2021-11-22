@@ -40,6 +40,7 @@ export function* findPackages(gitDiff: string[]): Operation<Iterable<string>> {
     return acc;
   };
 
+  // TODO remove unnecessary space
   let directoriesToPublish = [... new Set(directories.reduce((acc, directory) => findRelativePkgJsonPaths({ acc, directory }), [] as string[]))];
 
   console.log("\n"+colors.yellow("Directories with package.json located:"));

@@ -1,5 +1,6 @@
 import fs from "fs";
-import { listAllPkgJsons, colors } from "@frontside/actions-utils";
+import { listAllPkgJsons } from "@frontside/actions-utils";
+import { logIterable } from "./logIterable";
 
 export function findPublicPackages(): string[] {
   let privatePackages: string[] = [];
@@ -15,20 +16,15 @@ export function findPublicPackages(): string[] {
     }
   }, [] as string[]);
 
-  if (privatePackages.length) {
-    console.log(
-      colors.yellow("Skipping the following packages because they are"),
-      colors.red("PRIVATE") + colors.yellow(":")
-    );
-    privatePackages.forEach(pkg => console.log("  "+colors.blue(pkg)));
-    console.log("");
-  }
+  logIterable(
+    "Omitting the following packages because they are private:",
+    privatePackages,
+  );
 
-  if (eligiblePackages.length) {
-    console.log(colors.yellow("Running action for the following packages:"));
-    eligiblePackages.forEach(pkg => console.log("  "+colors.blue(pkg)));
-    console.log("");
-  }
+  logIterable(
+    "Running action for the following packages:",
+    eligiblePackages,
+  );
 
   return eligiblePackages;
 }
