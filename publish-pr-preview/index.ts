@@ -4,6 +4,7 @@ import fs from "fs";
 import { main } from "effection";
 import { run } from "./src";
 
+// TODO we don't have token input so just do `process... || ""`
 const token =
   core.getInput("token") === ""
     ? process.env.GITHUB_TOKEN || ""

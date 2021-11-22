@@ -16,6 +16,8 @@ jobs:
       with:
         registry-url: https://registry.npmjs.org
     - uses: ./synchronize-npm-tags
+      with:
+        PRESERVE: doo moo poo
       env:
         NODE_AUTH_TOKEN: ${{ secrets.UH_OH }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
