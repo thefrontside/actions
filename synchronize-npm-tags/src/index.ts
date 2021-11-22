@@ -1,16 +1,29 @@
+import { WebhookPayload as DefaultPayload } from "@actions/github/lib/interfaces";
 import { GitHub } from "@actions/github/lib/utils";
 import { Operation } from "effection";
 // import { colors } from "@frontside/actions-utils";
 import { findPublicPackages } from "./findPublicPackages";
+import { getGitBranches } from "./getGitBranches";
 
-interface Run {
-  octokit: InstanceType<typeof GitHub>;
+interface WebhookPayload extends DefaultPayload {
+  repository: DefaultPayload["repository"] & {
+    name: string,
+    owner: {
+      login: string
+    }
+  }
 }
 
-export function* run ({ octokit }: Run): Operation<void> {
-  console.log("doodoo");
+export interface ActionPayload {
+  octokit: InstanceType<typeof GitHub>;
+  payload: WebhookPayload;
+}
+
+export function* run ({ octokit, payload }: ActionPayload): Operation<void> {
   let publicPackages: string[] = findPublicPackages();
-  console.log(publicPackages);
+  let gitBranches: string[] = yield getGitBranches({ octokit, payload });
+  console.log("publicPackages:", publicPackages);
+  console.log("gitBranches:", gitBranches);
 }
 
 /*

@@ -20,6 +20,7 @@
   },
   "devDependencies": {
     "@effection/mocha": "^2.0.1",
+    "@octokit/types": "^6.34.0",
     "@types/mocha": "^9.0.0",
     "@types/node": "^16.10.2",
     "@vercel/ncc": "^0.31.1",
