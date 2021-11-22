@@ -16,6 +16,10 @@
     "problems": "yarn workspaces run problems",
     "test": "yarn workspaces run test"
   },
+  "devDependencies": {
+    "@frontside/eslint-config": "^2.1.0",
+    "@frontside/tsconfig": "^1.2.0"
+  },
   "volta": {
     "node": "12.22.7",
     "yarn": "1.22.11"

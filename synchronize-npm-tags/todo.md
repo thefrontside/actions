@@ -1,8 +1,9 @@
 - [ ] suggest new name = `delete-stale-tags`
   - publish-preview, publish-release, synchronize-tags
 
-- initialize javascript action
-- step 1
+- extract eslint and tsconfig to root
+- extract common utils to separate package
+- removing tags
   - manually push tag
   - test removing tags
 - on delete
