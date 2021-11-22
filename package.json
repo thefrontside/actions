@@ -6,7 +6,8 @@
   "license": "MIT",
   "workspaces": {
     "packages": [
-      "publish-pr-preview"
+      "publish-pr-preview",
+      "synchronize-npm-tags"
     ]
   },
   "scripts": {
