@@ -6,7 +6,7 @@ interface ToDeprecate {
   description: string;
 }
 
-interface ToPublish {
+export interface ToPublish {
   name: string;
   version: string;
 }
