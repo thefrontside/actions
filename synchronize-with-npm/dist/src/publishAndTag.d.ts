@@ -8,5 +8,5 @@ interface Publish {
     octokit: InstanceType<typeof GitHub>;
     payload: GithubActionsPayload;
 }
-export declare function publishAndTag({ confirmedPkgsToPublish, installScript, octokit, payload, }: Publish): Operation<string[]>;
+export declare function publishAndTag({ confirmedPkgsToPublish, installScript, octokit, payload, }: Publish): Operation<ToPublish[]>;
 export {};

@@ -1,7 +1,6 @@
-interface ToDeprecate {
+export interface ToDeprecate {
     name: string;
     description: string;
-    path: string;
 }
 export interface ToPublish {
     name: string;

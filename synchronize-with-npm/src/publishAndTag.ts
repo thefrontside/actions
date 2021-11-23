@@ -1,5 +1,5 @@
 import { GitHub } from "@actions/github/lib/utils";
-import { exec } from "@effection/process";
+import { exec, ProcessResult } from "@effection/process";
 import { colors } from "@frontside/actions-utils";
 import { all, Operation } from "effection";
 import fs from "fs";
@@ -18,7 +18,7 @@ export function* publishAndTag({
   installScript,
   octokit,
   payload,
-}: Publish): Operation<string[]> {
+}: Publish): Operation<ToPublish[]> {
   let installCommand = installScript || fs.existsSync("yarn.lock") ? "yarn install --frozen-lockfile" : "npm ci";
 
   console.log(
@@ -27,19 +27,21 @@ export function* publishAndTag({
   );
   yield exec(installCommand).join();
 
-  let successfullyPublished: string[] = [];
+  let successfullyPublished: ToPublish[] = [];
   yield all(
     confirmedPkgsToPublish.map(pkg =>
       function* () {
-        yield exec("npm publish --access=public", { cwd: pkg.path }).join();
+        let result: ProcessResult = yield exec("npm publish --access=public", { cwd: pkg.path }).join();
         // TODO how can i turn octokit.request into an operation so i can .join()
-        yield octokit.request("POST /repos/{owner}/{repo}/git/refs", {
-          owner: payload.repository.owner.login,
-          repo: payload.repository.name,
-          ref: `refs/tags/${pkg.name}-v${pkg.version}`,
-          sha: payload.after,
-        });
-        successfullyPublished = [...successfullyPublished, pkg.name];
+        if (result.code === 0) {
+          yield octokit.request("POST /repos/{owner}/{repo}/git/refs", {
+            owner: payload.repository.owner.login,
+            repo: payload.repository.name,
+            ref: `refs/tags/${pkg.name}-v${pkg.version}`,
+            sha: payload.after,
+          });
+          successfullyPublished = [...successfullyPublished, pkg];
+        }
       }
     )
   );
