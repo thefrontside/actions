@@ -1,0 +1,6 @@
+name: Synchronize with NPM
+description: Publish Releases
+
+runs:
+  using: "node12"
+  main: "dist/index.js"

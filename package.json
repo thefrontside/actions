@@ -8,7 +8,8 @@
     "packages": [
       "utils",
       "publish-pr-preview",
-      "synchronize-npm-tags"
+      "synchronize-npm-tags",
+      "synchronize-with-npm"
     ]
   },
   "scripts": {
