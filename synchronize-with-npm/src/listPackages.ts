@@ -1,10 +1,9 @@
 import fs from "fs";
 import { listAllPkgJsons, logIterable } from "@frontside/actions-utils";
 
-interface ToDeprecate {
+export interface ToDeprecate {
   name: string;
   description: string;
-  path: string;
 }
 
 export interface ToPublish {
@@ -30,7 +29,7 @@ export function listPackages(): PackagesList {
       privatePkgs = [...privatePkgs, name];
       return acc;
     } else if (deprecate) {
-      pkgsToDeprecate = [...pkgsToDeprecate, { name, description: deprecate, path }];
+      pkgsToDeprecate = [...pkgsToDeprecate, { name, description: deprecate }];
       return acc;
     } else {
       return [...acc, { name, version, path }];
