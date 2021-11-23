@@ -1,6 +1,5 @@
 import fs from "fs";
-import { listAllPkgJsons } from "@frontside/actions-utils";
-import { logIterable } from "./logIterable";
+import { listAllPkgJsons, logIterable } from "@frontside/actions-utils";
 
 export function findPublicPackages(): string[] {
   let privatePackages: string[] = [];
