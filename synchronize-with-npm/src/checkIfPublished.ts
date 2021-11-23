@@ -17,16 +17,11 @@ export function* checkIfPublished({ pkgsToPublish }:{ pkgsToPublish: ToPublish[]
         }
       }
     )
-  )
+  );
 
   logIterable(
-    "The following packages and versions already exists:",
+    "Skipping the following packages because they are already published:",
     alreadyPublished.map(pkg => `${colors.blue(pkg.name)+colors.yellow("@")+colors.blue(pkg.version)}`),
-  );
-    
-  logIterable(
-    "Attempting to publish the following packages:",
-    confirmedPkgsToPublish.map(pkg => `${colors.blue(pkg.name)+colors.yellow("@")+colors.blue(pkg.version)}`),
   );
 
   return confirmedPkgsToPublish;

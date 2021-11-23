@@ -4,11 +4,13 @@ import { listAllPkgJsons, logIterable } from "@frontside/actions-utils";
 interface ToDeprecate {
   name: string;
   description: string;
+  path: string;
 }
 
 export interface ToPublish {
   name: string;
   version: string;
+  path: string;
 }
 
 interface PackagesList {
@@ -23,14 +25,15 @@ export function listPackages(): PackagesList {
     let { name, private: privatePackage, deprecate, version } = JSON.parse(
       fs.readFileSync(pkgJsonPath, { encoding: "utf-8" })
     );
+    let path = pkgJsonPath.includes("/") ? "." : pkgJsonPath.replace(/([^\/]*)$/, "");
     if (privatePackage) {
       privatePkgs = [...privatePkgs, name];
       return acc;
     } else if (deprecate) {
-      pkgsToDeprecate = [...pkgsToDeprecate, { name, description: deprecate }];
+      pkgsToDeprecate = [...pkgsToDeprecate, { name, description: deprecate, path }];
       return acc;
     } else {
-      return [...acc, { name, version }];
+      return [...acc, { name, version, path }];
     }
   }, [] as ToPublish[]);
 
