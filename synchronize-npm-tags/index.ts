@@ -9,7 +9,7 @@ const octokit = github.getOctokit(token);
 
 const payload = JSON.parse(fs.readFileSync(`${process.env.GITHUB_EVENT_PATH}`, "utf-8"));
 
-const defaultProtectedTags = ["alpha", "beta", "latest"];
+const defaultProtectedTags = ["alpha", "beta", "latest", "dev"];
 const preserve = core.getInput("PRESERVE")
   ? core.getInput("PRESERVE").split(" ").concat(...defaultProtectedTags)
   : defaultProtectedTags;
