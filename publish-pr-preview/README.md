@@ -27,7 +27,7 @@ jobs:
 
 ### Specifying Install Script
 
-The action will by default run either `yarn install --frozen-lockfile` or `npm ci`, but if there are additional steps required before your packages can be published, you can specify your own install script that runs at the root of your repository;
+The action will by default run either `yarn install --frozen-lockfile` or `npm ci`, but if there are additional steps required before your packages can be published, you can specify your own install script that runs at the root of your repository:
 
 ```yaml
 - uses: thefrontside/publish-pr-preview@main

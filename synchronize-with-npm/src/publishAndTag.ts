@@ -21,13 +21,13 @@ export function* publishAndTag({
 }: Publish): Operation<ToPublish[]> {
   if (confirmedPkgsToPublish.length) {
     let installCommand = installScript || fs.existsSync("yarn.lock") ? "yarn install --frozen-lockfile" : "npm ci";
-  
+
     console.log(
       colors.yellow("Installing with command"),
       colors.blue(installCommand)+colors.yellow("...\n"),
     );
     yield exec(installCommand).join();
-  
+
     let successfullyPublished: ToPublish[] = [];
     yield all(
       confirmedPkgsToPublish.map(pkg =>
@@ -46,7 +46,7 @@ export function* publishAndTag({
         }
       )
     );
-  
+
     return successfullyPublished;
   } else {
     return [] as ToPublish[];

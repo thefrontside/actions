@@ -1,6 +1,11 @@
 name: Synchronize with NPM
 description: Publish Releases
 
+inputs:
+  INSTALL_SCRIPT:
+    description: "If you need to specify your own install command"
+    required: false
+
 runs:
   using: "node12"
   main: "dist/index.js"
