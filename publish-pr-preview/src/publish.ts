@@ -101,7 +101,7 @@ function* attemptPublish ({
   let attemptedVersions: string[] = [];
   while (attemptCount > 0) {
     increaseFrom = bumpVersion(increaseFrom, tag);
-    
+
     yield exec(`npm version ${increaseFrom} --no-git-tag-version`, { cwd: directory }).expect();
     console.log(
       colors.yellow("  Attempting to publish"),
@@ -111,7 +111,7 @@ function* attemptPublish ({
       colors.yellow("...")
     );
     let publishAttempt: ProcessResult = yield exec(`npm publish --access=public --tag=${tag}`, { cwd: directory }).join();
-    
+
     if (publishAttempt.code === 0) {
       return {
         publishedVersion: increaseFrom,
