@@ -99,10 +99,10 @@ function* attemptPublish ({
   let attemptedVersions: string[] = [];
   while (attemptCount > 0) {
     increaseFrom = bumpVersion(increaseFrom, tag);
-    
+
     yield exec(`npm version ${increaseFrom} --no-git-tag-version`, { cwd: directory }).expect();
     let publishAttempt: ProcessResult = yield exec(`npm publish --access=public --tag=${tag}`, { cwd: directory }).join();
-    
+
     if (publishAttempt.code === 0) {
       return {
         publishedVersion: increaseFrom,

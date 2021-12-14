@@ -45,7 +45,7 @@ function tableOfPublishedPackages ({
 }
 
 function tableOfFailedPublishes ({
-  unsuccessfulPublishes
+  unsuccessfulPublishes,
 }:{
   unsuccessfulPublishes: FailedPublish[],
 }) {
@@ -54,8 +54,8 @@ function tableOfFailedPublishes ({
     ...unsuccessfulPublishes.map(pkg => {
       return [
         preCodeWrap(pkg.packageName),
-        preCodeWrap(pkg.versions.join(", "))
-      ]
-    })
-  ], { align: [ "c", "" ]})
+        preCodeWrap(pkg.versions.join(", ")),
+      ];
+    }),
+  ], { align: [ "c", "" ] });
 }
