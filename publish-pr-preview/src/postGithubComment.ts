@@ -30,7 +30,7 @@ export function* postGithubComment({
     allComments.data.find((comment: { body: string | string[]; }) => comment.body.includes(tag));
 
   if (previousComment) {
-    console.log("\n"+colors.yellow("Updating comment in pull request..."));
+    console.log(colors.yellow("Updating comment in pull request..."));
     yield octokit.rest.issues.updateComment({
       owner,
       repo,
@@ -38,7 +38,7 @@ export function* postGithubComment({
       body,
     });
   } else {
-    console.log("\n"+colors.yellow("Posting comment in pull request..."));
+    console.log(colors.yellow("Posting comment in pull request..."));
     yield octokit.rest.issues.createComment({
       owner,
       repo,

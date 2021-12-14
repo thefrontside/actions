@@ -2,7 +2,7 @@ import { exec, Process, ProcessResult } from "@effection/process";
 import { all, Operation } from "effection";
 import fs from "fs";
 import semver from "semver";
-import { colors } from "@frontside/actions-utils";
+import { colors, logIterable } from "@frontside/actions-utils";
 
 interface PublishRun {
   directoriesToPublish: string[];
@@ -23,15 +23,15 @@ export interface PublishResults {
 export function* publish({ directoriesToPublish, installScript, branch }: PublishRun): Operation<PublishResults> {
   let installCommand = installScript || fs.existsSync("yarn.lock") ? "yarn install --frozen-lockfile" : "npm ci";
   let tag = branch.replace(/\_/g, "-").replace(/\//g, "-");
-  let published: Iterable<PublishedPackages> = [];
+  let published: PublishedPackages[] = [];
+  let privatePackages: string[] = [];
 
   console.log(
-    "\n"+
     colors.yellow("Installing with command"),
-    colors.blue(installCommand)+colors.yellow("..."),
+    colors.blue(installCommand)+colors.yellow("...\n"),
   );
   yield exec(installCommand).join();
-  console.log("\n"+colors.yellow("Publishing packages..."));
+  console.log(colors.yellow("Publishing packages...\n"));
 
   yield all(
     directoriesToPublish.map(directory =>
@@ -44,27 +44,32 @@ export function* publish({ directoriesToPublish, installScript, branch }: Publis
           let successfullyPublishedVersion: string | boolean = yield attemptPublish({ increaseFrom, tag, directory, attemptCount: 3 });
 
           if (successfullyPublishedVersion) {
-            console.log(
-              colors.green("  Successfully published"),
-              colors.blue(successfullyPublishedVersion),
-              colors.green("of"),
-              colors.blue(name)
-            );
             published = [...published, { packageName: name, version: successfullyPublishedVersion }];
+          } else {
+            // todo keep track of unsuccessful publishes
           }
         } else {
-          console.log(
-            colors.red("  Skipping"),
-            colors.blue(name),
-            colors.red("because it is a private package")
-          );
+          privatePackages = [...privatePackages, name];
         }
       }
     )
   );
+
+  logIterable(
+    "The following packages were skipped because they are marked private:",
+    privatePackages,
+  );
+
+  logIterable(
+    "The following preview packages were published:",
+    published.map(pkg => `${colors.blue(pkg.packageName)+colors.yellow("@")+colors.blue(pkg.version)}`),
+    "This workflow run did not publish any preview packages"
+  );
+
   return {
     tag,
     publishedPackages: published,
+    // todo = unsuccessfulPublishes: []
   };
 }
 

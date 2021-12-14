@@ -1,4 +1,4 @@
-import { colors, listAllPkgJsons } from "@frontside/actions-utils";
+import { listAllPkgJsons, logIterable } from "@frontside/actions-utils";
 
 export function findPackages(gitDiff: string[]): string[] {
   let directories = [...new Set(gitDiff.map(output => {
@@ -9,10 +9,10 @@ export function findPackages(gitDiff: string[]): string[] {
     }
   }))];
 
-  console.log(colors.yellow("Directories from git diff:"));
-  directories.forEach(dir => {
-    console.log(colors.blue("  "+dir));
-  });
+  logIterable(
+    "Directories from git diff:",
+    directories,
+  );
 
   let depthOfPath = (directory: string): number => {
     let matched = directory.match(/\//g);
@@ -41,10 +41,10 @@ export function findPackages(gitDiff: string[]): string[] {
 
   let directoriesToPublish = [...new Set(directories.reduce((acc, directory) => findRelativePkgJsonPaths({ acc, directory }), [] as string[]))];
 
-  console.log("\n"+colors.yellow("Directories with package.json located:"));
-  directoriesToPublish.forEach(dir => {
-    console.log(colors.blue("  "+dir));
-  });
+  logIterable(
+    "Directories with package.json located:",
+    directoriesToPublish,
+  );
 
   return directoriesToPublish;
 }
