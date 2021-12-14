@@ -28,9 +28,7 @@ export function* publish({ directoriesToPublish, installScript, branch }: Publis
   console.log(
     "\n"+
     colors.yellow("Installing with command"),
-    colors.blue(installCommand),
-    // TODO should be +colors.yellow("...") to remove unnecessary space
-    colors.yellow("...")
+    colors.blue(installCommand)+colors.yellow("..."),
   );
   yield exec(installCommand).join();
   console.log("\n"+colors.yellow("Publishing packages..."));

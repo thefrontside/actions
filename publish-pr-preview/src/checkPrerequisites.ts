@@ -41,8 +41,7 @@ export function* checkPrerequisites(payload: PullRequestPayload): Operation<Prer
   let buffer: string[] = yield gitDiff.stdout.lines().toArray();
   let { code: gitDiffExitCode } = yield gitDiff.join();
   if (gitDiffExitCode !== 0) {
-    // TODO remove period at the end for consistency
-    return { isValid: false, reason: "The base commit could not be found. Configure the checkout action in your workflow with the correct settings." };
+    return { isValid: false, reason: "The base commit could not be found. Configure the checkout action in your workflow with the correct settings" };
   } else {
     return { isValid: true, payload: buffer, branch: headBranch };
   }

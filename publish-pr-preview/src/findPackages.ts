@@ -1,7 +1,6 @@
-import { Operation } from "effection";
 import { colors, listAllPkgJsons } from "@frontside/actions-utils";
 
-export function* findPackages(gitDiff: string[]): Operation<Iterable<string>> {
+export function findPackages(gitDiff: string[]): string[] {
   let directories = [...new Set(gitDiff.map(output => {
     if (output.includes("/")) {
       return output.replace(/([^\/]*)$/, "");
@@ -40,8 +39,7 @@ export function* findPackages(gitDiff: string[]): Operation<Iterable<string>> {
     return acc;
   };
 
-  // TODO remove unnecessary space
-  let directoriesToPublish = [... new Set(directories.reduce((acc, directory) => findRelativePkgJsonPaths({ acc, directory }), [] as string[]))];
+  let directoriesToPublish = [...new Set(directories.reduce((acc, directory) => findRelativePkgJsonPaths({ acc, directory }), [] as string[]))];
 
   console.log("\n"+colors.yellow("Directories with package.json located:"));
   directoriesToPublish.forEach(dir => {
