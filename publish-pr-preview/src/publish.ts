@@ -15,15 +15,22 @@ export interface PublishedPackages {
   version: string;
 }
 
+export interface FailedPublish {
+  packageName: string;
+  versions: string[];
+}
+
 export interface PublishResults {
-  publishedPackages: PublishedPackages[];
   tag: string;
+  publishedPackages: PublishedPackages[];
+  unsuccessfulPublishes: FailedPublish[];
 }
 
 export function* publish({ directoriesToPublish, installScript, branch }: PublishRun): Operation<PublishResults> {
   let installCommand = installScript || fs.existsSync("yarn.lock") ? "yarn install --frozen-lockfile" : "npm ci";
   let tag = branch.replace(/\_/g, "-").replace(/\//g, "-");
   let published: PublishedPackages[] = [];
+  let failedPublishes: FailedPublish[] = [];
   let privatePackages: string[] = [];
 
   console.log(
@@ -41,12 +48,16 @@ export function* publish({ directoriesToPublish, installScript, branch }: Publis
         );
         if (!privatePackage) {
           let increaseFrom: string = yield npmView({ name, version, tag });
-          let successfullyPublishedVersion: string | boolean = yield attemptPublish({ increaseFrom, tag, directory, attemptCount: 3 });
 
-          if (successfullyPublishedVersion) {
-            published = [...published, { packageName: name, version: successfullyPublishedVersion }];
+          let publishAttempt: {
+            publishedVersion: string;
+            attemptedVersions: string[];
+          } = yield attemptPublish({ increaseFrom, tag, directory, attemptCount: 3 });
+
+          if (publishAttempt.publishedVersion) {
+            published = [...published, { packageName: name, version: publishAttempt.publishedVersion }];
           } else {
-            // todo keep track of unsuccessful publishes
+            failedPublishes = [...failedPublishes, { packageName: name, versions: publishAttempt.attemptedVersions }];
           }
         } else {
           privatePackages = [...privatePackages, name];
@@ -69,7 +80,7 @@ export function* publish({ directoriesToPublish, installScript, branch }: Publis
   return {
     tag,
     publishedPackages: published,
-    // todo = unsuccessfulPublishes: []
+    unsuccessfulPublishes: failedPublishes,
   };
 }
 
@@ -85,18 +96,24 @@ function* attemptPublish ({
   attemptCount: number,
 }) {
   let bumpVersion = (version: string, tag: string) => semver.inc(version, "prerelease", tag) || "";
+  let attemptedVersions: string[] = [];
   while (attemptCount > 0) {
     increaseFrom = bumpVersion(increaseFrom, tag);
-
+    
     yield exec(`npm version ${increaseFrom} --no-git-tag-version`, { cwd: directory }).expect();
     let publishAttempt: ProcessResult = yield exec(`npm publish --access=public --tag=${tag}`, { cwd: directory }).join();
-
+    
     if (publishAttempt.code === 0) {
-      return increaseFrom;
+      return {
+        publishedVersion: increaseFrom,
+      };
     }
+    attemptedVersions = [...attemptedVersions, increaseFrom];
     attemptCount--;
   }
-  return false;
+  return {
+    attemptedVersions,
+  };
 }
 
 function* npmView ({
