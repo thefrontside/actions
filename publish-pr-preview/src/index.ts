@@ -17,7 +17,7 @@ interface PullRequestBranch {
 }
 
 export interface PullRequestPayload extends WebhookPayload {
-  pull_request: WebhookPayload["pull_request"] & {
+  pull_request?: WebhookPayload["pull_request"] & {
     head: PullRequestBranch;
     base: PullRequestBranch;
   }
@@ -28,7 +28,7 @@ export interface PullRequestPayload extends WebhookPayload {
   }
 }
 
-interface PreviewRun {
+export interface PreviewRun {
   octokit: InstanceType<typeof GitHub>;
   core: typeof Core;
   payload: PullRequestPayload;

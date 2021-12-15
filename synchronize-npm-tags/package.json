@@ -9,7 +9,7 @@
     "lint": "eslint '{src,test}**/*.ts'",
     "build": "ncc build index.ts -m",
     "problems": "tsc --noEmit",
-    "test": "mocha -r node_modules/ts-node/register test/**.test.ts"
+    "test": "mocha -r ../node_modules/ts-node/register test/**.test.ts"
   },
   "dependencies": {
     "@actions/core": "^1.6.0",
