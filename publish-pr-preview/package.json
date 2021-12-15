@@ -6,7 +6,7 @@
   "license": "MIT",
   "main": "dist/index.js",
   "scripts": {
-    "lint": "eslint '{src,text}**/*.ts'",
+    "lint": "eslint '{src,test}**/*.ts'",
     "build": "ncc build index.ts -m",
     "problems": "tsc --noEmit",
     "test": "mocha -r node_modules/ts-node/register test/**.test.ts"
