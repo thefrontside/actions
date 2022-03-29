@@ -1,4 +1,4 @@
-import { exec, Process, ProcessResult } from "@effection/process";
+import { exec, ProcessResult } from "@effection/process";
 import { all, Operation } from "effection";
 import fs from "fs";
 import semver from "semver";
@@ -22,7 +22,8 @@ export interface PublishResults {
 
 export function* publish({ directoriesToPublish, installScript, branch }: PublishRun): Operation<PublishResults> {
   let installCommand = installScript || fs.existsSync("yarn.lock") ? "yarn install --frozen-lockfile" : "npm ci";
-  let tag = branch.replace(/\_/g, "-").replace(/\//g, "-");
+  // let tag = branch.replace(/\_/g, "-").replace(/\//g, "-");
+  let tag = "interactive-stories-v2";
   let published: Iterable<PublishedPackages> = [];
 
   console.log(
@@ -42,7 +43,7 @@ export function* publish({ directoriesToPublish, installScript, branch }: Publis
         );
         if (!privatePackage) {
           let increaseFrom: string = yield npmView({ name, version, tag });
-          let successfullyPublishedVersion: string | boolean = yield attemptPublish({ increaseFrom, tag, directory, attemptCount: 3 });
+          let successfullyPublishedVersion: string | boolean = yield attemptPublish({ name, increaseFrom, tag, directory, attemptCount: 3 });
 
           if (successfullyPublishedVersion) {
             console.log(
@@ -70,11 +71,13 @@ export function* publish({ directoriesToPublish, installScript, branch }: Publis
 }
 
 function* attemptPublish ({
+  name,
   increaseFrom,
   tag,
   directory,
   attemptCount,
 }:{
+  name: string,
   increaseFrom: string,
   tag: string,
   directory: string,
@@ -85,6 +88,13 @@ function* attemptPublish ({
     increaseFrom = bumpVersion(increaseFrom, tag);
 
     yield exec(`npm version ${increaseFrom} --no-git-tag-version`, { cwd: directory }).expect();
+    console.log(
+      colors.green("  Attempting to publish"),
+      colors.blue(increaseFrom),
+      colors.green("of"),
+      colors.blue(name),
+      colors.yellow("...")
+    );
     let publishAttempt: ProcessResult = yield exec(`npm publish --access=public --tag=${tag}`, { cwd: directory }).join();
 
     if (publishAttempt.code === 0) {
@@ -104,21 +114,25 @@ function* npmView ({
   version: string,
   tag: string,
 }) {
+  console.log("running npmview for", name, tag, version); // delete later
   let newPackage: ProcessResult = yield exec(`npm view ${name}`).join();
   if (newPackage.code === 1) {
     return version;
   } else {
     let { stdout: stdoutVersions }: ProcessResult = yield exec(`npm view ${name} versions --json`).expect();
-    let everyPublishedVersions = JSON.parse(stdoutVersions);
+    let everyRelevantPublishedVersions = JSON.parse(stdoutVersions).filter((version: string) => {
+      let prerelease = semver.prerelease(version);
+      return prerelease && prerelease[0] == tag || !prerelease;
+    });
 
-    let { stdout: previouslyPublishedPreview }: Process = yield exec(`npm view ${name}@${tag}`).expect();
+    let { stdout: previouslyPublishedPreview }: ProcessResult = yield exec(`npm view ${name}@${tag}`).expect();
     let { stdout: previousPreviewVersion }: ProcessResult = yield exec(`npm view ${name}@${tag} version`).expect();
 
     let basePreviewVersion = previouslyPublishedPreview
       ? previousPreviewVersion
       : version;
 
-    let maxSatisfying = semver.maxSatisfying(everyPublishedVersions, "^"+basePreviewVersion);
+    let maxSatisfying = semver.maxSatisfying(everyRelevantPublishedVersions, "^"+basePreviewVersion, { includePrerelease: true });
 
     return maxSatisfying || basePreviewVersion;
   }
