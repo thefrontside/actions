@@ -22,8 +22,7 @@ export interface PublishResults {
 
 export function* publish({ directoriesToPublish, installScript, branch }: PublishRun): Operation<PublishResults> {
   let installCommand = installScript || fs.existsSync("yarn.lock") ? "yarn install --frozen-lockfile" : "npm ci";
-  // let tag = branch.replace(/\_/g, "-").replace(/\//g, "-");
-  let tag = "interactive-stories-v2";
+  let tag = branch.replace(/\_/g, "-").replace(/\//g, "-");
   let published: Iterable<PublishedPackages> = [];
 
   console.log(
@@ -89,9 +88,9 @@ function* attemptPublish ({
 
     yield exec(`npm version ${increaseFrom} --no-git-tag-version`, { cwd: directory }).expect();
     console.log(
-      colors.green("  Attempting to publish"),
+      colors.yellow("  Attempting to publish"),
       colors.blue(increaseFrom),
-      colors.green("of"),
+      colors.yellow("of"),
       colors.blue(name),
       colors.yellow("...")
     );
@@ -114,13 +113,14 @@ function* npmView ({
   version: string,
   tag: string,
 }) {
-  console.log("running npmview for", name, tag, version); // delete later
   let newPackage: ProcessResult = yield exec(`npm view ${name}`).join();
   if (newPackage.code === 1) {
     return version;
   } else {
     let { stdout: stdoutVersions }: ProcessResult = yield exec(`npm view ${name} versions --json`).expect();
-    let everyRelevantPublishedVersions = JSON.parse(stdoutVersions).filter((version: string) => {
+    let versionsParsed = JSON.parse(stdoutVersions);
+    let versionsArray = Array.isArray(versionsParsed) && versionsParsed || [versionsParsed];
+    let everyRelevantPublishedVersions = versionsArray.filter((version: string) => {
       let prerelease = semver.prerelease(version);
       return prerelease && prerelease[0] == tag || !prerelease;
     });
