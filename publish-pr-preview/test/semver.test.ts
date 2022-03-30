@@ -10,14 +10,16 @@ const previewVersioning = ({
   npmView: string[],
   npmViewTag?: string,
 }): string => {
+  let tag = "branch";
   let npmViewTagWithoutVersionFlag = true;
   let currentPreviewVersion = npmViewTag && npmViewTagWithoutVersionFlag ? npmViewTag : current;
-    // npm view pkg @ invalid tag will return npm version
-      // therefore we need to do npm view pkg @ tag first, if it doesn't return anything, it means stick with package.json version
-        // if it does return something we run npm view pkg @ tag again with --version to get the last published preview version
-  let maxSat = s.maxSatisfying(npmView, "^"+currentPreviewVersion);
+  let filteredNpmView = npmView.filter((version: string) => {
+    let prerelease = s.prerelease(version);
+    return prerelease && prerelease[0] == tag || !prerelease;
+  });
+  let maxSat = s.maxSatisfying(filteredNpmView, "^"+currentPreviewVersion, { includePrerelease: true });
   let increaseFrom = maxSat || currentPreviewVersion;
-  return s.inc(increaseFrom, "prerelease", "branch") || "";
+  return s.inc(increaseFrom, "prerelease", tag) || "";
 };
 
 describe("correct preview versioning for all scenarios", () => {
@@ -39,18 +41,44 @@ describe("correct preview versioning for all scenarios", () => {
     });
   });
   describe("semver maxSatisfying function", () => {
-    it("maxSatisfying cannot be used for fetching specific prerelease interval", () => {
-      expect(s.maxSatisfying(
-        ["1.2.3-branch.1", "1.2.4-otherBranch.0"],
-        "^1.2.3-branch.0",
-        { includePrerelease: true }
-      )).not.toEqual("1.2.3-branch.1");
+    describe("maxSatisfying includePrerelease option", () => {
+      it("maxSatisfying will not match prerelease tag and will return the highest one alphabetically", () => {
+        expect(s.maxSatisfying(
+          ["1.2.3-aaa.4", "1.2.3-bbb.0"],
+          "^1.2.3-aaa.1",
+          { includePrerelease: true }
+        )).toEqual("1.2.3-bbb.0");
+      });
+      it("maxSatisfying will correctly return prerelease when option is set", () => {
+        expect(s.maxSatisfying(
+          ["1.0.0", "1.0.1", "1.1.0-abc.1", "1.1.0-abc.2"],
+          "^1.0.0",
+          { includePrerelease: true }
+        )).toEqual("1.1.0-abc.2");
+      });
+      it("maxSatisfying will correctly not return prerelease when option is not set", () => {
+        expect(s.maxSatisfying(
+          ["1.0.0", "1.0.1", "1.1.0-abc.1"],
+          "^1.0.0",
+        )).toEqual("1.0.1");
+        expect(s.maxSatisfying(
+          ["1.0.0", "1.0.3", "1.0.4-abc.3"],
+          "^1.0.0-abc.1"
+        )).toEqual("1.0.3");
+      });
+      it("maxSatisfying will return highest prerelease without the option if there are no valid versions to fall back on", () => {
+        expect(s.maxSatisfying(
+          ["0.0.1", "1.0.0-abc.1", "1.0.0-x.2"],
+          "^1.0.0-a.1"
+        )).toEqual("1.0.0-x.2");
+      });
     });
 
     it("maxSatisfying recognizes prerelease is lower than regular semver", () => {
       expect(s.maxSatisfying(
         ["1.2.2", "1.2.3"],
-        "^1.2.3-beta.1"
+        "^1.2.3-beta.1",
+        { includePrerelease: true }
       )).toEqual("1.2.3");
     });
 
@@ -99,7 +127,7 @@ describe("correct preview versioning for all scenarios", () => {
         expect(previewVersioning({ current: "1.1.1-beta.2", npmView: ["1.1.0", "1.1.1-beta.2"] })).toEqual("1.1.1-branch.0");
       });
 
-      it("maxSatisfying when there are higher prerelease versions", () => {
+      it("maxSatisfying when there are higher prerelease versions (when there shouldn't be)", () => {
         expect(previewVersioning({ current: "1.1.1-beta.2", npmView: ["1.1.0", "1.1.1-beta.2", "1.2.0-malicious.1"] })).toEqual("1.1.1-branch.0");
       });
     });

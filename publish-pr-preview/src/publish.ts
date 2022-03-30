@@ -1,4 +1,4 @@
-import { exec, Process, ProcessResult } from "@effection/process";
+import { exec, ProcessResult } from "@effection/process";
 import { all, Operation } from "effection";
 import fs from "fs";
 import semver from "semver";
@@ -42,7 +42,7 @@ export function* publish({ directoriesToPublish, installScript, branch }: Publis
         );
         if (!privatePackage) {
           let increaseFrom: string = yield npmView({ name, version, tag });
-          let successfullyPublishedVersion: string | boolean = yield attemptPublish({ increaseFrom, tag, directory, attemptCount: 3 });
+          let successfullyPublishedVersion: string | boolean = yield attemptPublish({ name, increaseFrom, tag, directory, attemptCount: 3 });
 
           if (successfullyPublishedVersion) {
             console.log(
@@ -70,11 +70,13 @@ export function* publish({ directoriesToPublish, installScript, branch }: Publis
 }
 
 function* attemptPublish ({
+  name,
   increaseFrom,
   tag,
   directory,
   attemptCount,
 }:{
+  name: string,
   increaseFrom: string,
   tag: string,
   directory: string,
@@ -85,6 +87,13 @@ function* attemptPublish ({
     increaseFrom = bumpVersion(increaseFrom, tag);
 
     yield exec(`npm version ${increaseFrom} --no-git-tag-version`, { cwd: directory }).expect();
+    console.log(
+      colors.yellow("  Attempting to publish"),
+      colors.blue(increaseFrom),
+      colors.yellow("of"),
+      colors.blue(name),
+      colors.yellow("...")
+    );
     let publishAttempt: ProcessResult = yield exec(`npm publish --access=public --tag=${tag}`, { cwd: directory }).join();
 
     if (publishAttempt.code === 0) {
@@ -109,16 +118,21 @@ function* npmView ({
     return version;
   } else {
     let { stdout: stdoutVersions }: ProcessResult = yield exec(`npm view ${name} versions --json`).expect();
-    let everyPublishedVersions = JSON.parse(stdoutVersions);
+    let versionsParsed = JSON.parse(stdoutVersions);
+    let versionsArray = Array.isArray(versionsParsed) && versionsParsed || [versionsParsed];
+    let everyRelevantPublishedVersions = versionsArray.filter((version: string) => {
+      let prerelease = semver.prerelease(version);
+      return prerelease && prerelease[0] == tag || !prerelease;
+    });
 
-    let { stdout: previouslyPublishedPreview }: Process = yield exec(`npm view ${name}@${tag}`).expect();
+    let { stdout: previouslyPublishedPreview }: ProcessResult = yield exec(`npm view ${name}@${tag}`).expect();
     let { stdout: previousPreviewVersion }: ProcessResult = yield exec(`npm view ${name}@${tag} version`).expect();
 
     let basePreviewVersion = previouslyPublishedPreview
       ? previousPreviewVersion
       : version;
 
-    let maxSatisfying = semver.maxSatisfying(everyPublishedVersions, "^"+basePreviewVersion);
+    let maxSatisfying = semver.maxSatisfying(everyRelevantPublishedVersions, "^"+basePreviewVersion, { includePrerelease: true });
 
     return maxSatisfying || basePreviewVersion;
   }
