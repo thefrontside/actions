@@ -14,8 +14,8 @@ jobs:
     name: Job Name
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
-    - uses: thefrontside/actions/synchronize-npm-tags@master
+    - uses: actions/checkout@v3
+    - uses: thefrontside/actions/synchronize-npm-tags@v1
       with:
         preserve: dev beta alpha
       env:
