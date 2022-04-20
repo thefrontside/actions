@@ -8,6 +8,7 @@ BLUE='\033[1;34m'
 NC='\033[0m'
 
 function git_setup(){
+  git config --global --add safe.directory /github/workspace
   git remote set-url origin https://x-oauth-basic:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
   git fetch origin +refs/heads/*:refs/heads/*
 

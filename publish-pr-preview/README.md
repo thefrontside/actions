@@ -28,9 +28,11 @@ jobs:
     name: Job Name
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
     - name: Publish PR Preview
-      uses: thefrontside/actions/publish-pr-preview@master
+      uses: thefrontside/actions/publish-pr-preview@v1
       with:
         BEFORE_ALL: npm run prepack-after-install
         NPM_PUBLISH: npm run my-script

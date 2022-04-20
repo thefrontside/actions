@@ -176,6 +176,7 @@ function package_json_finder(){
     done;
   }
   
+  git config --global --add safe.directory /github/workspace
   git checkout $GITHUB_BASE_REF
   git checkout $GITHUB_HEAD_REF
 
