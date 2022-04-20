@@ -9,12 +9,6 @@ NC='\033[0m'
 
 function git_setup(){
   git config --global --add safe.directory /github/workspace
-  git remote set-url origin https://x-oauth-basic:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
-  git fetch origin +refs/heads/*:refs/heads/*
-
-  branch="${GITHUB_REF#*refs\/heads\/}"
-  git checkout $branch
-
   git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
   git config user.name "$GITHUB_ACTOR"
 }
