@@ -12,7 +12,7 @@ jobs:
     name: Synchronize NPM Tags
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         fetch-depth: 0
           ## https://github.com/actions/checkout#fetch-all-history-for-all-tags-and-branches
@@ -20,7 +20,7 @@ jobs:
       with:
         registry-url: https://registry.npmjs.org
           ## https://github.com/actions/setup-node/blob/main/docs/advanced-usage.md#publish-to-npmjs-and-gpr-with-npm
-    - uses: thefrontside/actions/synchronize-npm-tags@main
+    - uses: thefrontside/actions/synchronize-npm-tags@v2
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -29,7 +29,7 @@ jobs:
 ### Specifying NPM Tags to Preserve
 
 ```yaml
-- uses: thefrontside/actions/synchronize-npm-tags@main
+- uses: thefrontside/actions/synchronize-npm-tags@v2
   with:
     PRESERVE: tag1 tag2 tag3
   env:
