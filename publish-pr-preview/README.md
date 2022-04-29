@@ -11,7 +11,7 @@ jobs:
     name: Publish Previews
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         fetch-depth: 0
           ## https://github.com/actions/checkout#fetch-all-history-for-all-tags-and-branches
@@ -19,7 +19,7 @@ jobs:
       with:
         registry-url: https://registry.npmjs.org
           ## https://github.com/actions/setup-node/blob/main/docs/advanced-usage.md#publish-to-npmjs-and-gpr-with-npm
-    - uses: thefrontside/actions/publish-pr-preview@main
+    - uses: thefrontside/actions/publish-pr-preview@v2
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -30,7 +30,7 @@ jobs:
 The action will by default run either `yarn install --frozen-lockfile` or `npm ci`, but if there are additional steps required before your packages can be published, you can specify your own install script that runs at the root of your repository:
 
 ```yaml
-- uses: thefrontside/actions/publish-pr-preview@main
+- uses: thefrontside/actions/publish-pr-preview@v2
   with:
     INSTALL_SCRIPT: yarn my_install_command
   env:

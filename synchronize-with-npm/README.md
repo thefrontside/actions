@@ -15,12 +15,12 @@ jobs:
     name: Publish Releases
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - uses: actions/step-node@v2
       with:
         registry-url: https://registry.npmjs.org
           ## https://github.com/actions/setup-node/blob/main/docs/advanced-usage.md#publish-to-npmjs-and-gpr-with-npm
-    - uses: thefrontside/actions/synchronize-with-npm@main
+    - uses: thefrontside/actions/synchronize-with-npm@v2
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -31,7 +31,7 @@ jobs:
 The action will by default run either `yarn install --frozen-lockfile` or `npm ci`, but if there are additional steps required before your packages can be published, you can specify your own install script that runs at the root of your repository:
 
 ```yaml
-- uses: thefrontside/actions/synchronize-with-npm@main
+- uses: thefrontside/actions/synchronize-with-npm@v2
   with:
     INSTALL_SCRIPT: yarn my_install_command
   env:
