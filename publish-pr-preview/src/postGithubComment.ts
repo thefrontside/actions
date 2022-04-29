@@ -1,7 +1,7 @@
 import { GitHub } from "@actions/github/lib/utils";
 import { PullRequestPayload } from ".";
 import { Operation } from "effection";
-import colors from "./ansiColors";
+import { colors } from "@frontside/actions-utils";
 
 export function* postGithubComment({
   comment,

@@ -30,4 +30,4 @@ const ansiColors = {
   },
 };
 
-export default ansiColors;
+export { ansiColors };

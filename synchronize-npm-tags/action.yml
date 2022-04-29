@@ -1,0 +1,11 @@
+name: Synchronize NPM Tags
+description: Remove stale tags from NPM
+
+inputs:
+  PRESERVE:
+    description: "Specify NPM tags to preserve"
+    required: false
+
+runs:
+  using: "node12"
+  main: "dist/index.js"

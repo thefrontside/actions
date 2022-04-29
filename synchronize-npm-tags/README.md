@@ -1,23 +1,38 @@
 # Synchronize NPM Tags
-`synchronize-npm-tags` is part of our Transparent Publishing workflow and is meant to be triggered `on: delete`. This action will cross-reference the NPM dist-tags with branch names and remove the tags that we no longer need (with the exception of `latest` and any other tag labels that are passed in as the `preserve` argument).
 
-For instance, let's say we have a pull request that published a package with the tag of `foo-bar`. After we merge the pull request and delete the branch, this action will be triggered and see that "foo-bar" exists as a tag but there's no corresponding branch so it will remove that tag from the registry.
+The `synchronize-npm-tags` action was created to be used in tandem with our [`publish-pr-preview`](../publish-pr-preview) action which publishes preview packages with NPM tags that are generated from branch names. Unless you remove stale tags manually, those NPM tags will keep accumulating. To address this inconvenience, the `synchronize-npm-tags` action will remove NPM tags that do not correspond to any of the git branches of your repository.
 
-## Requirements
-- Pass in `NPM_TOKEN`.
-- Optional: You can specify any NPM tags you'd like to `preserve`.
+By default the action will not remove common tags such as `dev`, `beta`, `alpha`, and `latest`. You can also specify your own list of tags that you wish to preserve. See below for details.
 
 ## Usage
+
 ```yaml
 jobs:
-  job_name:
-    name: Job Name
+  synchronize-tags:
+    name: Synchronize NPM Tags
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
-    - uses: thefrontside/actions/synchronize-npm-tags@master
+    - uses: actions/checkout@v2
       with:
-        preserve: dev beta alpha
+        fetch-depth: 0
+          ## https://github.com/actions/checkout#fetch-all-history-for-all-tags-and-branches
+    - uses: actions/setup-node@v2
+      with:
+        registry-url: https://registry.npmjs.org
+          ## https://github.com/actions/setup-node/blob/main/docs/advanced-usage.md#publish-to-npmjs-and-gpr-with-npm
+    - uses: thefrontside/synchronize-npm-tags@main
       env:
-        NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+```
+
+### Specifying NPM Tags to Preserve
+
+```yaml
+- uses: thefrontside/synchronize-npm-tags@main
+  with:
+    PRESERVE: tag1 tag2 tag3
+  env:
+    NODE_AUTH_TOKEN: ...
+    GITHUB_TOKEN: ...
 ```

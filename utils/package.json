@@ -1,0 +1,26 @@
+{
+  "name": "@frontside/actions-utils",
+  "version": "0.0.0",
+  "private": true,
+  "author": "Frontside Engineering <engineering@frontside.com>",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "scripts": {
+    "lint": "echo eslint '{src,test}**/*.ts'",
+    "build": "tsc --build tsconfig.json",
+    "problems": "tsc --noEmit",
+    "test": "echo no op"
+  },
+  "dependencies": {
+    "glob": "^7.2.0"
+  },
+  "devDependencies": {
+    "@types/glob": "^7.1.4",
+    "@types/node": "^16.10.2",
+    "ts-node": "^10.4.0",
+    "typescript": "4.3.5"
+  },
+  "volta": {
+    "extends": "../package.json"
+  }
+}

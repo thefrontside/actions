@@ -2,7 +2,7 @@ import { exec, ProcessResult } from "@effection/process";
 import { all, Operation } from "effection";
 import fs from "fs";
 import semver from "semver";
-import colors from "./ansiColors";
+import { colors } from "@frontside/actions-utils";
 
 interface PublishRun {
   directoriesToPublish: string[];
@@ -29,6 +29,7 @@ export function* publish({ directoriesToPublish, installScript, branch }: Publis
     "\n"+
     colors.yellow("Installing with command"),
     colors.blue(installCommand),
+    // TODO should be +colors.yellow("...") to remove unnecessary space
     colors.yellow("...")
   );
   yield exec(installCommand).join();

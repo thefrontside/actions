@@ -1,0 +1,23 @@
+name: Testing Delete Action
+
+on:
+  push:
+    branches: mk/tags
+
+jobs:
+  delete:
+    name: Delete Testing
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - uses: actions/setup-node@v2
+      with:
+        registry-url: https://registry.npmjs.org
+    - uses: ./synchronize-npm-tags
+      with:
+        PRESERVE: doo moo poo
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.UH_OH }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
