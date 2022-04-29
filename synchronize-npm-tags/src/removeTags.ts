@@ -1,8 +1,7 @@
 import { all, Operation } from "effection";
 import { exec, ProcessResult } from "@effection/process";
 import { PackageTags } from ".";
-import { colors } from "@frontside/actions-utils";
-import { logIterable } from "./logIterable";
+import { colors, logIterable } from "@frontside/actions-utils";
 
 export function* removeTags({
   allPackageTags,
