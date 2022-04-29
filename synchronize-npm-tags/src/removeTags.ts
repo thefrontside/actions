@@ -20,7 +20,7 @@ export function* removeTags({
   let keptTags: string[] = [];
   let forbidden: string[] = [];
 
-  console.log(colors.yellow("Removing stale NPM tags..."));
+  console.log(colors.yellow("Removing stale NPM tags...\n"));
   yield all(
     allPackageTags.map(pkg =>
       function* () {

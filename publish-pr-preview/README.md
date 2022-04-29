@@ -19,7 +19,7 @@ jobs:
       with:
         registry-url: https://registry.npmjs.org
           ## https://github.com/actions/setup-node/blob/main/docs/advanced-usage.md#publish-to-npmjs-and-gpr-with-npm
-    - uses: thefrontside/publish-pr-preview@main
+    - uses: thefrontside/actions/publish-pr-preview@main
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -30,7 +30,7 @@ jobs:
 The action will by default run either `yarn install --frozen-lockfile` or `npm ci`, but if there are additional steps required before your packages can be published, you can specify your own install script that runs at the root of your repository:
 
 ```yaml
-- uses: thefrontside/publish-pr-preview@main
+- uses: thefrontside/actions/publish-pr-preview@main
   with:
     INSTALL_SCRIPT: yarn my_install_command
   env:

@@ -1,4 +1,3 @@
-import * as github from "@actions/github";
 import { exec, Process } from "@effection/process";
 import { Operation } from "effection";
 import { PullRequestPayload } from ".";
@@ -13,6 +12,10 @@ type Prerequisites = {
 }
 
 export function* checkPrerequisites(payload: PullRequestPayload): Operation<Prerequisites> {
+  if (!payload.pull_request) {
+    return { isValid: false, reason: "This action can only be run on pull requests" };
+  }
+
   let {
     head: {
       ref: headBranch,
@@ -29,9 +32,7 @@ export function* checkPrerequisites(payload: PullRequestPayload): Operation<Prer
     },
   } = payload.pull_request;
 
-  if (!github.context.payload.pull_request) {
-    return { isValid: false, reason: "This action can only be run on pull requests" };
-  } else if (baseUrl !== headUrl) {
+  if (baseUrl !== headUrl) {
     return { isValid: false, reason: "This action cannot be run on pull requests created from a forked repository" };
   } else if (headBranch === "latest") {
     return { isValid: false, reason: "Unable to proceed because \"latest\" is a protected NPM tag. Retrigger this action from a different branch name" };
@@ -41,8 +42,7 @@ export function* checkPrerequisites(payload: PullRequestPayload): Operation<Prer
   let buffer: string[] = yield gitDiff.stdout.lines().toArray();
   let { code: gitDiffExitCode } = yield gitDiff.join();
   if (gitDiffExitCode !== 0) {
-    // TODO remove period at the end for consistency
-    return { isValid: false, reason: "The base commit could not be found. Configure the checkout action in your workflow with the correct settings." };
+    return { isValid: false, reason: "The base commit could not be found. Configure the checkout action in your workflow with the correct settings" };
   } else {
     return { isValid: true, payload: buffer, branch: headBranch };
   }
