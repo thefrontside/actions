@@ -25,6 +25,7 @@ export function listPackages(): PackagesList {
       fs.readFileSync(pkgJsonPath, { encoding: "utf-8" })
     );
     let path = pkgJsonPath.includes("/") ? "." : pkgJsonPath.replace(/([^\/]*)$/, "");
+    console.log(`Normalize Path: ${pkgJsonPath} -> ${path}`);
     if (privatePackage) {
       privatePkgs = [...privatePkgs, name];
       return acc;
