@@ -32,6 +32,7 @@ export function* publishAndTag({
     yield all(
       confirmedPkgsToPublish.map(pkg =>
         function* () {
+          console.log(colors.blue(`${pkg.path}> npm publish --access=public`));
           let result: ProcessResult = yield exec("npm publish --access=public", { cwd: pkg.path }).join();
           // TODO how can i turn octokit.request into an operation so i can .join()
           if (result.code === 0) {
