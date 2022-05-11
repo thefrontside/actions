@@ -42,6 +42,9 @@ export function* publishAndTag({
               sha: payload.after,
             });
             successfullyPublished = [...successfullyPublished, pkg];
+          } else {
+            console.warn(`publish ${pkg.name} FAILED
+${JSON.stringify(result, null, 2)}`);
           }
         }
       )
