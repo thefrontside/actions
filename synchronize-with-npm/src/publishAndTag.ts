@@ -42,6 +42,18 @@ export function* publishAndTag({
               sha: payload.after,
             });
             successfullyPublished = [...successfullyPublished, pkg];
+          } else {
+            console.warn(`FAILED: publish ${pkg.name}
+command: npm publish --access=public
+cwd: ${pkg.path}
+code: ${result.code}
+signal: ${result.signal}
+<stdout>
+${result.stdout}
+</stdout>
+<stderr>
+${result.stderr}
+</stderr>`);
           }
         }
       )
