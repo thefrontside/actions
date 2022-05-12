@@ -1,4 +1,5 @@
 import fs from "fs";
+import { dirname } from "path";
 import { listAllPkgJsons, logIterable } from "@frontside/actions-utils";
 
 export interface ToDeprecate {
@@ -24,7 +25,7 @@ export function listPackages(): PackagesList {
     let { name, private: privatePackage, deprecate, version } = JSON.parse(
       fs.readFileSync(pkgJsonPath, { encoding: "utf-8" })
     );
-    let path = pkgJsonPath.includes("/") ? "." : pkgJsonPath.replace(/([^\/]*)$/, "");
+    let path = dirname(pkgJsonPath);
     if (privatePackage) {
       privatePkgs = [...privatePkgs, name];
       return acc;
