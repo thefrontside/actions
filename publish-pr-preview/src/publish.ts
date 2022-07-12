@@ -1,4 +1,4 @@
-import { exec, ProcessResult } from "@effection/process";
+import { exec, ExecError, ProcessResult } from "@effection/process";
 import { all, Operation } from "effection";
 import fs from "fs";
 import semver from "semver";
@@ -103,14 +103,11 @@ function* attemptPublish ({
   while (attemptCount > 0) {
     increaseFrom = bumpVersion(increaseFrom, tag);
 
-    try {
-      let { stdout, stderr } = yield exec(`npm version ${increaseFrom} --no-git-tag-version`, { cwd: directory }).expect();
-      console.log(stdout);
-      console.log(stderr);
-    } catch (e) {
-      console.error(stderr);
-      console.error(`Error in publish ${e}`);
-      throw e;
+    let version: ProcessResult = yield exec(`npm version ${increaseFrom} --no-git-tag-version`, { cwd: directory }).join();
+    console.log(version.stdout);
+    if (version.code !== 0) {
+      console.error(version.stderr);
+      throw new Error("Failed to set the new version number");
     }
 
     console.log(
