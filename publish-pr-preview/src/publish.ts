@@ -3,6 +3,7 @@ import { all, Operation } from "effection";
 import fs from "fs";
 import semver from "semver";
 import { colors, logIterable } from "@frontside/actions-utils";
+import { stderr } from "process";
 
 interface PublishRun {
   directoriesToPublish: string[];
@@ -102,7 +103,16 @@ function* attemptPublish ({
   while (attemptCount > 0) {
     increaseFrom = bumpVersion(increaseFrom, tag);
 
-    yield exec(`npm version ${increaseFrom} --no-git-tag-version`, { cwd: directory }).expect();
+    try {
+      let { stdout, stderr } = yield exec(`npm version ${increaseFrom} --no-git-tag-version`, { cwd: directory }).expect();
+      console.log(stdout);
+      console.log(stderr);
+    } catch (e) {
+      console.error(stderr);
+      console.error(`Error in publish ${e}`);
+      throw e;
+    }
+
     console.log(
       colors.yellow("  Attempting to publish"),
       colors.blue(increaseFrom),
