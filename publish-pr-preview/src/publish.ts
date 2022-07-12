@@ -105,9 +105,9 @@ function* attemptPublish ({
     increaseFrom = bumpVersion(increaseFrom, tag);
 
     let version: ProcessResult = yield exec(`npm version ${increaseFrom} --no-git-tag-version`, { cwd: directory }).join();
-    console.log(`---STDOUT: \n ${version.stdout} \n----`);
+    console.log(`---STDOUT: \n${version.stdout}----`);
     if (version.code !== 0) {
-      console.error(version.stderr);
+      console.error(`---STDERR: \n${version.stderr}---`);
       throw new Error(`Failed to set the new version number with "npm version ${increaseFrom} --no-git-tag-version"`);
     }
 
