@@ -1,9 +1,8 @@
-import { exec, ExecError, ProcessResult } from "@effection/process";
+import { exec, ProcessResult } from "@effection/process";
 import { all, Operation } from "effection";
 import fs from "fs";
 import semver from "semver";
 import { colors, logIterable } from "@frontside/actions-utils";
-import { stderr } from "process";
 
 interface PublishRun {
   directoriesToPublish: string[];
