@@ -43,6 +43,7 @@ export function* publish({ directoriesToPublish, installScript, branch }: Publis
   yield all(
     directoriesToPublish.map(directory =>
       function* () {
+        console.log(colors.yellow("Executing in directory: "), colors.blue(directory));
         let { name, version, private: privatePackage } = JSON.parse(
           fs.readFileSync(`${directory}/package.json`, { encoding: "utf-8" })
         );
@@ -102,7 +103,14 @@ function* attemptPublish ({
   while (attemptCount > 0) {
     increaseFrom = bumpVersion(increaseFrom, tag);
 
-    yield exec(`npm version ${increaseFrom} --no-git-tag-version`, { cwd: directory }).expect();
+    let cmd = `npm version ${increaseFrom} --no-git-tag-version`;
+    let version: ProcessResult = yield exec(cmd, { cwd: directory }).join();
+    console.log(`${version.stdout}`);
+    if (version.code !== 0) {
+      console.error(`${version.stderr}`);
+      throw new Error(`Failed to set the new version number with "${cmd}"`);
+    }
+
     console.log(
       colors.yellow("  Attempting to publish"),
       colors.blue(increaseFrom),
