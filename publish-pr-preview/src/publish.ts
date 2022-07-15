@@ -1,10 +1,12 @@
 import { exec, ProcessResult } from "@effection/process";
-import { Operation } from "effection";
-import fs from "fs";
-import semver from "semver";
 import { colors, logIterable } from "@frontside/actions-utils";
-import { AttemptedPackage, isPublishedPackage, LernaListOutputType } from "./types";
+import { Operation } from "effection";
+import { promises as fs, Stats } from "fs";
+import path from "path";
 import { stderr, stdout } from "process";
+import { attemptPublish } from "./attemptPublish";
+import { npmView } from "./npmView";
+import { AttemptedPackage, isPublishedPackage, LernaListOutputType } from "./types";
 
 interface PublishRun {
   packages: LernaListOutputType;
@@ -18,7 +20,16 @@ export interface PublishResults {
 }
 
 export function* publish({ packages, installScript, branch }: PublishRun): Operation<PublishResults> {
-  let installCommand = installScript || fs.existsSync("yarn.lock") ? "yarn install --frozen-lockfile" : "npm ci";
+  let installCommand = "npm ci";
+  if (installScript) {
+    installCommand = installScript;
+  } else {
+    let stat: Stats = yield fs.stat("yarn.lock");
+    if (stat.isFile()) {
+      installCommand = "yarn install --frozen-lockfile";
+    }
+  }
+
   let tag = branch.replace(/\_/g, "-").replace(/\//g, "-");
 
   console.log(
@@ -50,6 +61,12 @@ export function* publish({ packages, installScript, branch }: PublishRun): Opera
 
       try {
         let increaseFrom: string = yield npmView({ name: pkg.name, version: pkg.version, tag });
+        let affected = yield changeAffectedDependencies(path.join(pkg.location, "package.json"), attemptedPackages)
+        if (affected.length > 0) {
+          console.log(colors.yellow("Updated dependencies: "), colors.blue(affected.join(", ")));
+        } else {
+          console.log(colors.yellow("No dependencies were updated"));
+        }
 
         let publishAttempt: {
           publishedVersion: string;
@@ -85,84 +102,35 @@ export function* publish({ packages, installScript, branch }: PublishRun): Opera
   return result;
 }
 
-function* attemptPublish ({
-  name,
-  increaseFrom,
-  tag,
-  directory,
-  attemptCount,
-}:{
-  name: string,
-  increaseFrom: string,
-  tag: string,
-  directory: string,
-  attemptCount: number,
-}) {
-  let bumpVersion = (version: string, tag: string) => semver.inc(version, "prerelease", tag) || "";
-  let attemptedVersions: string[] = [];
-  while (attemptCount > 0) {
-    increaseFrom = bumpVersion(increaseFrom, tag);
+function* changeAffectedDependencies(location: string, attemptedPackages: Map<string, AttemptedPackage>) {
+  let packageJson: string = yield fs.readFile(location, { encoding: "utf-8" });
+  let packageJsonContent = JSON.parse(packageJson) as { dependencies?: Record<string, string>; devDependencies?: Record<string, string> };
 
-    let cmd = `npm version ${increaseFrom} --no-git-tag-version`;
-    let version: ProcessResult = yield exec(cmd, { cwd: directory }).join();
-    console.log(`${version.stdout}`);
-    if (version.code !== 0) {
-      console.error(`${version.stderr}`);
-      throw new Error(`Failed to set the new version number with "${cmd}"`);
+  let madeChanges: string[] = [];
+
+  function updateDependencies(dependencies: Record<string, string>) {
+    for (let name in dependencies) {
+      if (attemptedPackages.has(name)) {
+        let pkg = attemptedPackages.get(name);
+        if (pkg && isPublishedPackage(pkg)) {
+          dependencies[name] = pkg.publishedVersion;
+          madeChanges.push(name);
+        }
+      }
     }
-
-    console.log(
-      colors.yellow("  Attempting to publish"),
-      colors.blue(increaseFrom),
-      colors.yellow("of"),
-      colors.blue(name),
-      colors.yellow("...")
-    );
-    let publishAttempt: ProcessResult = yield exec(`npm publish --access=public --tag=${tag}`, { cwd: directory }).join();
-
-    if (publishAttempt.code === 0) {
-      return {
-        publishedVersion: increaseFrom,
-      };
-    }
-    attemptedVersions = [...attemptedVersions, increaseFrom];
-    attemptCount--;
   }
-  return {
-    attemptedVersions,
-  };
-}
 
-function* npmView ({
-  name,
-  version,
-  tag,
-}:{
-  name: string,
-  version: string,
-  tag: string,
-}) {
-  let newPackage: ProcessResult = yield exec(`npm view ${name}`).join();
-  if (newPackage.code === 1) {
-    return version;
-  } else {
-    let { stdout: stdoutVersions }: ProcessResult = yield exec(`npm view ${name} versions --json`).expect();
-    let versionsParsed = JSON.parse(stdoutVersions);
-    let versionsArray = Array.isArray(versionsParsed) && versionsParsed || [versionsParsed];
-    let everyRelevantPublishedVersions = versionsArray.filter((version: string) => {
-      let prerelease = semver.prerelease(version);
-      return prerelease && prerelease[0] == tag || !prerelease;
-    });
-
-    let { stdout: previouslyPublishedPreview }: ProcessResult = yield exec(`npm view ${name}@${tag}`).expect();
-    let { stdout: previousPreviewVersion }: ProcessResult = yield exec(`npm view ${name}@${tag} version`).expect();
-
-    let basePreviewVersion = previouslyPublishedPreview
-      ? previousPreviewVersion
-      : version;
-
-    let maxSatisfying = semver.maxSatisfying(everyRelevantPublishedVersions, "^"+basePreviewVersion, { includePrerelease: true });
-
-    return maxSatisfying || basePreviewVersion;
+  if (packageJsonContent.dependencies) {
+    updateDependencies(packageJsonContent.dependencies);
   }
+
+  if (packageJsonContent.devDependencies) {
+    updateDependencies(packageJsonContent.devDependencies);
+  }
+
+  if (madeChanges.length > 0) {
+    yield fs.writeFile(location, JSON.stringify(packageJsonContent));
+  }
+
+  return madeChanges;
 }
