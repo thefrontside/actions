@@ -18,7 +18,8 @@
     "@frontside/actions-utils": "*",
     "effection": "2.0.1",
     "markdown-table": "^3.0.1",
-    "semver": "^7.3.5"
+    "semver": "^7.3.5",
+    "zod": "^3.17.3"
   },
   "devDependencies": {
     "@effection/mocha": "^2.0.1",

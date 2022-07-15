@@ -1,4 +1,4 @@
 import { PublishResults } from "./publish";
-export declare function formatComment({ published }: {
-    published: PublishResults;
+export declare function formatComment({ results }: {
+    results: PublishResults;
 }): string;

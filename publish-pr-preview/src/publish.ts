@@ -1,88 +1,88 @@
 import { exec, ProcessResult } from "@effection/process";
-import { all, Operation } from "effection";
+import { Operation } from "effection";
 import fs from "fs";
 import semver from "semver";
 import { colors, logIterable } from "@frontside/actions-utils";
+import { AttemptedPackage, isPublishedPackage, LernaListOutputType } from "./types";
+import { stderr, stdout } from "process";
 
 interface PublishRun {
-  directoriesToPublish: string[];
+  packages: LernaListOutputType;
   installScript: string;
   branch: string
 }
 
-export interface PublishedPackages {
-  packageName: string;
-  version: string;
-}
-
-export interface FailedPublish {
-  packageName: string;
-  versions: string[];
-}
-
 export interface PublishResults {
   tag: string;
-  publishedPackages: PublishedPackages[];
-  unsuccessfulPublishes: FailedPublish[];
+  attemptedPackages: AttemptedPackage[]
 }
 
-export function* publish({ directoriesToPublish, installScript, branch }: PublishRun): Operation<PublishResults> {
+export function* publish({ packages, installScript, branch }: PublishRun): Operation<PublishResults> {
   let installCommand = installScript || fs.existsSync("yarn.lock") ? "yarn install --frozen-lockfile" : "npm ci";
   let tag = branch.replace(/\_/g, "-").replace(/\//g, "-");
-  let published: PublishedPackages[] = [];
-  let failedPublishes: FailedPublish[] = [];
-  let privatePackages: string[] = [];
 
   console.log(
     colors.yellow("Installing with command"),
     colors.blue(installCommand)+colors.yellow("...\n"),
   );
-  yield exec(installCommand).join();
+
+  let install: ProcessResult = yield exec(installCommand).join();
+  if (install.code !== 0) {
+    console.log(stdout);
+    console.error(stderr);
+    throw new Error(`Failed command: ${installCommand}`);
+  }
+
   console.log(colors.yellow("Publishing packages...\n"));
 
-  yield all(
-    directoriesToPublish.map(directory =>
-      function* () {
-        console.log(colors.yellow("Executing in directory: "), colors.blue(directory));
-        let { name, version, private: privatePackage } = JSON.parse(
-          fs.readFileSync(`${directory}/package.json`, { encoding: "utf-8" })
-        );
-        if (!privatePackage) {
-          let increaseFrom: string = yield npmView({ name, version, tag });
-
-          let publishAttempt: {
-            publishedVersion: string;
-            attemptedVersions: string[];
-          } = yield attemptPublish({ name, increaseFrom, tag, directory, attemptCount: 3 });
-
-          if (publishAttempt.publishedVersion) {
-            published = [...published, { packageName: name, version: publishAttempt.publishedVersion }];
-          } else {
-            failedPublishes = [...failedPublishes, { packageName: name, versions: publishAttempt.attemptedVersions }];
-          }
-        } else {
-          privatePackages = [...privatePackages, name];
-        }
-      }
-    )
-  );
-
   logIterable(
-    "The following packages were skipped because they are marked private:",
-    privatePackages,
+    "The following packages will be skipped because they are marked private:",
+    packages
+      .filter(pkg => pkg.private)
+      .map(pkg => pkg.name)
   );
+
+  let attemptedPackages: Map<string, AttemptedPackage> = new Map();
+
+  for (let pkg of packages) {
+    if (!pkg.private) {
+      console.log(colors.yellow("Attempting to publish: "), colors.blue(pkg.name));
+
+      try {
+        let increaseFrom: string = yield npmView({ name: pkg.name, version: pkg.version, tag });
+
+        let publishAttempt: {
+          publishedVersion: string;
+          attemptedVersions: string[];
+        } = yield attemptPublish({ name: pkg.name, increaseFrom, tag, directory: pkg.location, attemptCount: 3 });
+
+        attemptedPackages.set(pkg.name, {
+          ...publishAttempt,
+          ...pkg,
+        });
+
+      } catch (error) {
+        attemptedPackages.set(pkg.name, {
+          ...pkg,
+          error,
+        });
+      }
+    }
+  }
+
+  let result = {
+    tag,
+    attemptedPackages: [...attemptedPackages.values()],
+  };
 
   logIterable(
     "The following preview packages were published:",
-    published.map(pkg => `${colors.blue(pkg.packageName)+colors.yellow("@")+colors.blue(pkg.version)}`),
+    result.attemptedPackages
+      .flatMap((pkg) => isPublishedPackage(pkg) ? [`${colors.blue(pkg.name) + colors.yellow("@") + colors.blue(pkg.publishedVersion)}`] : []),
     "This workflow run did not publish any preview packages"
   );
 
-  return {
-    tag,
-    publishedPackages: published,
-    unsuccessfulPublishes: failedPublishes,
-  };
+  return result;
 }
 
 function* attemptPublish ({
