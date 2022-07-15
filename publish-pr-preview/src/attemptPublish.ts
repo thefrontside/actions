@@ -11,6 +11,8 @@ export function* attemptPublish({
   directory: string;
   attemptCount: number;
 }) {
+  console.log(`Initial version number ${increaseFrom}`);
+
   let bumpVersion = (version: string, tag: string) => semver.inc(version, "prerelease", tag) || "";
   let attemptedVersions: string[] = [];
   while (attemptCount > 0) {
