@@ -39,15 +39,15 @@ export function* publish({ installScript, branch, baseRef }: PublishRun): Operat
 
   let install: ProcessResult = yield exec(installCommand).join();
   if (install.code !== 0) {
-    console.log(`${stdout}`);
-    console.error(`${stderr}`);
+    console.log(install.stdout);
+    console.error(install.stderr);
     throw new Error(`Failed command: ${installCommand}`);
   }
 
   let affectedPackages: ProcessResult = yield exec(`npx lerna ls --since ${baseRef} --toposort --json`).join();
   if (affectedPackages.code !== 0) {
-    console.log(`${stdout}`);
-    console.error(`${affectedPackages.stderr}`);
+    console.log(affectedPackages.stdout);
+    console.error(affectedPackages.stderr);
     throw new Error("Failed to retrieve affected packages.");
   }
 
