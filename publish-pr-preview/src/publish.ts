@@ -73,7 +73,7 @@ export function* publish({ installScript, branch, baseRef }: PublishRun): Operat
         let increaseFrom: string = yield npmView({ name: pkg.name, version: pkg.version, tag });
         let affected = yield changeAffectedDependencies(path.join(pkg.location, "package.json"), attemptedPackages);
         if (affected.length > 0) {
-          console.log(colors.yellow("Updated dependencies: "), colors.blue(affected.join(", ")));
+          console.log(`${colors.yellow("Updated dependencies: ")} ${colors.blue(affected.join(", "))}`);
         } else {
           console.log(colors.yellow("No dependencies were updated"));
         }
@@ -89,6 +89,7 @@ export function* publish({ installScript, branch, baseRef }: PublishRun): Operat
         });
 
       } catch (error) {
+        console.error(colors.red(`Publishing ${pkg.name} failed due to ${error}`));
         attemptedPackages.set(pkg.name, {
           ...pkg,
           error,

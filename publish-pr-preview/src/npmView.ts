@@ -9,7 +9,6 @@ export function* npmView({
   tag: string;
 }) {
   let newPackage: ProcessResult = yield exec(`npm view ${name}`).join();
-  console.dir(newPackage, { depth: 3 });
   if (newPackage.code !== 0) {
     return version;
   } else {
