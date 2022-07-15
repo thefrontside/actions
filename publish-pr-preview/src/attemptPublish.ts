@@ -1,6 +1,6 @@
 import { exec, ProcessResult } from "@effection/process";
-import semver from "semver";
 import { colors } from "@frontside/actions-utils";
+import semver from "semver";
 
 export function* attemptPublish({
   name, increaseFrom, tag, directory, attemptCount,

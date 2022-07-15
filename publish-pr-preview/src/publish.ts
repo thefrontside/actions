@@ -3,7 +3,6 @@ import { colors, logIterable } from "@frontside/actions-utils";
 import { Operation } from "effection";
 import { promises as fs, Stats } from "fs";
 import path from "path";
-import { stderr, stdout } from "process";
 import { attemptPublish } from "./attemptPublish";
 import { npmView } from "./npmView";
 import { AttemptedPackage, isPublishedPackage, LernaListOutput } from "./types";
@@ -37,7 +36,7 @@ export function* publish({ installScript, branch, baseRef }: PublishRun): Operat
     colors.blue(installCommand)+colors.yellow("...\n"),
   );
 
-  let install: ProcessResult = yield exec(installCommand).join();
+  let install: ProcessResult = yield exec(installCommand, { shell: true }).join();
   if (install.code !== 0) {
     console.log(install.stdout);
     console.error(install.stderr);
@@ -70,7 +69,7 @@ export function* publish({ installScript, branch, baseRef }: PublishRun): Operat
 
       try {
         let increaseFrom: string = yield npmView({ name: pkg.name, version: pkg.version, tag });
-        let affected = yield changeAffectedDependencies(path.join(pkg.location, "package.json"), attemptedPackages)
+        let affected = yield changeAffectedDependencies(path.join(pkg.location, "package.json"), attemptedPackages);
         if (affected.length > 0) {
           console.log(colors.yellow("Updated dependencies: "), colors.blue(affected.join(", ")));
         } else {
