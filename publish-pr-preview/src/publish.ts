@@ -52,7 +52,7 @@ export function* publish({ installScript, branch, baseRef }: PublishRun): Operat
     throw new Error("Failed to retrieve affected packages.");
   }
 
-  let packages = LernaListOutput.parse(affectedPackages.stdout);
+  let packages = LernaListOutput.parse(JSON.parse(affectedPackages.stdout));
 
   console.log(colors.yellow("Publishing packages...\n"));
 
