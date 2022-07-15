@@ -18,9 +18,9 @@ export function* attemptPublish({
 
     let cmd = `npm version ${increaseFrom} --no-git-tag-version`;
     let version: ProcessResult = yield exec(cmd, { cwd: directory }).join();
-    console.log(`${version.stdout}`);
+    console.log(version.stdout);
     if (version.code !== 0) {
-      console.error(`${version.stderr}`);
+      console.error(version.stderr);
       throw new Error(`Failed to set the new version number with "${cmd}"`);
     }
 
@@ -38,7 +38,7 @@ export function* attemptPublish({
     attemptedVersions = [...attemptedVersions, increaseFrom];
     attemptCount--;
   }
-  
+
   console.log(colors.red(`Publish failed after ${attemptedVersions.length} attempts`));
 
   return {

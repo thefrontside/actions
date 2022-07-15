@@ -67,7 +67,7 @@ export function* publish({ installScript, branch, baseRef }: PublishRun): Operat
 
   for (let pkg of packages) {
     if (!pkg.private) {
-      console.log(colors.yellow("Attempting to publish: "), colors.blue(pkg.name));
+      console.log(`${colors.yellow("Attempting to publish: ")} ${colors.blue(pkg.name)}`);
 
       try {
         let increaseFrom: string = yield npmView({ name: pkg.name, version: pkg.version, tag });
