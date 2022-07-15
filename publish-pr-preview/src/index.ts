@@ -1,12 +1,11 @@
-import { GitHub } from "@actions/github/lib/utils";
-import { WebhookPayload } from "@actions/github/lib/interfaces";
 import * as Core from "@actions/core/lib/core";
+import { WebhookPayload } from "@actions/github/lib/interfaces";
+import { GitHub } from "@actions/github/lib/utils";
 import { Operation } from "effection";
 import { checkPrerequisites, Prerequisites } from "./checkPrerequisites";
-import { publish, PublishResults } from "./publish";
 import { formatComment } from "./formatComment";
 import { postGithubComment } from "./postGithubComment";
-import { LernaListOutput } from "./types";
+import { publish, PublishResults } from "./publish";
 
 interface PullRequestBranch {
   ref: string;
@@ -39,9 +38,8 @@ export function* run({ octokit, core, payload }: PreviewRun): Operation<void> {
   if (!req.isValid) {
     core.setFailed(req.reason);
   } else {
-    let packages = LernaListOutput.parse(req.payload);
     let installScript = core.getInput("INSTALL_SCRIPT") || "";
-    let results: PublishResults = yield publish({ packages, installScript, branch: req.branch });
+    let results: PublishResults = yield publish({ installScript, branch: req.branch, baseRef: req.baseRef });
     let comment: string = formatComment({ results });
     yield postGithubComment({ comment, octokit, payload });
   }

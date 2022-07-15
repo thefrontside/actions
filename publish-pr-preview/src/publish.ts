@@ -6,11 +6,11 @@ import path from "path";
 import { stderr, stdout } from "process";
 import { attemptPublish } from "./attemptPublish";
 import { npmView } from "./npmView";
-import { AttemptedPackage, isPublishedPackage, LernaListOutputType } from "./types";
+import { AttemptedPackage, isPublishedPackage, LernaListOutput } from "./types";
 
 interface PublishRun {
-  packages: LernaListOutputType;
   installScript: string;
+  baseRef: string;
   branch: string
 }
 
@@ -19,7 +19,7 @@ export interface PublishResults {
   attemptedPackages: AttemptedPackage[]
 }
 
-export function* publish({ packages, installScript, branch }: PublishRun): Operation<PublishResults> {
+export function* publish({ installScript, branch, baseRef }: PublishRun): Operation<PublishResults> {
   let installCommand = "npm ci";
   if (installScript) {
     installCommand = installScript;
@@ -43,6 +43,14 @@ export function* publish({ packages, installScript, branch }: PublishRun): Opera
     console.error(stderr);
     throw new Error(`Failed command: ${installCommand}`);
   }
+
+  let affectedPackages: ProcessResult = yield exec(`npx lerna ls --since ${baseRef} --toposort --json`).join();
+  if (affectedPackages.code !== 0) {
+    console.error(affectedPackages.stderr);
+    throw new Error("Failed to retrieve affected packages.");
+  }
+
+  let packages = LernaListOutput.parse(affectedPackages.stdout);
 
   console.log(colors.yellow("Publishing packages...\n"));
 

@@ -1,4 +1,3 @@
-import { exec, ProcessResult } from "@effection/process";
 import { Operation } from "effection";
 import { PullRequestPayload } from ".";
 
@@ -7,7 +6,7 @@ export type Prerequisites = {
   reason: string;
 } | {
   isValid: true;
-  payload: unknown;
+  baseRef: string;
   branch: string;
 }
 
@@ -37,10 +36,5 @@ export function* checkPrerequisites(payload: PullRequestPayload): Operation<Prer
     return { isValid: false, reason: "Unable to proceed because \"latest\" is a protected NPM tag. Retrigger this action from a different branch name" };
   }
 
-  let affectedPackages: ProcessResult = yield exec(`npx lerna ls --since ${baseRef} --toposort --json`).join();
-  if (affectedPackages.code === 0) {
-    return { isValid: true, payload: JSON.parse(affectedPackages.stdout), branch: headBranch };
-  } else {
-    return { isValid: false, reason: affectedPackages.stderr };
-  }
+  return { isValid: true, baseRef, branch: headBranch };
 }
