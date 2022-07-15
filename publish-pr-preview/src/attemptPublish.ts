@@ -11,16 +11,13 @@ export function* attemptPublish({
   directory: string;
   attemptCount: number;
 }) {
-  console.log(`Initial version number ${increaseFrom}`);
-
   let bumpVersion = (version: string, tag: string) => semver.inc(version, "prerelease", tag) || "";
   let attemptedVersions: string[] = [];
   while (attemptCount > 0) {
     increaseFrom = bumpVersion(increaseFrom, tag);
 
     let cmd = `npm version ${increaseFrom} --no-git-tag-version`;
-    let version: ProcessResult = yield exec(cmd, { cwd: directory }).join();
-    console.log(version.stdout);
+    yield exec(cmd, { cwd: directory }).join();
 
     console.log(
       `${colors.yellow("  Attempting to publish")} ${colors.blue(increaseFrom)} ${colors.yellow("of")} ${colors.blue(name)}} ${colors.yellow("...")}`
@@ -28,7 +25,7 @@ export function* attemptPublish({
     let publishAttempt: ProcessResult = yield exec(`npm publish --access=public --tag=${tag}`, { cwd: directory }).join();
 
     if (publishAttempt.code === 0) {
-      console.log(`Published ${name}@${increaseFrom} successfully.`);
+      console.log(`  Published ${name}@${increaseFrom} successfully.`);
       return {
         publishedVersion: increaseFrom,
       };
@@ -37,7 +34,7 @@ export function* attemptPublish({
     attemptCount--;
   }
 
-  console.log(colors.red(`Publish failed after ${attemptedVersions.length} attempts`));
+  console.log(colors.red(`  Publish failed after ${attemptedVersions.length} attempts`));
 
   return {
     attemptedVersions,
