@@ -39,8 +39,8 @@ export function* checkPrerequisites(payload: PullRequestPayload): Operation<Prer
 
   let affectedPackages: ProcessResult = yield exec(`npx lerna ls --since ${baseRef} --toposort --json`).join();
   if (affectedPackages.code === 0) {
-    return { isValid: false, reason: affectedPackages.stderr };
-  } else {
     return { isValid: true, payload: JSON.parse(affectedPackages.stdout), branch: headBranch };
+  } else {
+    return { isValid: false, reason: affectedPackages.stderr };
   }
 }
