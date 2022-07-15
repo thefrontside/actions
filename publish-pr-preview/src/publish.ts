@@ -43,14 +43,16 @@ export function* publish({ installScript, branch, baseRef }: PublishRun): Operat
     throw new Error(`Failed command (${install.code}): ${installCommand}`);
   }
 
-  let affectedPackages: ProcessResult = yield exec(`npx lerna ls --since ${baseRef} --toposort --json`, { shell: true }).join();
+  yield exec(`git checkout ${baseRef} && git checkout -`, { shell: true }).expect();
+
+  let affectedPackages: ProcessResult = yield exec(`npx lerna ls --since ${baseRef} --toposort --json`).join();
   console.log(affectedPackages.stdout);
   if (affectedPackages.code !== 0) {
     console.error(affectedPackages.stderr);
     throw new Error("Failed to retrieve affected packages.");
   }
 
-  let packages = LernaListOutput.parse(`${affectedPackages.stdout}`);
+  let packages = LernaListOutput.parse(affectedPackages.stdout);
 
   console.log(colors.yellow("Publishing packages...\n"));
 
