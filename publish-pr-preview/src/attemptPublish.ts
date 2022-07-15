@@ -19,8 +19,7 @@ export function* attemptPublish({
     let cmd = `npm version ${increaseFrom} --no-git-tag-version`;
     let version: ProcessResult = yield exec(cmd, { cwd: directory }).join();
     if (version.code !== 0) {
-      console.error(version.stderr);
-      throw new Error(`Failed to set the new version number with "${cmd}"`);
+      throw new Error(`${cmd} exited with ${version.code} \n ${version.stderr}`);
     }
 
     console.log(
