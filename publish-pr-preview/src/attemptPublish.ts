@@ -25,15 +25,12 @@ export function* attemptPublish({
     }
 
     console.log(
-      colors.yellow("  Attempting to publish"),
-      colors.blue(increaseFrom),
-      colors.yellow("of"),
-      colors.blue(name),
-      colors.yellow("...")
+      `${colors.yellow("  Attempting to publish")} ${colors.blue(increaseFrom)} ${colors.yellow("of")} ${colors.blue(name)}} ${colors.yellow("...")}`
     );
     let publishAttempt: ProcessResult = yield exec(`npm publish --access=public --tag=${tag}`, { cwd: directory }).join();
 
     if (publishAttempt.code === 0) {
+      console.log(`Published ${name}@${increaseFrom} successfully.`);
       return {
         publishedVersion: increaseFrom,
       };
@@ -41,6 +38,9 @@ export function* attemptPublish({
     attemptedVersions = [...attemptedVersions, increaseFrom];
     attemptCount--;
   }
+  
+  console.log(colors.red(`Publish failed after ${attemptedVersions.length} attempts`));
+
   return {
     attemptedVersions,
   };
