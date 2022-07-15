@@ -1,12 +1,11 @@
-import { GitHub } from "@actions/github/lib/utils";
-import { WebhookPayload } from "@actions/github/lib/interfaces";
 import * as Core from "@actions/core/lib/core";
+import { WebhookPayload } from "@actions/github/lib/interfaces";
+import { GitHub } from "@actions/github/lib/utils";
 import { Operation } from "effection";
-import { checkPrerequisites } from "./checkPrerequisites";
-import { findPackages } from "./findPackages";
-import { publish, PublishResults } from "./publish";
+import { checkPrerequisites, Prerequisites } from "./checkPrerequisites";
 import { formatComment } from "./formatComment";
 import { postGithubComment } from "./postGithubComment";
+import { publish, PublishResults } from "./publish";
 
 interface PullRequestBranch {
   ref: string;
@@ -35,14 +34,13 @@ interface PreviewRun {
 }
 
 export function* run({ octokit, core, payload }: PreviewRun): Operation<void> {
-  let { isValid, reason, payload: gitDiff, branch } = yield checkPrerequisites(payload);
-  if (!isValid) {
-    core.setFailed(reason);
+  let req: Prerequisites = yield checkPrerequisites(payload);
+  if (!req.isValid) {
+    core.setFailed(req.reason);
   } else {
-    let directoriesToPublish: string[] = findPackages(gitDiff);
     let installScript = core.getInput("INSTALL_SCRIPT") || "";
-    let published: PublishResults = yield publish({ directoriesToPublish, installScript, branch });
-    let comment: string = formatComment({ published });
+    let results: PublishResults = yield publish({ installScript, branch: req.branch, baseRef: req.baseRef });
+    let comment: string = formatComment({ results });
     yield postGithubComment({ comment, octokit, payload });
   }
 }

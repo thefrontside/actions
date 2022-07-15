@@ -1,12 +1,11 @@
 import { Operation } from "effection";
 import { PullRequestPayload } from ".";
-declare type Prerequisites = {
+export declare type Prerequisites = {
     isValid: false;
     reason: string;
 } | {
     isValid: true;
-    payload: string[];
+    baseRef: string;
     branch: string;
 };
 export declare function checkPrerequisites(payload: PullRequestPayload): Operation<Prerequisites>;
-export {};

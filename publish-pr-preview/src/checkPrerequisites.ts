@@ -1,13 +1,12 @@
-import { exec, Process } from "@effection/process";
 import { Operation } from "effection";
 import { PullRequestPayload } from ".";
 
-type Prerequisites = {
+export type Prerequisites = {
   isValid: false;
   reason: string;
 } | {
   isValid: true;
-  payload: string[];
+  baseRef: string;
   branch: string;
 }
 
@@ -22,13 +21,12 @@ export function* checkPrerequisites(payload: PullRequestPayload): Operation<Prer
       repo: {
         url: headUrl,
       },
-      sha: headSHA,
     },
     base: {
+      ref: baseRef,
       repo: {
         url: baseUrl,
       },
-      sha: baseSHA,
     },
   } = payload.pull_request;
 
@@ -38,12 +36,5 @@ export function* checkPrerequisites(payload: PullRequestPayload): Operation<Prer
     return { isValid: false, reason: "Unable to proceed because \"latest\" is a protected NPM tag. Retrigger this action from a different branch name" };
   }
 
-  let gitDiff: Process = yield exec(`git diff ${baseSHA}...${headSHA} --name-only`);
-  let buffer: string[] = yield gitDiff.stdout.lines().toArray();
-  let { code: gitDiffExitCode } = yield gitDiff.join();
-  if (gitDiffExitCode !== 0) {
-    return { isValid: false, reason: "The base commit could not be found. Configure the checkout action in your workflow with the correct settings" };
-  } else {
-    return { isValid: true, payload: buffer, branch: headBranch };
-  }
+  return { isValid: true, baseRef, branch: headBranch };
 }

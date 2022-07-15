@@ -1,168 +1,143 @@
 import { exec, ProcessResult } from "@effection/process";
-import { all, Operation } from "effection";
-import fs from "fs";
-import semver from "semver";
 import { colors, logIterable } from "@frontside/actions-utils";
+import { Operation } from "effection";
+import { promises as fs, Stats } from "fs";
+import path from "path";
+import { attemptPublish } from "./attemptPublish";
+import { npmView } from "./npmView";
+import { AttemptedPackage, isPublishedPackage, LernaListOutput } from "./types";
 
 interface PublishRun {
-  directoriesToPublish: string[];
   installScript: string;
+  baseRef: string;
   branch: string
-}
-
-export interface PublishedPackages {
-  packageName: string;
-  version: string;
-}
-
-export interface FailedPublish {
-  packageName: string;
-  versions: string[];
 }
 
 export interface PublishResults {
   tag: string;
-  publishedPackages: PublishedPackages[];
-  unsuccessfulPublishes: FailedPublish[];
+  attemptedPackages: AttemptedPackage[]
 }
 
-export function* publish({ directoriesToPublish, installScript, branch }: PublishRun): Operation<PublishResults> {
-  let installCommand = installScript || fs.existsSync("yarn.lock") ? "yarn install --frozen-lockfile" : "npm ci";
+export function* publish({ installScript, branch, baseRef }: PublishRun): Operation<PublishResults> {
+  let installCommand = "npm ci";
+  if (installScript) {
+    installCommand = installScript;
+  } else {
+    let stat: Stats = yield fs.stat("yarn.lock");
+    if (stat.isFile()) {
+      installCommand = "yarn install --frozen-lockfile";
+    }
+  }
+
   let tag = branch.replace(/\_/g, "-").replace(/\//g, "-");
-  let published: PublishedPackages[] = [];
-  let failedPublishes: FailedPublish[] = [];
-  let privatePackages: string[] = [];
 
   console.log(
     colors.yellow("Installing with command"),
     colors.blue(installCommand)+colors.yellow("...\n"),
   );
-  yield exec(installCommand).join();
+
+  let install: ProcessResult = yield exec(installCommand, { shell: true }).join();
+  console.log(install.stdout);
+  if (install.code !== 0) {
+    console.error(install.stderr);
+    throw new Error(`Failed command (${install.code}): ${installCommand}`);
+  }
+
+  yield exec(`git checkout ${baseRef} && git checkout -`, { shell: true }).expect();
+
+  let affectedPackages: ProcessResult = yield exec(`npx lerna ls --since ${baseRef} --toposort --json`).join();
+  console.log(affectedPackages.stdout);
+  if (affectedPackages.code !== 0) {
+    console.error(affectedPackages.stderr);
+    throw new Error("Failed to retrieve affected packages.");
+  }
+
+  let packages = LernaListOutput.parse(JSON.parse(affectedPackages.stdout));
+
   console.log(colors.yellow("Publishing packages...\n"));
 
-  yield all(
-    directoriesToPublish.map(directory =>
-      function* () {
-        console.log(colors.yellow("Executing in directory: "), colors.blue(directory));
-        let { name, version, private: privatePackage } = JSON.parse(
-          fs.readFileSync(`${directory}/package.json`, { encoding: "utf-8" })
-        );
-        if (!privatePackage) {
-          let increaseFrom: string = yield npmView({ name, version, tag });
-
-          let publishAttempt: {
-            publishedVersion: string;
-            attemptedVersions: string[];
-          } = yield attemptPublish({ name, increaseFrom, tag, directory, attemptCount: 3 });
-
-          if (publishAttempt.publishedVersion) {
-            published = [...published, { packageName: name, version: publishAttempt.publishedVersion }];
-          } else {
-            failedPublishes = [...failedPublishes, { packageName: name, versions: publishAttempt.attemptedVersions }];
-          }
-        } else {
-          privatePackages = [...privatePackages, name];
-        }
-      }
-    )
-  );
-
   logIterable(
-    "The following packages were skipped because they are marked private:",
-    privatePackages,
+    "The following packages will be skipped because they are marked private:",
+    packages
+      .filter(pkg => pkg.private)
+      .map(pkg => pkg.name)
   );
+
+  let attemptedPackages: Map<string, AttemptedPackage> = new Map();
+
+  for (let pkg of packages) {
+    if (!pkg.private) {
+      console.log(`${colors.yellow("Attempting to publish: ")} ${colors.blue(pkg.name)}`);
+
+      try {
+        let increaseFrom: string = yield npmView({ name: pkg.name, version: pkg.version, tag });
+        let affected: string[] = yield changeAffectedDependencies(path.join(pkg.location, "package.json"), attemptedPackages);
+        logIterable("  Updated dependencies: ", affected, "No dependencies were updated");
+
+        let publishAttempt: {
+          publishedVersion: string;
+          attemptedVersions: string[];
+        } = yield attemptPublish({ name: pkg.name, increaseFrom, tag, directory: pkg.location, attemptCount: 3 });
+
+        attemptedPackages.set(pkg.name, {
+          ...publishAttempt,
+          ...pkg,
+        });
+
+      } catch (error) {
+        console.error(colors.red(`Publishing ${pkg.name} failed due to ${error}`));
+        attemptedPackages.set(pkg.name, {
+          ...pkg,
+          error,
+        });
+      }
+    }
+  }
+
+  let result = {
+    tag,
+    attemptedPackages: [...attemptedPackages.values()],
+  };
 
   logIterable(
     "The following preview packages were published:",
-    published.map(pkg => `${colors.blue(pkg.packageName)+colors.yellow("@")+colors.blue(pkg.version)}`),
+    result.attemptedPackages
+      .flatMap((pkg) => isPublishedPackage(pkg) ? [`${colors.blue(pkg.name) + colors.yellow("@") + colors.blue(pkg.publishedVersion)}`] : []),
     "This workflow run did not publish any preview packages"
   );
 
-  return {
-    tag,
-    publishedPackages: published,
-    unsuccessfulPublishes: failedPublishes,
-  };
+  return result;
 }
 
-function* attemptPublish ({
-  name,
-  increaseFrom,
-  tag,
-  directory,
-  attemptCount,
-}:{
-  name: string,
-  increaseFrom: string,
-  tag: string,
-  directory: string,
-  attemptCount: number,
-}) {
-  let bumpVersion = (version: string, tag: string) => semver.inc(version, "prerelease", tag) || "";
-  let attemptedVersions: string[] = [];
-  while (attemptCount > 0) {
-    increaseFrom = bumpVersion(increaseFrom, tag);
+function* changeAffectedDependencies(location: string, attemptedPackages: Map<string, AttemptedPackage>) {
+  let packageJson: string = yield fs.readFile(location, { encoding: "utf-8" });
+  let packageJsonContent = JSON.parse(packageJson) as { dependencies?: Record<string, string>; devDependencies?: Record<string, string> };
 
-    let cmd = `npm version ${increaseFrom} --no-git-tag-version`;
-    let version: ProcessResult = yield exec(cmd, { cwd: directory }).join();
-    console.log(`${version.stdout}`);
-    if (version.code !== 0) {
-      console.error(`${version.stderr}`);
-      throw new Error(`Failed to set the new version number with "${cmd}"`);
+  let madeChanges: string[] = [];
+
+  function updateDependencies(dependencies: Record<string, string>) {
+    for (let name in dependencies) {
+      if (attemptedPackages.has(name)) {
+        let pkg = attemptedPackages.get(name);
+        if (pkg && isPublishedPackage(pkg)) {
+          dependencies[name] = pkg.publishedVersion;
+          madeChanges.push(name);
+        }
+      }
     }
-
-    console.log(
-      colors.yellow("  Attempting to publish"),
-      colors.blue(increaseFrom),
-      colors.yellow("of"),
-      colors.blue(name),
-      colors.yellow("...")
-    );
-    let publishAttempt: ProcessResult = yield exec(`npm publish --access=public --tag=${tag}`, { cwd: directory }).join();
-
-    if (publishAttempt.code === 0) {
-      return {
-        publishedVersion: increaseFrom,
-      };
-    }
-    attemptedVersions = [...attemptedVersions, increaseFrom];
-    attemptCount--;
   }
-  return {
-    attemptedVersions,
-  };
-}
 
-function* npmView ({
-  name,
-  version,
-  tag,
-}:{
-  name: string,
-  version: string,
-  tag: string,
-}) {
-  let newPackage: ProcessResult = yield exec(`npm view ${name}`).join();
-  if (newPackage.code === 1) {
-    return version;
-  } else {
-    let { stdout: stdoutVersions }: ProcessResult = yield exec(`npm view ${name} versions --json`).expect();
-    let versionsParsed = JSON.parse(stdoutVersions);
-    let versionsArray = Array.isArray(versionsParsed) && versionsParsed || [versionsParsed];
-    let everyRelevantPublishedVersions = versionsArray.filter((version: string) => {
-      let prerelease = semver.prerelease(version);
-      return prerelease && prerelease[0] == tag || !prerelease;
-    });
-
-    let { stdout: previouslyPublishedPreview }: ProcessResult = yield exec(`npm view ${name}@${tag}`).expect();
-    let { stdout: previousPreviewVersion }: ProcessResult = yield exec(`npm view ${name}@${tag} version`).expect();
-
-    let basePreviewVersion = previouslyPublishedPreview
-      ? previousPreviewVersion
-      : version;
-
-    let maxSatisfying = semver.maxSatisfying(everyRelevantPublishedVersions, "^"+basePreviewVersion, { includePrerelease: true });
-
-    return maxSatisfying || basePreviewVersion;
+  if (packageJsonContent.dependencies) {
+    updateDependencies(packageJsonContent.dependencies);
   }
+
+  if (packageJsonContent.devDependencies) {
+    updateDependencies(packageJsonContent.devDependencies);
+  }
+
+  if (madeChanges.length > 0) {
+    yield fs.writeFile(location, JSON.stringify(packageJsonContent));
+  }
+
+  return madeChanges;
 }

@@ -1,21 +1,13 @@
 import { Operation } from "effection";
+import { AttemptedPackage } from "./types";
 interface PublishRun {
-    directoriesToPublish: string[];
     installScript: string;
+    baseRef: string;
     branch: string;
-}
-export interface PublishedPackages {
-    packageName: string;
-    version: string;
-}
-export interface FailedPublish {
-    packageName: string;
-    versions: string[];
 }
 export interface PublishResults {
     tag: string;
-    publishedPackages: PublishedPackages[];
-    unsuccessfulPublishes: FailedPublish[];
+    attemptedPackages: AttemptedPackage[];
 }
-export declare function publish({ directoriesToPublish, installScript, branch }: PublishRun): Operation<PublishResults>;
+export declare function publish({ installScript, branch, baseRef }: PublishRun): Operation<PublishResults>;
 export {};

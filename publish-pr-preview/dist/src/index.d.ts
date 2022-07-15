@@ -1,6 +1,6 @@
-import { GitHub } from "@actions/github/lib/utils";
-import { WebhookPayload } from "@actions/github/lib/interfaces";
 import * as Core from "@actions/core/lib/core";
+import { WebhookPayload } from "@actions/github/lib/interfaces";
+import { GitHub } from "@actions/github/lib/utils";
 import { Operation } from "effection";
 interface PullRequestBranch {
     ref: string;
