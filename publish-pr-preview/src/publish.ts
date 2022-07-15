@@ -43,7 +43,7 @@ export function* publish({ installScript, branch, baseRef }: PublishRun): Operat
     throw new Error(`Failed command (${install.code}): ${installCommand}`);
   }
 
-  let affectedPackages: ProcessResult = yield exec(`npx lerna ls --since ${baseRef} --toposort --json`).join();
+  let affectedPackages: ProcessResult = yield exec(`npx lerna ls --since ${baseRef} --toposort --json`, { shell: true }).join();
   console.log(affectedPackages.stdout);
   if (affectedPackages.code !== 0) {
     console.error(affectedPackages.stderr);
