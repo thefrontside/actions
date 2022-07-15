@@ -46,11 +46,11 @@ export function* publish({ installScript, branch, baseRef }: PublishRun): Operat
 
   let affectedPackages: ProcessResult = yield exec(`npx lerna ls --since ${baseRef} --toposort --json`).join();
   if (affectedPackages.code !== 0) {
-    console.error(affectedPackages.stderr);
+    console.error(`${affectedPackages.stderr}`);
     throw new Error("Failed to retrieve affected packages.");
   }
 
-  let packages = LernaListOutput.parse(affectedPackages.stdout);
+  let packages = LernaListOutput.parse(`${affectedPackages.stdout}`);
 
   console.log(colors.yellow("Publishing packages...\n"));
 
