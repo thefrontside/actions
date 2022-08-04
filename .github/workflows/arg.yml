@@ -1,0 +1,13 @@
+name: Arg
+
+on: push
+
+jobs:
+  lint:
+    name: Arg
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: thefrontside/actions/arg@mk/arg
+      with:
+        HELLO_BYE: yarn hello && yarn bye

@@ -1,0 +1,11 @@
+name: Arg Test
+description: Hmmm
+
+inputs:
+  HELLO_BYE:
+    description: "hmmm"
+    required: false
+
+runs:
+  using: "node12"
+  main: "dist/index.js"
