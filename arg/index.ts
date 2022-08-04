@@ -5,6 +5,7 @@ import * as core from "@actions/core";
 main(
   function*(): Operation<void> {
     let command = core.getInput("HELLO_BYE") || "yarn uhoh";
-    yield exec(command).join();
+    let { stdout: result } = yield exec(command).join();
+    console.log("stdout:", result);
   }
 );
