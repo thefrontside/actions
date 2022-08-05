@@ -1,5 +1,6 @@
 import { exec, ProcessResult } from "@effection/process";
 import { colors } from "@frontside/actions-utils";
+import { Operation } from "effection";
 import semver from "semver";
 
 export function* attemptPublish({
@@ -10,7 +11,7 @@ export function* attemptPublish({
   tag: string;
   directory: string;
   attemptCount: number;
-}) {
+}): Operation<{ atteptedVersions: string[] }> {
   let bumpVersion = (version: string, tag: string) => semver.inc(version, "prerelease", tag) || "";
   let attemptedVersions: string[] = [];
   while (attemptCount > 0) {

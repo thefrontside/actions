@@ -1,4 +1,5 @@
 import { exec, ProcessResult } from "@effection/process";
+import { Operation } from "effection";
 import semver from "semver";
 
 export function* npmView({
@@ -7,7 +8,7 @@ export function* npmView({
   name: string;
   version: string;
   tag: string;
-}) {
+}): Operation<string> {
   let newPackage: ProcessResult = yield exec(`npm view ${name}`).join();
   if (newPackage.code !== 0) {
     return version;

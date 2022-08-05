@@ -29,7 +29,7 @@ export function* parsePayload(payload: PullRequestPayload): Operation<Prerequisi
   if (baseUrl !== headUrl) {
     throw new Error("This action cannot be run on pull requests created from a forked repository");
   } else if (headBranch === "latest") {
-    throw new Error("Unable to proceed because \"latest\" is a protected NPM tag. Retrigger this action from a different branch name")
+    throw new Error("Unable to proceed because \"latest\" is a protected NPM tag. Retrigger this action from a different branch name");
   }
 
   return { baseRef, branch: headBranch };
