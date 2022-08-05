@@ -43,8 +43,7 @@ export function* run({ octokit, core, payload }: PreviewRun): Operation<void> {
     return;
   }
 
-  let installScript = core.getInput("INSTALL_SCRIPT") || "";
-  yield install({ installScript });
+  yield install({ installScript: core.getInput("INSTALL_SCRIPT") || "" });
 
   let packages: LernaListOutputType = yield detectAffectedPackages({ baseRef: req.baseRef });
 

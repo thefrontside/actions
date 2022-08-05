@@ -3,7 +3,6 @@ import { colors } from "@frontside/actions-utils";
 import { exec, ProcessResult } from "@effection/process";
 import { promises as fs, Stats } from "fs";
 
-
 type IntallParams = {
   installScript: string;
 };

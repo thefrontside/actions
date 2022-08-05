@@ -27,17 +27,16 @@ export function* run({ octokit, core, payload }: ActionPayload): Operation<void>
   let { pkgsToPublish, pkgsToDeprecate } = listPackages();
   let confirmedPkgsToPublish = yield checkIfPublished({ pkgsToPublish });
 
-  let installScript = core.getInput("INSTALL_SCRIPT") || "";
-  // if (confirmedPkgsToPublish.length > 0) {
-    yield install({ installScript });
-  // }
+  if (confirmedPkgsToPublish.length > 0) {
+    yield install({ installScript: core.getInput("INSTALL_SCRIPT") || "" });
+  }
 
   let publishedPackages: ToPublish[] = yield publishAndTag({ confirmedPkgsToPublish, octokit, payload });
   let deprecatedPackages: string[] = yield deprecatePackages({ pkgsToDeprecate });
 
   logIterable(
     "The following packages were successfully published:",
-    publishedPackages.map(pkg => `${colors.blue(pkg.name)+colors.yellow("@")+colors.blue(pkg.version)}`),
+    publishedPackages.map(pkg => `${colors.blue(pkg.name) + colors.yellow("@") + colors.blue(pkg.version)}`),
     "This workflow run did not publish any packages"
   );
 
