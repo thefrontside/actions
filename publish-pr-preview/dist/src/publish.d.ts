@@ -1,12 +1,13 @@
+import { LernaListOutputType } from "@frontside/actions-utils";
 import { Operation } from "effection";
 import { AttemptedPackage } from "./types";
 interface PublishRun {
-    baseRef: string;
+    packages: LernaListOutputType;
     branch: string;
 }
 export interface PublishResults {
     tag: string;
     attemptedPackages: AttemptedPackage[];
 }
-export declare function publish({ branch, baseRef }: PublishRun): Operation<PublishResults>;
+export declare function publish({ branch, packages }: PublishRun): Operation<PublishResults>;
 export {};

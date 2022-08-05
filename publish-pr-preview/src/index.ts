@@ -1,7 +1,7 @@
 import * as Core from "@actions/core/lib/core";
 import { WebhookPayload } from "@actions/github/lib/interfaces";
 import { GitHub } from "@actions/github/lib/utils";
-import { install } from "@frontside/actions-utils";
+import { detectAffectedPackages, install, LernaListOutputType } from "@frontside/actions-utils";
 import { Operation } from "effection";
 import { parsePayload, Prerequisites } from "./parsePayload";
 import { formatComment } from "./formatComment";
@@ -39,14 +39,16 @@ export function* run({ octokit, core, payload }: PreviewRun): Operation<void> {
   try {
     req = yield parsePayload(payload);
   } catch (e) {
-    core.setFailed(e);
+    core.setFailed(`${e}`);
     return;
   }
 
   let installScript = core.getInput("INSTALL_SCRIPT") || "";
   yield install({ installScript });
 
-  let results: PublishResults = yield publish({ branch: req.branch, baseRef: req.baseRef });
+  let packages: LernaListOutputType = yield detectAffectedPackages({ baseRef: req.baseRef });
+
+  let results: PublishResults = yield publish({ branch: req.branch, packages });
   let comment: string = formatComment({ results });
 
   yield postGithubComment({ comment, octokit, payload });

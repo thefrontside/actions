@@ -1,8 +1,6 @@
-/// <reference types="node" />
-import { ProcessResult } from "@effection/process";
-import { Stats } from "fs";
+import type { Operation } from "effection";
 declare type IntallParams = {
     installScript: string;
 };
-export declare function install({ installScript }: IntallParams): Generator<Promise<Stats> | import("effection").Operation<ProcessResult>, void, Stats & ProcessResult>;
+export declare function install({ installScript }: IntallParams): Operation<void>;
 export {};

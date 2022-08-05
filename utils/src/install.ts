@@ -1,3 +1,4 @@
+import type { Operation } from "effection";
 import { colors } from "@frontside/actions-utils";
 import { exec, ProcessResult } from "@effection/process";
 import { promises as fs, Stats } from "fs";
@@ -7,7 +8,7 @@ type IntallParams = {
   installScript: string;
 };
 
-export function* install({ installScript }: IntallParams) {
+export function* install({ installScript }: IntallParams): Operation<void> {
   let installCommand = "npm ci";
   if (installScript) {
     installCommand = installScript;

@@ -1,14 +1,13 @@
-import { exec, ProcessResult } from "@effection/process";
-import { colors, logIterable } from "@frontside/actions-utils";
+import { colors, logIterable, LernaListOutputType } from "@frontside/actions-utils";
 import { Operation } from "effection";
 import { promises as fs } from "fs";
 import path from "path";
 import { attemptPublish } from "./attemptPublish";
 import { npmView } from "./npmView";
-import { AttemptedPackage, isPublishedPackage, LernaListOutput } from "./types";
+import { AttemptedPackage, isPublishedPackage } from "./types";
 
 interface PublishRun {
-  baseRef: string;
+  packages: LernaListOutputType;
   branch: string
 }
 
@@ -17,19 +16,8 @@ export interface PublishResults {
   attemptedPackages: AttemptedPackage[]
 }
 
-export function* publish({ branch, baseRef }: PublishRun): Operation<PublishResults> {
+export function* publish({ branch, packages }: PublishRun): Operation<PublishResults> {
   let tag = branch.replace(/\_/g, "-").replace(/\//g, "-");
-
-  yield exec(`git checkout ${baseRef} && git checkout -`, { shell: true }).expect();
-
-  let affectedPackages: ProcessResult = yield exec(`npx lerna ls --since ${baseRef} --toposort --json`).join();
-  console.log(affectedPackages.stdout);
-  if (affectedPackages.code !== 0) {
-    console.error(affectedPackages.stderr);
-    throw new Error("Failed to retrieve affected packages.");
-  }
-
-  let packages = LernaListOutput.parse(JSON.parse(affectedPackages.stdout));
 
   console.log(colors.yellow("Publishing packages...\n"));
 
