@@ -26,7 +26,7 @@ export function* publishAndTag({
       colors.yellow("Installing with command"),
       colors.blue(installCommand)+colors.yellow("...\n"),
     );
-    yield exec(installCommand).join();
+    yield exec(installCommand, { shell: true }).join();
 
     let successfullyPublished: ToPublish[] = [];
     yield all(
