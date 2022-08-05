@@ -1,14 +1,3 @@
-import { z } from "zod";
-
-export const LernaListOutput = z.array(z.object({
-  name: z.string(),
-  version: z.string(),
-  private: z.boolean(),
-  location: z.string(),
-}));
-
-export type LernaListOutputType = z.TypeOf<typeof LernaListOutput>
-
 export interface Package {
   name: string;
   location: string;

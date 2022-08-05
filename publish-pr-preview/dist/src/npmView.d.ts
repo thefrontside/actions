@@ -1,6 +1,6 @@
-import { ProcessResult } from "@effection/process";
+import { Operation } from "effection";
 export declare function npmView({ name, version, tag, }: {
     name: string;
     version: string;
     tag: string;
-}): Generator<import("effection").Operation<ProcessResult>, any, ProcessResult>;
+}): Operation<string>;
