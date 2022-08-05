@@ -1,34 +1,21 @@
 import { GitHub } from "@actions/github/lib/utils";
 import { exec, ProcessResult } from "@effection/process";
-import { colors } from "@frontside/actions-utils";
 import { all, Operation } from "effection";
-import fs from "fs";
 import { ToPublish } from "./listPackages";
 import { GithubActionsPayload } from ".";
 
 interface Publish {
   confirmedPkgsToPublish: ToPublish[];
-  installScript: string;
   octokit: InstanceType<typeof GitHub>;
   payload: GithubActionsPayload;
 }
 
 export function* publishAndTag({
   confirmedPkgsToPublish,
-  installScript,
   octokit,
   payload,
 }: Publish): Operation<ToPublish[]> {
   if (confirmedPkgsToPublish.length) {
-    let installCommand = installScript || fs.existsSync("yarn.lock") ? "yarn install --frozen-lockfile" : "npm ci";
-
-    console.log(
-      colors.yellow("Installing with command"),
-      colors.blue(installCommand)+colors.yellow("...\n"),
-    );
-    console.log({ installCommand });
-    yield exec(installCommand, { shell: true }).join();
-
     let successfullyPublished: ToPublish[] = [];
     yield all(
       confirmedPkgsToPublish.map(pkg =>

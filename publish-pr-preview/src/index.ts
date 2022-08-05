@@ -39,7 +39,8 @@ export function* run({ octokit, core, payload }: PreviewRun): Operation<void> {
     core.setFailed(req.reason);
   } else {
     let installScript = core.getInput("INSTALL_SCRIPT") || "";
-    let results: PublishResults = yield publish({ installScript, branch: req.branch, baseRef: req.baseRef });
+    yield install(installScript);
+    let results: PublishResults = yield publish({ branch: req.branch, baseRef: req.baseRef });
     let comment: string = formatComment({ results });
     yield postGithubComment({ comment, octokit, payload });
   }

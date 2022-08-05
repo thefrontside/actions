@@ -1,14 +1,14 @@
 import { exec, ProcessResult } from "@effection/process";
 import { colors, logIterable } from "@frontside/actions-utils";
 import { Operation } from "effection";
-import { promises as fs, Stats } from "fs";
+import { promises as fs } from "fs";
 import path from "path";
 import { attemptPublish } from "./attemptPublish";
 import { npmView } from "./npmView";
 import { AttemptedPackage, isPublishedPackage, LernaListOutput } from "./types";
+import { install } from '@frontside/actions-utils';
 
 interface PublishRun {
-  installScript: string;
   baseRef: string;
   branch: string
 }
@@ -18,30 +18,8 @@ export interface PublishResults {
   attemptedPackages: AttemptedPackage[]
 }
 
-export function* publish({ installScript, branch, baseRef }: PublishRun): Operation<PublishResults> {
-  let installCommand = "npm ci";
-  if (installScript) {
-    installCommand = installScript;
-  } else {
-    let stat: Stats = yield fs.stat("yarn.lock");
-    if (stat.isFile()) {
-      installCommand = "yarn install --frozen-lockfile";
-    }
-  }
-
+export function* publish({ branch, baseRef }: PublishRun): Operation<PublishResults> {
   let tag = branch.replace(/\_/g, "-").replace(/\//g, "-");
-
-  console.log(
-    colors.yellow("Installing with command"),
-    colors.blue(installCommand)+colors.yellow("...\n"),
-  );
-
-  let install: ProcessResult = yield exec(installCommand, { shell: true }).join();
-  console.log(install.stdout);
-  if (install.code !== 0) {
-    console.error(install.stderr);
-    throw new Error(`Failed command (${install.code}): ${installCommand}`);
-  }
 
   yield exec(`git checkout ${baseRef} && git checkout -`, { shell: true }).expect();
 
