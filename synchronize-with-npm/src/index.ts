@@ -28,9 +28,9 @@ export function* run({ octokit, core, payload }: ActionPayload): Operation<void>
   let confirmedPkgsToPublish = yield checkIfPublished({ pkgsToPublish });
 
   let installScript = core.getInput("INSTALL_SCRIPT") || "";
-  if (confirmedPkgsToPublish.length > 0) {
+  // if (confirmedPkgsToPublish.length > 0) {
     yield install({ installScript });
-  }
+  // }
 
   let publishedPackages: ToPublish[] = yield publishAndTag({ confirmedPkgsToPublish, octokit, payload });
   let deprecatedPackages: string[] = yield deprecatePackages({ pkgsToDeprecate });
