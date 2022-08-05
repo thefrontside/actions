@@ -4,9 +4,8 @@ import { ToPublish } from "./listPackages";
 import { GithubActionsPayload } from ".";
 interface Publish {
     confirmedPkgsToPublish: ToPublish[];
-    installScript: string;
     octokit: InstanceType<typeof GitHub>;
     payload: GithubActionsPayload;
 }
-export declare function publishAndTag({ confirmedPkgsToPublish, installScript, octokit, payload, }: Publish): Operation<ToPublish[]>;
+export declare function publishAndTag({ confirmedPkgsToPublish, octokit, payload, }: Publish): Operation<ToPublish[]>;
 export {};

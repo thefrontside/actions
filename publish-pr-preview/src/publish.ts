@@ -6,7 +6,6 @@ import path from "path";
 import { attemptPublish } from "./attemptPublish";
 import { npmView } from "./npmView";
 import { AttemptedPackage, isPublishedPackage, LernaListOutput } from "./types";
-import { install } from '@frontside/actions-utils';
 
 interface PublishRun {
   baseRef: string;

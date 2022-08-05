@@ -1,8 +1,9 @@
 import * as Core from "@actions/core/lib/core";
 import { WebhookPayload } from "@actions/github/lib/interfaces";
 import { GitHub } from "@actions/github/lib/utils";
+import { install } from "@frontside/actions-utils";
 import { Operation } from "effection";
-import { checkPrerequisites, Prerequisites } from "./checkPrerequisites";
+import { parsePayload, Prerequisites } from "./parsePayload";
 import { formatComment } from "./formatComment";
 import { postGithubComment } from "./postGithubComment";
 import { publish, PublishResults } from "./publish";
@@ -34,14 +35,19 @@ interface PreviewRun {
 }
 
 export function* run({ octokit, core, payload }: PreviewRun): Operation<void> {
-  let req: Prerequisites = yield checkPrerequisites(payload);
-  if (!req.isValid) {
-    core.setFailed(req.reason);
-  } else {
-    let installScript = core.getInput("INSTALL_SCRIPT") || "";
-    yield install(installScript);
-    let results: PublishResults = yield publish({ branch: req.branch, baseRef: req.baseRef });
-    let comment: string = formatComment({ results });
-    yield postGithubComment({ comment, octokit, payload });
+  let req: Prerequisites;
+  try {
+    req = yield parsePayload(payload);
+  } catch (e) {
+    core.setFailed(e);
+    return;
   }
+
+  let installScript = core.getInput("INSTALL_SCRIPT") || "";
+  yield install({ installScript });
+
+  let results: PublishResults = yield publish({ branch: req.branch, baseRef: req.baseRef });
+  let comment: string = formatComment({ results });
+
+  yield postGithubComment({ comment, octokit, payload });
 }
