@@ -1,5 +1,6 @@
 import fs from "fs";
-import { dirname } from "path";
+import { join, dirname } from "path";
+
 import { listAllPkgJsons, logIterable } from "@frontside/actions-utils";
 
 export interface ToDeprecate {
@@ -7,25 +8,26 @@ export interface ToDeprecate {
   description: string;
 }
 
-export interface ToPublish {
+export interface PackageInfo {
   name: string;
   version: string;
   path: string;
 }
 
 interface PackagesList {
-  pkgsToPublish: ToPublish[];
+  pkgsToPublish: PackageInfo[];
   pkgsToDeprecate: ToDeprecate[];
 }
 
-export function listPackages(): PackagesList {
+export function listPackages(directory = "."): PackagesList {
   let pkgsToDeprecate: ToDeprecate[] = [];
   let privatePkgs: string[] = [];
-  let pkgsToPublish: ToPublish[] = listAllPkgJsons().reduce((acc, pkgJsonPath) => {
+  let pkgsToPublish: PackageInfo[] = listAllPkgJsons(directory).reduce((acc, pkgJsonPath) => {
+    let path = join(directory, pkgJsonPath);
     let { name, private: privatePackage, deprecate, version } = JSON.parse(
-      fs.readFileSync(pkgJsonPath, { encoding: "utf-8" })
+      fs.readFileSync(path, { encoding: "utf-8" })
     );
-    let path = dirname(pkgJsonPath);
+
     if (privatePackage) {
       privatePkgs = [...privatePkgs, name];
       return acc;
@@ -33,9 +35,9 @@ export function listPackages(): PackagesList {
       pkgsToDeprecate = [...pkgsToDeprecate, { name, description: deprecate }];
       return acc;
     } else {
-      return [...acc, { name, version, path }];
+      return [...acc, { name, version, path: dirname(path) }];
     }
-  }, [] as ToPublish[]);
+  }, [] as PackageInfo[]);
 
   logIterable(
     "Omitting the following packages because they are private:",

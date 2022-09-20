@@ -8,7 +8,7 @@ const glob_1 = __importDefault(require("glob"));
 function listAllPkgJsons(directory = ".") {
     return glob_1.default.sync("**/package.json", {
         cwd: directory,
-        ignore: ["node_modules/**"],
+        ignore: ["**/node_modules/**"],
     });
 }
 exports.listAllPkgJsons = listAllPkgJsons;
