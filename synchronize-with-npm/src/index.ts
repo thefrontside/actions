@@ -31,7 +31,9 @@ export function* run({ octokit, core, payload }: ActionPayload): Operation<void>
     yield install({ installScript: core.getInput("INSTALL_SCRIPT") || "" });
   }
 
-  let publishedPackages: ToPublish[] = yield publishAndTag({ confirmedPkgsToPublish, octokit, payload });
+  let publishScript = core.getInput("PUBLISH_SCRIPT");
+
+  let publishedPackages: ToPublish[] = yield publishAndTag({ confirmedPkgsToPublish, octokit, payload, publishScript });
   let deprecatedPackages: string[] = yield deprecatePackages({ pkgsToDeprecate });
 
   logIterable(

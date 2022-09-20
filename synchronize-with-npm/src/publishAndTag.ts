@@ -8,19 +8,21 @@ interface Publish {
   confirmedPkgsToPublish: ToPublish[];
   octokit: InstanceType<typeof GitHub>;
   payload: GithubActionsPayload;
+  publishScript: string;
 }
 
 export function* publishAndTag({
   confirmedPkgsToPublish,
   octokit,
   payload,
+  publishScript,
 }: Publish): Operation<ToPublish[]> {
   if (confirmedPkgsToPublish.length) {
     let successfullyPublished: ToPublish[] = [];
     yield all(
       confirmedPkgsToPublish.map(pkg =>
         function* () {
-          let result: ProcessResult = yield exec("npm publish --access=public", { cwd: pkg.path }).join();
+          let result: ProcessResult = yield exec(publishScript, { cwd: pkg.path }).join();
           // TODO how can i turn octokit.request into an operation so i can .join()
           if (result.code === 0) {
             yield octokit.request("POST /repos/{owner}/{repo}/git/refs", {
@@ -32,7 +34,7 @@ export function* publishAndTag({
             successfullyPublished = [...successfullyPublished, pkg];
           } else {
             console.warn(`FAILED: publish ${pkg.name}
-command: npm publish --access=public
+command: ${publishScript}
 cwd: ${pkg.path}
 code: ${result.code}
 signal: ${result.signal}

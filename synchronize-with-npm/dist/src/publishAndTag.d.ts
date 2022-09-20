@@ -6,6 +6,7 @@ interface Publish {
     confirmedPkgsToPublish: ToPublish[];
     octokit: InstanceType<typeof GitHub>;
     payload: GithubActionsPayload;
+    publishScript: string;
 }
-export declare function publishAndTag({ confirmedPkgsToPublish, octokit, payload, }: Publish): Operation<ToPublish[]>;
+export declare function publishAndTag({ confirmedPkgsToPublish, octokit, payload, publishScript, }: Publish): Operation<ToPublish[]>;
 export {};
