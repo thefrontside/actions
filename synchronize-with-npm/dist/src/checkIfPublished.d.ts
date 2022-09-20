@@ -1,5 +1,7 @@
 import { Operation } from "effection";
-import { ToPublish } from "./listPackages";
-export declare function checkIfPublished({ pkgsToPublish }: {
-    pkgsToPublish: ToPublish[];
-}): Operation<ToPublish[]>;
+import { PackageInfo } from "./listPackages";
+export interface PublishCheck {
+    publish: PackageInfo[];
+    skip: PackageInfo[];
+}
+export declare function checkIfPublished(pkgsToCheck: PackageInfo[]): Operation<PublishCheck>;

@@ -2,14 +2,14 @@ export interface ToDeprecate {
     name: string;
     description: string;
 }
-export interface ToPublish {
+export interface PackageInfo {
     name: string;
     version: string;
     path: string;
 }
 interface PackagesList {
-    pkgsToPublish: ToPublish[];
+    pkgsToPublish: PackageInfo[];
     pkgsToDeprecate: ToDeprecate[];
 }
-export declare function listPackages(): PackagesList;
+export declare function listPackages(directory?: string): PackagesList;
 export {};

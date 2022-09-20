@@ -5,6 +5,10 @@ inputs:
   INSTALL_SCRIPT:
     description: "If you need to specify your own install command"
     required: false
+  DRY_RUN:
+    description: "Do not actually publish releases, but print what would happen"
+    required: true
+    default: false
 
 runs:
   using: "node16"
