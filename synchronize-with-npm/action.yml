@@ -2,10 +2,14 @@ name: Synchronize with NPM
 description: Publish Releases
 
 inputs:
+  PUBLISH_SCRIPT:
+    description: Command to use when publishing
+    default: npm publish --access=public
+
   INSTALL_SCRIPT:
-    description: "If you need to specify your own install command"
+    description: If you need to specify your own install command
     required: false
 
 runs:
-  using: "node16"
-  main: "dist/index.js"
+  using: node16
+  main: dist/index.js
