@@ -21,6 +21,8 @@ jobs:
         registry-url: https://registry.npmjs.org
           ## https://github.com/actions/setup-node/blob/main/docs/advanced-usage.md#publish-to-npmjs-and-gpr-with-npm
     - uses: thefrontside/actions/synchronize-with-npm@v2
+      with:
+        # PUBLISH_SCRIPT: yarn publish --access=public
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
