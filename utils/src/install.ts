@@ -25,7 +25,7 @@ export function* install({ installScript }: IntallParams): Operation<void> {
     colors.blue(installCommand) + colors.yellow(" ...\n"),
   );
 
-  let install: Process = yield exec(installCommand, { shell: true }).join();
+  let install: Process = yield exec(installCommand, { shell: true });
   yield spawn(install.stdout.forEach(chars => { process.stdout.write(chars) }));
   yield spawn(install.stderr.forEach(chars => { process.stderr.write(chars) }));
   yield install.expect();

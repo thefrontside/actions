@@ -17,7 +17,7 @@ function* install({ installScript }) {
         }
     }
     console.log("::group::", actions_utils_1.colors.yellow("Installing with command "), actions_utils_1.colors.blue(installCommand) + actions_utils_1.colors.yellow(" ...\n"));
-    let install = yield process_1.exec(installCommand, { shell: true }).join();
+    let install = yield process_1.exec(installCommand, { shell: true });
     yield effection_1.spawn(install.stdout.forEach(chars => { process.stdout.write(chars); }));
     yield effection_1.spawn(install.stderr.forEach(chars => { process.stderr.write(chars); }));
     yield install.expect();
