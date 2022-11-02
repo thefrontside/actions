@@ -1,6 +1,7 @@
 import type { Operation } from "effection";
 import { colors } from "@frontside/actions-utils";
-import { exec, ProcessResult } from "@effection/process";
+import { exec, Process } from "@effection/process";
+import { spawn } from "effection";
 import { promises as fs, Stats } from "fs";
 
 type IntallParams = {
@@ -19,14 +20,15 @@ export function* install({ installScript }: IntallParams): Operation<void> {
   }
 
   console.log(
-    colors.yellow("Installing with command"),
-    colors.blue(installCommand) + colors.yellow("...\n"),
+    "::group::",
+    colors.yellow("Installing with command "),
+    colors.blue(installCommand) + colors.yellow(" ...\n"),
   );
 
-  let install: ProcessResult = yield exec(installCommand, { shell: true }).join();
-  console.log(install.stdout);
-  if (install.code !== 0) {
-    console.error(install.stderr);
-    throw new Error(`Failed command (${install.code}): ${installCommand}`);
-  }
+  let install: Process = yield exec(installCommand, { shell: true });
+  yield spawn(install.stdout.forEach(chars => { process.stdout.write(chars) }));
+  yield spawn(install.stderr.forEach(chars => { process.stderr.write(chars) }));
+  yield install.expect();
+
+  console.log("::endgroup::");
 }

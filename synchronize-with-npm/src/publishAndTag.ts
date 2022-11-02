@@ -1,8 +1,7 @@
 import { GitHub } from "@actions/github/lib/utils";
-import { exec, Process, ProcessResult } from "@effection/process";
-import { colors } from "@frontside/actions-utils";
-import { spawn, Operation } from "effection";
-import fs from "fs";
+import { exec, ProcessResult } from "@effection/process";
+import { install } from "@frontside/actions-utils";
+import { Operation } from "effection";
 import { PackageInfo } from "./listPackages";
 import { GithubActionsPayload } from ".";
 
@@ -23,18 +22,7 @@ export function* publishAndTag({
 }: Publish): Operation<PackageInfo[]> {
   if (confirmedPkgsToPublish.length) {
 
-    let installCommand = installScript || fs.existsSync("yarn.lock") ? "yarn install --frozen-lockfile" : "npm ci";
-
-    console.log(
-      "::group::",
-      colors.yellow("Installing with command"),
-      colors.blue(installCommand)+colors.yellow("...\n"),
-    );
-    let install: Process = yield exec(installCommand);
-    yield spawn(install.stdout.forEach(chars => { process.stdout.write(chars) }));
-    yield spawn(install.stderr.forEach(chars => { process.stderr.write(chars) }));
-    yield install.expect();
-    console.log("::endgroup::");
+    yield install({ installScript });
 
     let successfullyPublished: PackageInfo[] = [];
     for (let pkg of confirmedPkgsToPublish) {
