@@ -50,7 +50,8 @@ export function* publish({ branch, packages }: PublishRun): Operation<PublishRes
         });
 
       } catch (error) {
-        console.error(colors.red(`Publishing ${pkg.name} failed due to ${error}`));
+        console.error(colors.red(`Publishing ${pkg.name} failed due to error`));
+        console.log(error);
         attemptedPackages.set(pkg.name, {
           ...pkg,
           error,
