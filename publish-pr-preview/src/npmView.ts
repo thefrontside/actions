@@ -1,5 +1,5 @@
-import { exec, ProcessResult } from "@effection/process";
-import { Operation } from "effection";
+import { exec, Process, ProcessResult } from "@effection/process";
+import { Operation, spawn } from "effection";
 import semver from "semver";
 
 export function* npmView({
@@ -13,7 +13,18 @@ export function* npmView({
   if (newPackage.code !== 0) {
     return version;
   } else {
-    let { stdout: stdoutVersions }: ProcessResult = yield exec(`npm view ${name} versions --json`).expect();
+    let versions: Process = yield exec(`npm view ${name} versions --json`);
+    let stdoutVersions = "";
+
+    yield spawn(versions.stdout.forEach(chars => {
+      process.stdout.write(chars);
+      stdoutVersions += chars;
+    }));
+
+    yield spawn(versions.stderr.forEach(chars => { process.stderr.write(chars) }));
+
+    yield versions.expect();
+
     let versionsParsed = JSON.parse(stdoutVersions);
     let versionsArray = Array.isArray(versionsParsed) && versionsParsed || [versionsParsed];
     let everyRelevantPublishedVersions = versionsArray.filter((version: string) => {
