@@ -1,0 +1,33 @@
+name: Dist Update
+
+on:
+  push:
+    branches:
+      - "v[0-9]+"
+
+jobs:
+  dist-update:
+    name: Dist Update Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: volta-cli/action@v3
+      - run: yarn
+      - run: yarn build
+      - name: Open PR If There Are Changes To `dist`
+        id: cpr
+        uses: peter-evans/create-pull-request@v3
+        with:
+          token: ${{ env.GITHUB_TOKEN }}
+          commit-message: service-lockfile-updates
+          branch: dist-updates
+          title: Dist Updates
+          body: |
+            ## Motivation
+
+            Syncing `*/dist` changes as it was not build in a previous commit.
+
+            ## Approach
+
+            A sync was run and the `yarn install` changed the lockfile.
