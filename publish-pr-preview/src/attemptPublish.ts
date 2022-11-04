@@ -1,6 +1,6 @@
-import { exec, ProcessResult } from "@effection/process";
+import { exec, Process, ProcessResult } from "@effection/process";
 import { colors } from "@frontside/actions-utils";
-import { Operation } from "effection";
+import { Operation, spawn } from "effection";
 import semver from "semver";
 
 export function* attemptPublish({
@@ -23,16 +23,19 @@ export function* attemptPublish({
     console.log(
       `${colors.yellow("  Attempting to publish")} ${colors.blue(increaseFrom)} ${colors.yellow("of")} ${colors.blue(name)}} ${colors.yellow("...")}`
     );
-    let publishAttempt: ProcessResult = yield exec(`npm publish --access=public --tag=${tag}`, { cwd: directory }).join();
 
-    if (publishAttempt.code === 0) {
-      console.log(`  Published ${name}@${increaseFrom} successfully.`);
+    let publishAttempt: Process = yield exec(`npm publish --access=public --tag=${tag}`, { cwd: directory });
+    yield spawn(publishAttempt.stdout.forEach(chars => { process.stdout.write(chars) }));
+    yield spawn(publishAttempt.stderr.forEach(chars => { process.stderr.write(chars) }));
+    try {
+      yield publishAttempt.expect();
       return {
         publishedVersion: increaseFrom,
       };
+    } catch (e) {
+      attemptedVersions = [...attemptedVersions, increaseFrom];
+      attemptCount--;
     }
-    attemptedVersions = [...attemptedVersions, increaseFrom];
-    attemptCount--;
   }
 
   console.log(colors.red(`  Publish failed after ${attemptedVersions.length} attempts`));
