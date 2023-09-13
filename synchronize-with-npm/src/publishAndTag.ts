@@ -11,6 +11,7 @@ interface Publish {
   octokit: InstanceType<typeof GitHub>;
   payload: GithubActionsPayload;
   dryRun: boolean;
+  useYarn: boolean;
 }
 
 export function* publishAndTag({
@@ -19,6 +20,7 @@ export function* publishAndTag({
   octokit,
   payload,
   dryRun,
+  useYarn,
 }: Publish): Operation<PackageInfo[]> {
   if (confirmedPkgsToPublish.length) {
 
@@ -26,7 +28,7 @@ export function* publishAndTag({
 
     let successfullyPublished: PackageInfo[] = [];
     for (let pkg of confirmedPkgsToPublish) {
-      let cmd = `npm publish --access=public ${dryRun ? "--dry-run" : ""}`;
+      let cmd = `${useYarn ? "yarn " : ""}npm publish --access=public ${dryRun ? "--dry-run" : ""}`;
       console.log(`::group::${pkg.path} $ ${cmd}`);
       let result: ProcessResult = yield exec(cmd, { cwd: pkg.path }).join();
       // TODO how can i turn octokit.request into an operation so i can .join()

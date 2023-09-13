@@ -2,6 +2,9 @@ name: Synchronize with NPM
 description: Publish Releases
 
 inputs:
+  USE_YARN:
+    description: "Use yarn instead of npm"
+    required: false
   INSTALL_SCRIPT:
     description: "If you need to specify your own install command"
     required: false

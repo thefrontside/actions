@@ -25,6 +25,7 @@ export interface ActionPayload {
 
 export function* run({ octokit, core, payload }: ActionPayload): Operation<void> {
   let dryRun = core.getBooleanInput("DRY_RUN");
+  let useYarn = core.getBooleanInput("USE_YARN");
 
   let { pkgsToPublish, pkgsToDeprecate } = listPackages();
 
@@ -36,7 +37,7 @@ export function* run({ octokit, core, payload }: ActionPayload): Operation<void>
   );
 
   let installScript = core.getInput("INSTALL_SCRIPT") || "";
-  let publishedPackages: PackageInfo[] = yield publishAndTag({ confirmedPkgsToPublish: publish, installScript, octokit, payload, dryRun });
+  let publishedPackages: PackageInfo[] = yield publishAndTag({ confirmedPkgsToPublish: publish, installScript, octokit, payload, dryRun, useYarn });
   let deprecatedPackages: string[] = yield deprecatePackages({ pkgsToDeprecate });
 
   logIterable(
