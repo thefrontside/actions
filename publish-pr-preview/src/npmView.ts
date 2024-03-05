@@ -31,7 +31,7 @@ export function* npmView({
       ? previousPreviewVersion
       : version;
     } catch (error) {
-      console.warn(colors.yellow(`Failed to view package version of ${name}@${tag} with error`), error)
+      console.warn(colors.yellow(`Failed to view package version of ${name}@${tag} with error`), error);
     }
 
     let maxSatisfying = semver.maxSatisfying(everyRelevantPublishedVersions, "^" + basePreviewVersion, { includePrerelease: true });
