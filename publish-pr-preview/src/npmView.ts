@@ -1,5 +1,4 @@
 import { exec, ProcessResult } from "@effection/process";
-import { colors } from "@frontside/actions-utils";
 import { Operation } from "effection";
 import semver from "semver";
 
@@ -21,18 +20,11 @@ export function* npmView({
       let prerelease = semver.prerelease(version);
       return prerelease && prerelease[0] == tag || !prerelease;
     });
-    let basePreviewVersion = version;
+    let { stdout: packagePublishedTags }: ProcessResult = yield exec(`npm dist-tag ${name}`).expect();
 
-    try {
-    let { stdout: previouslyPublishedPreview }: ProcessResult = yield exec(`npm view ${name}@${tag}`).expect();
-    let { stdout: previousPreviewVersion }: ProcessResult = yield exec(`npm view ${name}@${tag} version`).expect();
+    let tagsVersionsMap = new Map(packagePublishedTags.split("\n").map(line => line.trim().split(": ") as [string, string]));
 
-    basePreviewVersion = previouslyPublishedPreview
-      ? previousPreviewVersion
-      : version;
-    } catch (error) {
-      console.warn(colors.yellow(`Failed to view package version of ${name}@${tag} with error`), error);
-    }
+    let basePreviewVersion = tagsVersionsMap.get(tag) ?? version;
 
     let maxSatisfying = semver.maxSatisfying(everyRelevantPublishedVersions, "^" + basePreviewVersion, { includePrerelease: true });
 
