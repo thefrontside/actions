@@ -20,13 +20,11 @@ export function* npmView({
       let prerelease = semver.prerelease(version);
       return prerelease && prerelease[0] == tag || !prerelease;
     });
+    let { stdout: packagePublishedTags }: ProcessResult = yield exec(`npm dist-tag ${name}`).expect();
 
-    let { stdout: previouslyPublishedPreview }: ProcessResult = yield exec(`npm view ${name}@${tag}`).expect();
-    let { stdout: previousPreviewVersion }: ProcessResult = yield exec(`npm view ${name}@${tag} version`).expect();
+    let tagsVersionsMap = new Map(packagePublishedTags.split("\n").map(line => line.trim().split(": ") as [string, string]));
 
-    let basePreviewVersion = previouslyPublishedPreview
-      ? previousPreviewVersion
-      : version;
+    let basePreviewVersion = tagsVersionsMap.get(tag) ?? version;
 
     let maxSatisfying = semver.maxSatisfying(everyRelevantPublishedVersions, "^" + basePreviewVersion, { includePrerelease: true });
 
